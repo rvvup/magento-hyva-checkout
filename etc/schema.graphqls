@@ -1,3 +1,0 @@
-type StoreConfig {
-    rvvup_payments_active: String @doc(description: "Rvvup Payments Active")
-}
