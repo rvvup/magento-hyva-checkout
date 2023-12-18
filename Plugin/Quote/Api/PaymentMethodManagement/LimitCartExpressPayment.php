@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Quote\Api\PaymentMethodManagement;
+namespace Rvvup\Payments\Hyva\Plugin\Quote\Api\PaymentMethodManagement;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class LimitCartExpressPayment
 {

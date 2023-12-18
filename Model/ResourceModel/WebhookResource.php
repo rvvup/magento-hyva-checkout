@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ResourceModel;
+namespace Rvvup\Payments\Hyva\Model\ResourceModel;
 
-use Rvvup\Payments\Api\Data\WebhookInterface;
+use Rvvup\Payments\Hyva\Api\Data\WebhookInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**

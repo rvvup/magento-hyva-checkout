@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 // @codingStandardsIgnoreFile
-namespace Rvvup\Payments\Sdk;
+namespace Rvvup\Payments\Hyva\Sdk;
 
 class Curl
 {

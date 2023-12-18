@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
-use Rvvup\Payments\Api\WebhookRepositoryInterface;
-use Rvvup\Payments\Api\Data\WebhookInterface;
-use Rvvup\Payments\Api\Data\WebhookInterfaceFactory;
+use Rvvup\Payments\Hyva\Api\WebhookRepositoryInterface;
+use Rvvup\Payments\Hyva\Api\Data\WebhookInterface;
+use Rvvup\Payments\Hyva\Api\Data\WebhookInterfaceFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Rvvup\Payments\Model\ResourceModel\WebhookResource;
+use Rvvup\Payments\Hyva\Model\ResourceModel\WebhookResource;
 
 class WebhookRepository implements WebhookRepositoryInterface
 {

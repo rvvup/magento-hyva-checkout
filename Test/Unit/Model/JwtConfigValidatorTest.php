@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\Model;
+namespace Rvvup\Payments\Hyva\Test\Unit\Model;
 
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\CacheInterface;
@@ -18,12 +18,12 @@ use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\Config\Jwt\Validator;
-use Rvvup\Payments\Model\UserAgentBuilder;
+use Rvvup\Payments\Hyva\Model\Config\Jwt\Validator;
+use Rvvup\Payments\Hyva\Model\UserAgentBuilder;
 use Rvvup\Sdk\GraphQlSdkFactory;
 
 /**
- * @covers \Rvvup\Payments\Model\Config\Jwt\Validator
+ * @covers \Rvvup\Payments\Hyva\Model\Config\Jwt\Validator
  */
 class JwtConfigValidatorTest extends TestCase
 {

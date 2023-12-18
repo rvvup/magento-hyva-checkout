@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\Redirect;
+namespace Rvvup\Payments\Hyva\Controller\Redirect;
 
 use Exception;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -12,12 +12,12 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
-use Rvvup\Payments\Api\Data\SessionMessageInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\Payment\PaymentDataGetInterface;
-use Rvvup\Payments\Model\ProcessOrder\ProcessorPool;
-use Rvvup\Payments\Service\Order;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\Payment\PaymentDataGetInterface;
+use Rvvup\Payments\Hyva\Model\ProcessOrder\ProcessorPool;
+use Rvvup\Payments\Hyva\Service\Order;
 
 class In implements HttpGetActionInterface
 {
@@ -235,7 +235,7 @@ class In implements HttpGetActionInterface
      * Default to Warning container if none of the above
      * Allow custom message group for the checkout page specifically.
      *
-     * @param \Rvvup\Payments\Api\Data\ProcessOrderResultInterface $processOrderResult
+     * @param \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface $processOrderResult
      * @param string|null $messageGroup
      * @return void
      */

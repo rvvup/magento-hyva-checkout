@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Block;
+namespace Rvvup\Payments\Hyva\Block;
 
 use Magento\Payment\Block\ConfigurableInfo;
 

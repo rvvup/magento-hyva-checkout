@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\Model\System;
+namespace Rvvup\Payments\Hyva\Test\Unit\Model\System;
 
 use Magento\Cron\Model\ResourceModel\Schedule\Collection;
 use Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory;
 use Magento\Framework\App\DeploymentConfig;
 use PHPUnit\Framework\TestCase;
-use Rvvup\Payments\Model\System\Message\Queue;
+use Rvvup\Payments\Hyva\Model\System\Message\Queue;
 
 class QueueTest extends TestCase
 {

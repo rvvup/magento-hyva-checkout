@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Magento\Payment\Gateway\Command\CommandException;
 use Magento\Payment\Gateway\CommandInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 class CreatePayment implements CommandInterface
 {

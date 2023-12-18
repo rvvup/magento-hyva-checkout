@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Payment;
+namespace Rvvup\Payments\Hyva\Model\Payment;
 
 interface PaymentDataGetInterface
 {

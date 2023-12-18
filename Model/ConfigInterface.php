@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Store\Model\ScopeInterface;
 

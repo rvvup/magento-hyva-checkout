@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Observer;
+namespace Rvvup\Payments\Hyva\Observer;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
@@ -8,8 +8,8 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\Restriction\Messages;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\Restriction\Messages;
 
 class CartRestrictionsWarning implements ObserverInterface
 {

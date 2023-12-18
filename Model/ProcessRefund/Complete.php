@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessRefund;
+namespace Rvvup\Payments\Hyva\Model\ProcessRefund;
 
 use Exception;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -10,8 +10,8 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Exception\PaymentValidationException;
-use Rvvup\Payments\Service\Order;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Service\Order;
 
 class Complete implements ProcessorInterface
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Rvvup\Payments\Controller\Express;
+namespace Rvvup\Payments\Hyva\Controller\Express;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 class Cancel implements HttpGetActionInterface
 {

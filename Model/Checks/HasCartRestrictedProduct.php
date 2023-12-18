@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Checks;
+namespace Rvvup\Payments\Hyva\Model\Checks;
 
 use Exception;
 use Magento\Bundle\Model\Product\Type;

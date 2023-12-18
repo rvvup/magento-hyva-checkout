@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Environment;
+namespace Rvvup\Payments\Hyva\Model\Environment;
 
 use Exception;
 use InvalidArgumentException;

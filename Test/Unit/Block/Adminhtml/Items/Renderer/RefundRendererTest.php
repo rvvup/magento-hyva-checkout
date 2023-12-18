@@ -8,7 +8,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use PHPUnit\Framework\TestCase;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order\Creditmemo;
-use Rvvup\Payments\Block\Adminhtml\Items\Renderer\RefundRenderer;
+use Rvvup\Payments\Hyva\Block\Adminhtml\Items\Renderer\RefundRenderer;
 
 class RefundRendererTest extends TestCase
 {

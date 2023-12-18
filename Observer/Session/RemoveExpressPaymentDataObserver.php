@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Observer\Session;
+namespace Rvvup\Payments\Hyva\Observer\Session;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Rvvup\Payments\Api\CartExpressPaymentRemoveInterface;
+use Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface;
 
 class RemoveExpressPaymentDataObserver implements ObserverInterface
 {
     /**
-     * @var \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface
      */
     private $cartExpressPaymentRemove;
 
     /**
-     * @param \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
+     * @param \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
      * @return void
      */
     public function __construct(CartExpressPaymentRemoveInterface $cartExpressPaymentRemove)

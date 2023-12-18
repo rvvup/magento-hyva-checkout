@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\ViewModel;
+namespace Rvvup\Payments\Hyva\ViewModel;
 
 use Exception;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -10,9 +10,9 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\Clearpay\Config;
-use Rvvup\Payments\Model\ComplexProductTypePool;
-use Rvvup\Payments\Model\ThresholdProvider;
+use Rvvup\Payments\Hyva\Model\Clearpay\Config;
+use Rvvup\Payments\Hyva\Model\ComplexProductTypePool;
+use Rvvup\Payments\Hyva\Model\ThresholdProvider;
 use Magento\Store\Model\StoreManagerInterface;
 
 class Clearpay implements ArgumentInterface

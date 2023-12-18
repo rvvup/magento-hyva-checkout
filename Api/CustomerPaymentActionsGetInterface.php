@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Api;
+namespace Rvvup\Payments\Hyva\Api;
 
 interface CustomerPaymentActionsGetInterface
 {
@@ -11,7 +11,7 @@ interface CustomerPaymentActionsGetInterface
      *
      * @param string $customerId
      * @param string $cartId
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      */
     public function execute(string $customerId, string $cartId): array;
 }

@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\Model;
+namespace Rvvup\Payments\Hyva\Test\Unit\Model;
 
 use Magento\Framework\App\CacheInterface;
 use PHPUnit\Framework\TestCase;
-use Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface;
-use Rvvup\Payments\Model\UserAgentBuilder;
+use Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface;
+use Rvvup\Payments\Hyva\Model\UserAgentBuilder;
 
 /**
- * @covers \Rvvup\Payments\Model\UserAgentBuilder
+ * @covers \Rvvup\Payments\Hyva\Model\UserAgentBuilder
  */
 class UserAgentBuilderTest extends TestCase
 {

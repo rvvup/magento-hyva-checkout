@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Framework\App\CacheInterface;
-use Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface;
+use Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface;
 
 class UserAgentBuilder
 {
@@ -15,13 +15,13 @@ class UserAgentBuilder
     private $cache;
 
     /**
-     * @var \Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface
+     * @var \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface
      */
     private $getEnvironmentVersions;
 
     /**
      * @param \Magento\Framework\App\CacheInterface $cache
-     * @param \Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface $getEnvironmentVersions
+     * @param \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface $getEnvironmentVersions
      * @return void
      */
     public function __construct(CacheInterface $cache, GetEnvironmentVersionsInterface $getEnvironmentVersions)

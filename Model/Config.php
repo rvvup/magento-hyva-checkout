@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;

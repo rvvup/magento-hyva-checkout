@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin;
+namespace Rvvup\Payments\Hyva\Plugin;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -10,10 +10,10 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Payment\Helper\Data;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\RvvupConfigProvider as Config;
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Traits\LoadMethods;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\RvvupConfigProvider as Config;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Traits\LoadMethods;
 
 class LoadPaymentMethods
 {

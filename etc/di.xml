@@ -4,44 +4,44 @@
     <!-- DI preferences -->
     <!-- Create Express Payment for logged-in & guest users -->
     <!-- Payment Action model di -->
-    <preference for="Rvvup\Payments\Api\Data\PaymentActionInterface"
-                type="Rvvup\Payments\Model\PaymentAction" />
-    <preference for="Rvvup\Payments\Api\ExpressPaymentCreateInterface"
-                type="Rvvup\Payments\Model\ExpressPaymentCreate" />
-    <preference for="Rvvup\Payments\Api\GuestExpressPaymentCreateInterface"
-                type="Rvvup\Payments\Model\GuestExpressPaymentCreate" />
+    <preference for="Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface"
+                type="Rvvup\Payments\Hyva\Model\PaymentAction" />
+    <preference for="Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface"
+                type="Rvvup\Payments\Hyva\Model\ExpressPaymentCreate" />
+    <preference for="Rvvup\Payments\Hyva\Api\GuestExpressPaymentCreateInterface"
+                type="Rvvup\Payments\Hyva\Model\GuestExpressPaymentCreate" />
     <!-- Remove Express Payment Data from payment method for logged-in & guest users -->
-    <preference for="Rvvup\Payments\Api\GuestCartExpressPaymentRemoveInterface"
-                type="Rvvup\Payments\Model\GuestCartExpressPaymentRemove" />
-    <preference for="Rvvup\Payments\Api\CartExpressPaymentRemoveInterface"
-                type="Rvvup\Payments\Model\CartExpressPaymentRemove" />
+    <preference for="Rvvup\Payments\Hyva\Api\GuestCartExpressPaymentRemoveInterface"
+                type="Rvvup\Payments\Hyva\Model\GuestCartExpressPaymentRemove" />
+    <preference for="Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface"
+                type="Rvvup\Payments\Hyva\Model\CartExpressPaymentRemove" />
     <!-- Get Cart Payment Actions for logged-in & guest users -->
-    <preference for="Rvvup\Payments\Api\CartPaymentActionsGetInterface"
-                type="Rvvup\Payments\Model\CartPaymentActionsGet" />
-    <preference for="Rvvup\Payments\Api\GuestCartPaymentActionsGetInterface"
-                type="Rvvup\Payments\Model\GuestCartPaymentActionsGet" />
-    <preference for="Rvvup\Payments\Model\ConfigInterface" type="Rvvup\Payments\Model\Config" />
-    <preference for="Rvvup\Payments\Api\PaymentMethodsAssetsGetInterface"
-                type="Rvvup\Payments\Model\PaymentMethodsAssetsGet" />
-    <preference for="Rvvup\Payments\Api\PaymentMethodsSettingsGetInterface"
-                type="Rvvup\Payments\Model\PaymentMethodsSettingsGet" />
-    <preference for="Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface"
-                type="Rvvup\Payments\Model\Environment\GetEnvironmentVersions" />
-    <preference for="Rvvup\Payments\Model\IsPaymentMethodAvailableInterface"
-                type="Rvvup\Payments\Model\IsPaymentMethodAvailable" />
-    <preference for="Rvvup\Payments\Model\PaymentActionsGetInterface"
-                type="Rvvup\Payments\Model\PaymentActionsGet" />
-    <preference for="Rvvup\Payments\Model\PaymentMethodsAvailableGetInterface"
-                type="Rvvup\Payments\Model\PaymentMethodsAvailableGet" />
-    <preference for="Rvvup\Payments\Api\Data\ProcessOrderResultInterface"
-                type="Rvvup\Payments\Model\ProcessOrderResult" />
-    <preference for="Rvvup\Payments\Model\Payment\PaymentCreateExpressInterface"
-                type="Rvvup\Payments\Model\Payment\PaymentCreateExpress" />
-    <preference for="Rvvup\Payments\Model\Payment\PaymentDataGetInterface"
-                type="Rvvup\Payments\Model\Payment\PaymentDataGet" />
+    <preference for="Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface"
+                type="Rvvup\Payments\Hyva\Model\CartPaymentActionsGet" />
+    <preference for="Rvvup\Payments\Hyva\Api\GuestCartPaymentActionsGetInterface"
+                type="Rvvup\Payments\Hyva\Model\GuestCartPaymentActionsGet" />
+    <preference for="Rvvup\Payments\Hyva\Model\ConfigInterface" type="Rvvup\Payments\Hyva\Model\Config" />
+    <preference for="Rvvup\Payments\Hyva\Api\PaymentMethodsAssetsGetInterface"
+                type="Rvvup\Payments\Hyva\Model\PaymentMethodsAssetsGet" />
+    <preference for="Rvvup\Payments\Hyva\Api\PaymentMethodsSettingsGetInterface"
+                type="Rvvup\Payments\Hyva\Model\PaymentMethodsSettingsGet" />
+    <preference for="Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface"
+                type="Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersions" />
+    <preference for="Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface"
+                type="Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailable" />
+    <preference for="Rvvup\Payments\Hyva\Model\PaymentActionsGetInterface"
+                type="Rvvup\Payments\Hyva\Model\PaymentActionsGet" />
+    <preference for="Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGetInterface"
+                type="Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGet" />
+    <preference for="Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface"
+                type="Rvvup\Payments\Hyva\Model\ProcessOrderResult" />
+    <preference for="Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpressInterface"
+                type="Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpress" />
+    <preference for="Rvvup\Payments\Hyva\Model\Payment\PaymentDataGetInterface"
+                type="Rvvup\Payments\Hyva\Model\Payment\PaymentDataGet" />
     <!-- Checks -->
-    <preference for="Rvvup\Payments\Model\Checks\HasCartExpressPaymentInterface"
-                type="Rvvup\Payments\Model\Checks\HasCartExpressPayment" />
+    <preference for="Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPaymentInterface"
+                type="Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPayment" />
 
     <!-- Custom Rvvup Logger -->
     <virtualType name="RvvupLogHandler" type="\Magento\Framework\Logger\Handler\Base">
@@ -60,18 +60,18 @@
     </virtualType>
 
     <!-- Payment Method Facade configuration -->
-    <virtualType name="RvvupFacade" type="Rvvup\Payments\Gateway\Method">
+    <virtualType name="RvvupFacade" type="Rvvup\Payments\Hyva\Gateway\Method">
         <arguments>
             <argument name="code" xsi:type="string">rvvup</argument>
             <argument name="title" xsi:type="string">Rvvup</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form\Cc</argument>
-            <argument name="infoBlockType" xsi:type="string">Rvvup\Payments\Block\Info</argument>
+            <argument name="infoBlockType" xsi:type="string">Rvvup\Payments\Hyva\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">RvvupValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">RvvupCommandPool</argument>
         </arguments>
     </virtualType>
 
-    <type name="Rvvup\Payments\Block\Info">
+    <type name="Rvvup\Payments\Hyva\Block\Info">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="methodCode" xsi:type="string">rvvup</item>
@@ -83,8 +83,8 @@
         <arguments>
             <argument name="handlers" xsi:type="array">
                 <item name="default" xsi:type="string">RvvupConfigValueHandler</item>
-                <item name="can_refund" xsi:type="string">Rvvup\Payments\Gateway\Command\CanRefund</item>
-                <item name="can_void" xsi:type="string">Rvvup\Payments\Gateway\Command\CanVoid</item>
+                <item name="can_refund" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\CanRefund</item>
+                <item name="can_void" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\CanVoid</item>
             </argument>
         </arguments>
     </virtualType>
@@ -105,26 +105,26 @@
     <virtualType name="RvvupCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">Rvvup\Payments\Gateway\Command\InitializeCommand</item>
-                <item name="capture" xsi:type="string">Rvvup\Payments\Gateway\Command\Capture</item>
-                <item name="refund" xsi:type="string">Rvvup\Payments\Gateway\Command\Refund</item>
-                <item name="void" xsi:type="string">Rvvup\Payments\Gateway\Command\VoidPayment</item>
-                <item name="createPayment" xsi:type="string">Rvvup\Payments\Gateway\Command\CreatePayment</item>
+                <item name="initialize" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\InitializeCommand</item>
+                <item name="capture" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\Capture</item>
+                <item name="refund" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\Refund</item>
+                <item name="void" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\VoidPayment</item>
+                <item name="createPayment" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Command\CreatePayment</item>
             </argument>
         </arguments>
     </virtualType>
 
     <!-- Initialize Command -->
-    <type name="Rvvup\Payments\Gateway\Command\InitializeCommand">
+    <type name="Rvvup\Payments\Hyva\Gateway\Command\InitializeCommand">
         <arguments>
             <argument name="requestBuilder" xsi:type="object">RvvupInitializeRequest</argument>
-            <argument name="transferFactory" xsi:type="object">Rvvup\Payments\Gateway\Http\TransferFactory</argument>
+            <argument name="transferFactory" xsi:type="object">Rvvup\Payments\Hyva\Gateway\Http\TransferFactory</argument>
             <argument name="client"
-                      xsi:type="object">Rvvup\Payments\Gateway\Http\Client\TransactionInitialize</argument>
+                      xsi:type="object">Rvvup\Payments\Hyva\Gateway\Http\Client\TransactionInitialize</argument>
             <argument name="handler"
-                      xsi:type="object">\Rvvup\Payments\Gateway\Response\InitializeResponseHandler</argument>
+                      xsi:type="object">\Rvvup\Payments\Hyva\Gateway\Response\InitializeResponseHandler</argument>
             <argument name="validator"
-                      xsi:type="object">Rvvup\Payments\Gateway\Validator\InitializeResponseValidator</argument>
+                      xsi:type="object">Rvvup\Payments\Hyva\Gateway\Validator\InitializeResponseValidator</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
@@ -132,38 +132,38 @@
     <virtualType name="RvvupInitializeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
             <argument name="builders" xsi:type="array">
-                <item name="initialize" xsi:type="string">Rvvup\Payments\Gateway\Request\InitializeDataBuilder</item>
+                <item name="initialize" xsi:type="string">Rvvup\Payments\Hyva\Gateway\Request\InitializeDataBuilder</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <type name="Rvvup\Payments\Gateway\Request\InitializeDataBuilder">
+    <type name="Rvvup\Payments\Hyva\Gateway\Request\InitializeDataBuilder">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
     <!-- End of Initialize command -->
 
-    <type name="Rvvup\Payments\Model\CartPaymentActionsGet">
+    <type name="Rvvup\Payments\Hyva\Model\CartPaymentActionsGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
             <argument name="commandPool" xsi:type="object">RvvupCommandPool</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\SdkProxy">
+    <type name="Rvvup\Payments\Hyva\Model\SdkProxy">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Checks\HasCartRestrictedProduct">
+    <type name="Rvvup\Payments\Hyva\Model\Checks\HasCartRestrictedProduct">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Checks\HasCartExpressPayment">
+    <type name="Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPayment">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
@@ -173,67 +173,67 @@
     <!-- Remove express paymment additional information from payment object if changing payment method -->
     <type name="Magento\Quote\Api\PaymentMethodManagementInterface">
         <plugin name="Rvvup_Payments::quote.api.payment_method_management.remove_express_payment_info_on_method_change.plugin"
-                type="Rvvup\Payments\Plugin\Quote\Api\PaymentMethodManagement\RemoveExpressPaymentInfoOnMethodChange" />
+                type="Rvvup\Payments\Hyva\Plugin\Quote\Api\PaymentMethodManagement\RemoveExpressPaymentInfoOnMethodChange" />
     </type>
 
     <type name="Magento\Quote\Api\PaymentMethodManagementInterface">
         <plugin name="Rvvup_Payments::quote.api.payment_method_management.limit_cart_express_payment.plugin"
-                type="Rvvup\Payments\Plugin\Quote\Api\PaymentMethodManagement\LimitCartExpressPayment" />
+                type="Rvvup\Payments\Hyva\Plugin\Quote\Api\PaymentMethodManagement\LimitCartExpressPayment" />
     </type>
 
     <type name="Magento\Payment\Helper\Data">
-        <plugin name="Rvvup_Payments::loadMethods" type="Rvvup\Payments\Plugin\LoadMethodInstances"/>
+        <plugin name="Rvvup_Payments::loadMethods" type="Rvvup\Payments\Hyva\Plugin\LoadMethodInstances"/>
     </type>
 
-    <type name="Rvvup\Payments\Controller\Webhook\Index">
+    <type name="Rvvup\Payments\Hyva\Controller\Webhook\Index">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Service\Order">
+    <type name="Rvvup\Payments\Hyva\Service\Order">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="\Rvvup\Payments\Controller\CardPayments\Cancel">
+    <type name="\Rvvup\Payments\Hyva\Controller\CardPayments\Cancel">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\ViewModel\Clearpay">
+    <type name="Rvvup\Payments\Hyva\ViewModel\Clearpay">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\CartExpressPaymentRemove">
+    <type name="Rvvup\Payments\Hyva\Model\CartExpressPaymentRemove">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\PaymentMethodsAssetsGet">
+    <type name="Rvvup\Payments\Hyva\Model\PaymentMethodsAssetsGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\IsPaymentMethodAvailable">
+    <type name="Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailable">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\PaymentMethodsAvailableGet">
+    <type name="Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\ViewModel\Assets">
+    <type name="Rvvup\Payments\Hyva\ViewModel\Assets">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
@@ -254,19 +254,19 @@
         <arguments>
             <argument name="mapping" xsi:type="array">
                 <item name="rvvup_payment_methods_restricted_product_specification"
-                      xsi:type="object">Rvvup\Payments\Model\Checks\HasCartRestrictedProduct</item>
+                      xsi:type="object">Rvvup\Payments\Hyva\Model\Checks\HasCartRestrictedProduct</item>
             </argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Plugin\LoadMethodInstances">
+    <type name="Rvvup\Payments\Hyva\Plugin\LoadMethodInstances">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ComplexProductTypePool">
+    <type name="Rvvup\Payments\Hyva\Model\ComplexProductTypePool">
         <arguments>
             <argument name="productTypes" xsi:type="array">
                 <item name="configurable" xsi:type="string">configurable</item>
@@ -276,139 +276,139 @@
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessOrder\ProcessorPool">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessOrder\ProcessorPool">
         <arguments>
             <argument name="processors" xsi:type="array">
-                <item name="CANCELLED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Cancel</item>
-                <item name="DECLINED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Cancel</item>
-                <item name="EXPIRED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Cancel</item>
-                <item name="FAILED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Cancel</item>
-                <item name="AUTHORIZATION_EXPIRED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Cancel</item>
-                <item name="PENDING" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Processing</item>
-                <item name="REQUIRES_ACTION" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Processing</item>
-                <item name="AUTHORIZED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Processing</item>
-                <item name="SUCCEEDED" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\Complete</item>
-                <item name="REQUIRES_PAYMENT" xsi:type="object">Rvvup\Payments\Model\ProcessOrder\UpdateOrder</item>
+                <item name="CANCELLED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel</item>
+                <item name="DECLINED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel</item>
+                <item name="EXPIRED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel</item>
+                <item name="FAILED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel</item>
+                <item name="AUTHORIZATION_EXPIRED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel</item>
+                <item name="PENDING" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Processing</item>
+                <item name="REQUIRES_ACTION" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Processing</item>
+                <item name="AUTHORIZED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Processing</item>
+                <item name="SUCCEEDED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\Complete</item>
+                <item name="REQUIRES_PAYMENT" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessOrder\UpdateOrder</item>
             </argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessRefund\ProcessorPool">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessRefund\ProcessorPool">
         <arguments>
             <argument name="processors" xsi:type="array">
-                <item name="REFUND_COMPLETED" xsi:type="object">Rvvup\Payments\Model\ProcessRefund\Complete</item>
+                <item name="REFUND_COMPLETED" xsi:type="object">Rvvup\Payments\Hyva\Model\ProcessRefund\Complete</item>
             </argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Environment\GetEnvironmentVersions">
+    <type name="Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersions">
         <arguments>
             <argument name="fileIo" xsi:type="object">Magento\Framework\Filesystem\Io\File</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\PaymentActionsGet">
+    <type name="Rvvup\Payments\Hyva\Model\PaymentActionsGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
             <argument name="commandPool" xsi:type="object">RvvupCommandPool</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Payment\PaymentCreateExpress">
+    <type name="Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpress">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Payment\PaymentDataGet">
+    <type name="Rvvup\Payments\Hyva\Model\Payment\PaymentDataGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Gateway\Command\VoidPayment">
+    <type name="Rvvup\Payments\Hyva\Gateway\Command\VoidPayment">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessOrder\Cancel">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessOrder\Cancel">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessOrder\Complete">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessOrder\Complete">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessOrder\Processing">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessOrder\Processing">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\ProcessRefund\Complete">
+    <type name="Rvvup\Payments\Hyva\Model\ProcessRefund\Complete">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Model\Quote\QuoteMaskedQuoteIdGet">
+    <type name="Rvvup\Payments\Hyva\Model\Quote\QuoteMaskedQuoteIdGet">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver">
+    <type name="Rvvup\Payments\Hyva\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Observer\Model\ProcessOrder\EmailSenderObserver">
+    <type name="Rvvup\Payments\Hyva\Observer\Model\ProcessOrder\EmailSenderObserver">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver">
+    <type name="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Plugin\Quote\Api\PaymentMethodManagement\RemoveExpressPaymentInfoOnMethodChange">
+    <type name="Rvvup\Payments\Hyva\Plugin\Quote\Api\PaymentMethodManagement\RemoveExpressPaymentInfoOnMethodChange">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <type name="Rvvup\Payments\Gateway\Http\Client\TransactionInitialize">
+    <type name="Rvvup\Payments\Hyva\Gateway\Http\Client\TransactionInitialize">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 
-    <preference for="Rvvup\Payments\Api\Data\WebhookInterface" type="Rvvup\Payments\Model\Data\WebhookData"/>
-    <preference for="Rvvup\Payments\Api\WebhookRepositoryInterface" type="Rvvup\Payments\Model\WebhookRepository"/>
+    <preference for="Rvvup\Payments\Hyva\Api\Data\WebhookInterface" type="Rvvup\Payments\Hyva\Model\Data\WebhookData"/>
+    <preference for="Rvvup\Payments\Hyva\Api\WebhookRepositoryInterface" type="Rvvup\Payments\Hyva\Model\WebhookRepository"/>
 
     <type name="Magento\Sales\Model\Order\Creditmemo">
         <plugin name="disableCreditMemoRefunds"
-                type="Rvvup\Payments\Plugin\Refund\CreditMemo"
+                type="Rvvup\Payments\Hyva\Plugin\Refund\CreditMemo"
                 sortOrder="1"/>
     </type>
     <type name="Magento\Sales\Model\Order\Invoice">
         <plugin name="pendingRefunds"
-                type="Rvvup\Payments\Plugin\Refund\Invoice"
+                type="Rvvup\Payments\Hyva\Plugin\Refund\Invoice"
                 sortOrder="1"/>
     </type>
     <type name="Magento\Sales\Model\Order\Payment">
         <plugin name="canCreditMemoDisable"
-                type="Rvvup\Payments\Plugin\Cancel\Payment"
+                type="Rvvup\Payments\Hyva\Plugin\Cancel\Payment"
                 sortOrder="1"/>
     </type>
 

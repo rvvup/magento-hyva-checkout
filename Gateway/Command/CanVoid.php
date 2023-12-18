@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Exception;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Config\ValueHandlerInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Service\Cache;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Service\Cache;
 
 class CanVoid implements ValueHandlerInterface
 {

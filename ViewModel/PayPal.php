@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\ViewModel;
+namespace Rvvup\Payments\Hyva\ViewModel;
 
 use Exception;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\ApiSettingsProvider;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\IsPaymentMethodAvailableInterface;
+use Rvvup\Payments\Hyva\Model\ApiSettingsProvider;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface;
 
 class PayPal implements ArgumentInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\Config
+     * @var \Rvvup\Payments\Hyva\Model\Config
      */
     private $config;
 
     /**
-     * @var \Rvvup\Payments\Model\IsPaymentMethodAvailableInterface
+     * @var \Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface
      */
     private $isPaymentMethodAvailable;
 

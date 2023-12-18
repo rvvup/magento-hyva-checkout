@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Laminas\Uri\Exception\InvalidArgumentException;
 use Laminas\Uri\Exception\InvalidUriException;
@@ -17,8 +17,8 @@ use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Address;
 use Magento\Ui\Component\Form\Element\Multiline;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\ConfigInterface as RvvupConfig;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\ConfigInterface as RvvupConfig;
 
 class ConfigProvider implements ConfigProviderInterface
 {
@@ -28,7 +28,7 @@ class ConfigProvider implements ConfigProviderInterface
     private $config;
 
     /**
-     * @var \Rvvup\Payments\Model\SdkProxy
+     * @var \Rvvup\Payments\Hyva\Model\SdkProxy
      */
     private $sdkProxy;
 
@@ -68,7 +68,7 @@ class ConfigProvider implements ConfigProviderInterface
 
     /**
      * @param ConfigInterface|RvvupConfig $config
-     * @param \Rvvup\Payments\Model\SdkProxy $sdkProxy
+     * @param \Rvvup\Payments\Hyva\Model\SdkProxy $sdkProxy
      * @param \Magento\Customer\Api\AddressMetadataInterface $addressMetadata
      * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      * @param \Magento\Framework\Session\SessionManagerInterface $checkoutSession

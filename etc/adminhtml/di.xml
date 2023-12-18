@@ -2,40 +2,40 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- DI -->
-    <type name="Rvvup\Payments\Model\Config\Env\Indicator">
+    <type name="Rvvup\Payments\Hyva\Model\Config\Env\Indicator">
         <arguments>
             <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\Base64Json</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Observer\ConfigSaveObserver">
+    <type name="Rvvup\Payments\Hyva\Observer\ConfigSaveObserver">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Controller\Adminhtml\Credential\Validate">
+    <type name="Rvvup\Payments\Hyva\Controller\Adminhtml\Credential\Validate">
         <arguments>
             <argument name="serializer" xsi:type="object">Magento\Framework\Serialize\Serializer\Base64Json</argument>
         </arguments>
     </type>
     <type name="Magento\Payment\Helper\Data">
         <plugin name="setRvvupMethods"
-                type="Rvvup\Payments\Plugin\PaymentMethod"
+                type="Rvvup\Payments\Hyva\Plugin\PaymentMethod"
                 sortOrder="1"/>
     </type>
     <type name="Magento\Framework\Notification\MessageList">
         <arguments>
             <argument name="messages" xsi:type="array">
-                <item name="rvvup_missing_queues" xsi:type="string">Rvvup\Payments\Model\System\Message\Queue</item>
-                <item name="rvvup_missing_crons" xsi:type="string">Rvvup\Payments\Model\System\Message\Cron</item>
+                <item name="rvvup_missing_queues" xsi:type="string">Rvvup\Payments\Hyva\Model\System\Message\Queue</item>
+                <item name="rvvup_missing_crons" xsi:type="string">Rvvup\Payments\Hyva\Model\System\Message\Cron</item>
             </argument>
         </arguments>
     </type>
     <type name="Magento\Sales\Model\Order\Payment">
         <plugin name="isRvvupVoidable"
-                type="Rvvup\Payments\Plugin\IsVoidable"
+                type="Rvvup\Payments\Hyva\Plugin\IsVoidable"
                 sortOrder="1"/>
         <plugin name="afterVoidCancelOrder"
-                type="Rvvup\Payments\Plugin\Cancel\Payment"
+                type="Rvvup\Payments\Hyva\Plugin\Cancel\Payment"
                 sortOrder="1"/>
     </type>
 </config>

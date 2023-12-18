@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Response;
+namespace Rvvup\Payments\Hyva\Gateway\Response;
 
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Payment\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Model\InfoInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class InitializeResponseHandler implements HandlerInterface
 {

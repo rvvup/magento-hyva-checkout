@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\Adminhtml\Credential;
+namespace Rvvup\Payments\Hyva\Controller\Adminhtml\Credential;
 
 use GuzzleHttp\Client;
 use Magento\Backend\App\Action;
@@ -10,7 +10,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Base64Json;
 use Magento\Framework\Serialize\SerializerInterface;
-use Rvvup\Payments\Model\UserAgentBuilder;
+use Rvvup\Payments\Hyva\Model\UserAgentBuilder;
 use Rvvup\Sdk\GraphQlSdkFactory;
 
 class Validate extends Action implements HttpPostActionInterface

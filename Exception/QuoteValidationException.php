@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Exception;
+namespace Rvvup\Payments\Hyva\Exception;
 
 use Magento\Framework\Exception\LocalizedException;
 

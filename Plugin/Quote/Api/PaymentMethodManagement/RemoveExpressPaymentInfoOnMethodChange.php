@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Quote\Api\PaymentMethodManagement;
+namespace Rvvup\Payments\Hyva\Plugin\Quote\Api\PaymentMethodManagement;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\CartExpressPaymentRemove;
+use Rvvup\Payments\Hyva\Model\CartExpressPaymentRemove;
 
 class RemoveExpressPaymentInfoOnMethodChange
 {
     /**
-     * @var \Rvvup\Payments\Model\CartExpressPaymentRemove
+     * @var \Rvvup\Payments\Hyva\Model\CartExpressPaymentRemove
      */
     private $cartExpressPaymentRemove;
 
@@ -25,7 +25,7 @@ class RemoveExpressPaymentInfoOnMethodChange
     private $logger;
 
     /**
-     * @param \Rvvup\Payments\Model\CartExpressPaymentRemove $cartExpressPaymentRemove
+     * @param \Rvvup\Payments\Hyva\Model\CartExpressPaymentRemove $cartExpressPaymentRemove
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(CartExpressPaymentRemove $cartExpressPaymentRemove, LoggerInterface $logger)

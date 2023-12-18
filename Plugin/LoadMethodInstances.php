@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin;
+namespace Rvvup\Payments\Hyva\Plugin;
 
 use Magento\Checkout\Model\Session\Proxy;
 use Magento\Framework\Exception\LocalizedException;
@@ -8,10 +8,10 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\Method\Factory;
 use Magento\Payment\Model\MethodInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Traits\LoadMethods;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Traits\LoadMethods;
 
 class LoadMethodInstances
 {

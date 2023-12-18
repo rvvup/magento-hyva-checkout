@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Service;
+namespace Rvvup\Payments\Hyva\Service;
 
 use Magento\Framework\App\CacheInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class Cache
 {

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
-use Rvvup\Payments\Api\CustomerPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\CustomerPaymentActionsGetInterface;
 
 class CustomerPaymentActionsGet implements CustomerPaymentActionsGetInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\PaymentActionsGetInterface
+     * @var \Rvvup\Payments\Hyva\Model\PaymentActionsGetInterface
      */
     private $paymentActionsGet;
 
     /**
-     * @param \Rvvup\Payments\Model\PaymentActionsGetInterface $paymentActionsGet
+     * @param \Rvvup\Payments\Hyva\Model\PaymentActionsGetInterface $paymentActionsGet
      * @return void
      */
     public function __construct(PaymentActionsGetInterface $paymentActionsGet)
@@ -27,7 +27,7 @@ class CustomerPaymentActionsGet implements CustomerPaymentActionsGetInterface
      *
      * @param string $customerId
      * @param string $cartId
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute(string $customerId, string $cartId): array

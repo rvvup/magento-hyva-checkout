@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
-use Rvvup\Payments\Api\PaymentMethodsSettingsGetInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Api\PaymentMethodsSettingsGetInterface;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class PaymentMethodsSettingsGet implements PaymentMethodsSettingsGetInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\PaymentMethodsAvailableGetInterface
+     * @var \Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGetInterface
      */
     private $paymentMethodsAvailableGet;
 
     /**
-     * @param \Rvvup\Payments\Model\PaymentMethodsAvailableGetInterface $paymentMethodsAvailableGet
+     * @param \Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGetInterface $paymentMethodsAvailableGet
      * @return void
      */
     public function __construct(PaymentMethodsAvailableGetInterface $paymentMethodsAvailableGet)

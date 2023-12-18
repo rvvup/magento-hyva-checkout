@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -15,8 +15,8 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Rvvup\Payments\Exception\QuoteValidationException;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Exception\QuoteValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class OrderDataBuilder
 {
@@ -31,7 +31,7 @@ class OrderDataBuilder
     private $urlBuilder;
 
     /**
-     * @var \Rvvup\Payments\Model\ConfigInterface
+     * @var \Rvvup\Payments\Hyva\Model\ConfigInterface
      */
     private $config;
 

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\Redirect;
+namespace Rvvup\Payments\Hyva\Controller\Redirect;
 
 use Exception;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -8,10 +8,10 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
-use Rvvup\Payments\Api\Data\SessionMessageInterface;
-use Rvvup\Payments\Model\Payment\PaymentDataGetInterface;
-use Rvvup\Payments\Model\ProcessOrder\ProcessorPool;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface;
+use Rvvup\Payments\Hyva\Model\Payment\PaymentDataGetInterface;
+use Rvvup\Payments\Hyva\Model\ProcessOrder\ProcessorPool;
 
 /**
  * ToDo: Evaluate if this is still being used by Rvvup & delete if not as it is not used internally in the module.
@@ -122,7 +122,7 @@ class Cancel implements HttpGetActionInterface
      * Default to Warning container if none of the above
      * Allow custom message group for the checkout page specifically.
      *
-     * @param \Rvvup\Payments\Api\Data\ProcessOrderResultInterface $processOrderResult
+     * @param \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface $processOrderResult
      * @param string|null $messageGroup
      * @return void
      */

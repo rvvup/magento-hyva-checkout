@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Magento\Payment\Gateway\Command\GatewayCommand;
 

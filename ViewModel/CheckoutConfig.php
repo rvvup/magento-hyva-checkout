@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\ViewModel;
+namespace Rvvup\Payments\Hyva\ViewModel;
 
 use Exception;
 use Magento\Framework\Serialize\SerializerInterface;

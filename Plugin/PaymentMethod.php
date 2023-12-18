@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin;
+namespace Rvvup\Payments\Hyva\Plugin;
 
 use Magento\Payment\Helper\Data;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\RvvupConfigProvider;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\RvvupConfigProvider;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 class PaymentMethod
 {

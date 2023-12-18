@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\CustomerData;
+namespace Rvvup\Payments\Hyva\CustomerData;
 
 use Exception;
 use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class ExpressPayment implements SectionSourceInterface
 {

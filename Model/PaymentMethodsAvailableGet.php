@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class PaymentMethodsAvailableGet implements PaymentMethodsAvailableGetInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\SdkProxy
+     * @var \Rvvup\Payments\Hyva\Model\SdkProxy
      */
     private $sdkProxy;
 
@@ -21,7 +21,7 @@ class PaymentMethodsAvailableGet implements PaymentMethodsAvailableGetInterface
     private $logger;
 
     /**
-     * @param \Rvvup\Payments\Model\SdkProxy $sdkProxy
+     * @param \Rvvup\Payments\Hyva\Model\SdkProxy $sdkProxy
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */

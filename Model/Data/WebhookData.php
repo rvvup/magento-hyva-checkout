@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Data;
+namespace Rvvup\Payments\Hyva\Model\Data;
 
 use Magento\Framework\Model\AbstractModel;
-use Rvvup\Payments\Api\Data\WebhookInterface;
-use Rvvup\Payments\Model\ResourceModel\WebhookResource;
+use Rvvup\Payments\Hyva\Api\Data\WebhookInterface;
+use Rvvup\Payments\Hyva\Model\ResourceModel\WebhookResource;
 
 class WebhookData extends AbstractModel implements WebhookInterface
 {

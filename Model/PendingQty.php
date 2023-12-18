@@ -1,6 +1,6 @@
 <?php
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Framework\DataObject;
 use Magento\Framework\Serialize\Serializer\Json;

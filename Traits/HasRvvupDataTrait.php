@@ -1,8 +1,8 @@
 <?php
 
-namespace Rvvup\Payments\Traits;
+namespace Rvvup\Payments\Hyva\Traits;
 
-use Rvvup\Payments\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
 
 trait HasRvvupDataTrait
 {
@@ -26,7 +26,7 @@ trait HasRvvupDataTrait
      * @param array $data
      * @param string|null $alternativeIdKey
      * @return void
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     protected function validateIdExists(array $data, ?string $alternativeIdKey = null): void
     {
@@ -42,7 +42,7 @@ trait HasRvvupDataTrait
      * @param array $allowedStatuses
      * @param string|null $alternativeStatusKey
      * @return void
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     protected function validateStatusAllowed(
         array $data,

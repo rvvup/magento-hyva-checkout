@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
-use Rvvup\Payments\Api\CartExpressPaymentRemoveInterface;
-use Rvvup\Payments\Api\GuestCartExpressPaymentRemoveInterface;
+use Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface;
+use Rvvup\Payments\Hyva\Api\GuestCartExpressPaymentRemoveInterface;
 
 class GuestCartExpressPaymentRemove implements GuestCartExpressPaymentRemoveInterface
 {
@@ -15,13 +15,13 @@ class GuestCartExpressPaymentRemove implements GuestCartExpressPaymentRemoveInte
      */
     private $maskedQuoteIdToQuoteId;
     /**
-     * @var \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface
      */
     private $cartExpressPaymentRemove;
 
     /**
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
+     * @param \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
      * @return void
      */
     public function __construct(

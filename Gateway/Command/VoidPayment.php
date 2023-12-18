@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
@@ -10,9 +10,9 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\InvoiceRepository;
 use Magento\Sales\Model\Order\Payment;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Service\Cache;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Service\Cache;
 
 class VoidPayment implements CommandInterface
 {

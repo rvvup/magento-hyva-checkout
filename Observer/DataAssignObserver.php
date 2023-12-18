@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Observer;
+namespace Rvvup\Payments\Hyva\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
 use Magento\Quote\Api\Data\PaymentInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class DataAssignObserver extends AbstractDataAssignObserver
 {

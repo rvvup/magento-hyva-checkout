@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Checks;
+namespace Rvvup\Payments\Hyva\Model\Checks;
 
 interface HasCartExpressPaymentInterface
 {

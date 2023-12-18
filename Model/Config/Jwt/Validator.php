@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Config\Jwt;
+namespace Rvvup\Payments\Hyva\Model\Config\Jwt;
 
 use GuzzleHttp\Client;
 use Magento\Config\Model\Config\Backend\Encrypted;
@@ -15,7 +15,7 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
-use Rvvup\Payments\Model\UserAgentBuilder;
+use Rvvup\Payments\Hyva\Model\UserAgentBuilder;
 use Rvvup\Sdk\GraphQlSdkFactory;
 
 class Validator extends Encrypted

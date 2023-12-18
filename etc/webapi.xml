@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
     <route url="/V1/rvvup/clearpay" method="GET">
-        <service class="Rvvup\Payments\Api\ClearpayAvailabilityInterface" method="isAvailable"/>
+        <service class="Rvvup\Payments\Hyva\Api\ClearpayAvailabilityInterface" method="isAvailable"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
     <!-- Reset Cart data (items, addresses, payment) -->
     <route url="/V1/rvvup/payments/guest-carts/:cartId" method="DELETE">
-        <service class="Rvvup\Payments\Api\GuestCartResetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\GuestCartResetInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
     <route url="/V1/rvvup/payments/carts/mine" method="DELETE">
-        <service class="Rvvup\Payments\Api\CartResetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\CartResetInterface" method="execute"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -24,13 +24,13 @@
     </route>
     <!-- Create Rvvup Express Payment Cart -->
     <route url="/V1/rvvup/payments/guest-carts/:cartId/express" method="POST">
-        <service class="Rvvup\Payments\Api\GuestExpressPaymentCreateInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\GuestExpressPaymentCreateInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
     <route url="/V1/rvvup/payments/carts/mine/express" method="POST">
-        <service class="Rvvup\Payments\Api\ExpressPaymentCreateInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface" method="execute"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -40,13 +40,13 @@
     </route>
     <!-- Remove Rvvup Express Payment data from a Cart -->
     <route url="/V1/rvvup/payments/guest-carts/:cartId/express" method="DELETE">
-        <service class="Rvvup\Payments\Api\GuestCartExpressPaymentRemoveInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\GuestCartExpressPaymentRemoveInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
     <route url="/V1/rvvup/payments/carts/mine/express" method="DELETE">
-        <service class="Rvvup\Payments\Api\CartExpressPaymentRemoveInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface" method="execute"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -56,13 +56,13 @@
     </route>
     <!-- Get Rvvup Payment Actions for a Cart -->
     <route url="/V1/rvvup/payments/guest-carts/:cartId/payment-actions" method="GET">
-        <service class="Rvvup\Payments\Api\GuestCartPaymentActionsGetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\GuestCartPaymentActionsGetInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
     <route url="/V1/rvvup/payments/carts/mine/payment-actions" method="GET">
-        <service class="Rvvup\Payments\Api\CartPaymentActionsGetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface" method="execute"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -72,13 +72,13 @@
     </route>
     <!-- Get Rvvup Payment Actions for an Order -->
     <route url="/V1/rvvup/payments/:cartId/payment-actions" method="GET">
-        <service class="Rvvup\Payments\Api\GuestPaymentActionsGetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\GuestPaymentActionsGetInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
     <route url="/V1/rvvup/payments/mine/:cartId/payment-actions" method="GET">
-        <service class="Rvvup\Payments\Api\CustomerPaymentActionsGetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\CustomerPaymentActionsGetInterface" method="execute"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -88,7 +88,7 @@
     </route>
     <!-- Get Rvvup Payment Group Session messages (both guest & logged-in users) -->
     <route url="/V1/rvvup/payments/session/messages" method="GET">
-        <service class="Rvvup\Payments\Api\SessionMessagesGetInterface" method="execute"/>
+        <service class="Rvvup\Payments\Hyva\Api\SessionMessagesGetInterface" method="execute"/>
         <resources>
             <resource ref="anonymous" />
         </resources>

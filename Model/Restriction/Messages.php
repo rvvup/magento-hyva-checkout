@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Restriction;
+namespace Rvvup\Payments\Hyva\Model\Restriction;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Rvvup\Payments\Model\ConfigInterface as RvvupConfig;
+use Rvvup\Payments\Hyva\Model\ConfigInterface as RvvupConfig;
 
 class Messages
 {

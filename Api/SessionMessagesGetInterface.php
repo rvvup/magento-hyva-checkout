@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Api;
+namespace Rvvup\Payments\Hyva\Api;
 
 interface SessionMessagesGetInterface
 {
     /**
      * Get the Rvvup Payments session messages.
      *
-     * @return \Rvvup\Payments\Api\Data\SessionMessageInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface[]
      */
     public function execute(): array;
 }

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Request;
+namespace Rvvup\Payments\Hyva\Gateway\Request;
 
 use Magento\Payment\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Exception\QuoteValidationException;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\OrderDataBuilder;
+use Rvvup\Payments\Hyva\Exception\QuoteValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\OrderDataBuilder;
 
 class InitializeDataBuilder implements BuilderInterface
 {
@@ -21,7 +21,7 @@ class InitializeDataBuilder implements BuilderInterface
     private $cartRepository;
 
     /**
-     * @var \Rvvup\Payments\Model\OrderDataBuilder
+     * @var \Rvvup\Payments\Hyva\Model\OrderDataBuilder
      */
     private $orderDataBuilder;
 
@@ -32,7 +32,7 @@ class InitializeDataBuilder implements BuilderInterface
 
     /**
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
-     * @param \Rvvup\Payments\Model\OrderDataBuilder $orderDataBuilder
+     * @param \Rvvup\Payments\Hyva\Model\OrderDataBuilder $orderDataBuilder
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */
@@ -49,7 +49,7 @@ class InitializeDataBuilder implements BuilderInterface
     /**
      * @param array $buildSubject
      * @return array
-     * @throws \Rvvup\Payments\Exception\QuoteValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\QuoteValidationException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function build(array $buildSubject): array
@@ -83,7 +83,7 @@ class InitializeDataBuilder implements BuilderInterface
      *
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @return array|null
-     * @throws \Rvvup\Payments\Exception\QuoteValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\QuoteValidationException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function handleOrderPayment(InfoInterface $payment): ?array
@@ -113,7 +113,7 @@ class InitializeDataBuilder implements BuilderInterface
      *
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @return array|null
-     * @throws \Rvvup\Payments\Exception\QuoteValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\QuoteValidationException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function handleQuotePayment(InfoInterface $payment): ?array

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\Webhook;
+namespace Rvvup\Payments\Hyva\Controller\Webhook;
 
 use Exception;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -12,10 +12,10 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\MessageQueue\PublisherInterface;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\ProcessRefund\Complete;
-use Rvvup\Payments\Model\ProcessRefund\ProcessorPool as RefundPool;
-use Rvvup\Payments\Model\WebhookRepository;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\ProcessRefund\Complete;
+use Rvvup\Payments\Hyva\Model\ProcessRefund\ProcessorPool as RefundPool;
+use Rvvup\Payments\Hyva\Model\WebhookRepository;
 
 /**
  * The purpose of this controller is to accept incoming webhooks from Rvvup to update the status of payments

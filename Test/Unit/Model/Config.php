@@ -7,14 +7,14 @@ namespace Unit\Model;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\TestCase;
-use Rvvup\Payments\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
 
 class Config extends TestCase
 {
     /** @var ScopeConfigInterface */
     private $scopeConfigMock;
 
-    /** @var \Rvvup\Payments\Model\Config */
+    /** @var \Rvvup\Payments\Hyva\Model\Config */
     private $config;
 
     protected function setUp(): void
@@ -22,7 +22,7 @@ class Config extends TestCase
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->config = new \Rvvup\Payments\Model\Config($this->scopeConfigMock);
+        $this->config = new \Rvvup\Payments\Hyva\Model\Config($this->scopeConfigMock);
     }
 
     public function testPaypalBlockDefaultStyling()

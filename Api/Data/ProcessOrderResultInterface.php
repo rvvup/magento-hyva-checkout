@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Api\Data;
+namespace Rvvup\Payments\Hyva\Api\Data;
 
 interface ProcessOrderResultInterface
 {

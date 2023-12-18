@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Cancel;
+namespace Rvvup\Payments\Hyva\Plugin\Cancel;
 
 use Magento\Framework\DataObject;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class Payment
 {

@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ResourceModel\WebhookModel;
+namespace Rvvup\Payments\Hyva\Model\ResourceModel\WebhookModel;
 
-use Rvvup\Payments\Model\ResourceModel\WebhookResource;
-use Rvvup\Payments\Model\WebhookModel;
+use Rvvup\Payments\Hyva\Model\ResourceModel\WebhookResource;
+use Rvvup\Payments\Hyva\Model\WebhookModel;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 class WebhookCollection extends AbstractCollection

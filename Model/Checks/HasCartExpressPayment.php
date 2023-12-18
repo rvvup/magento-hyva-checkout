@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Checks;
+namespace Rvvup\Payments\Hyva\Model\Checks;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class HasCartExpressPayment implements HasCartExpressPaymentInterface
 {

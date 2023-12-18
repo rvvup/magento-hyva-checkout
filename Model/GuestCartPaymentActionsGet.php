@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
-use Rvvup\Payments\Api\CartPaymentActionsGetInterface;
-use Rvvup\Payments\Api\GuestCartPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\GuestCartPaymentActionsGetInterface;
 
 class GuestCartPaymentActionsGet implements GuestCartPaymentActionsGetInterface
 {
@@ -16,13 +16,13 @@ class GuestCartPaymentActionsGet implements GuestCartPaymentActionsGetInterface
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Rvvup\Payments\Api\CartPaymentActionsGetInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface
      */
     private $cartPaymentActionsGet;
 
     /**
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Api\CartPaymentActionsGetInterface $cartPaymentActionsGet
+     * @param \Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface $cartPaymentActionsGet
      * @return void
      */
     public function __construct(
@@ -36,7 +36,7 @@ class GuestCartPaymentActionsGet implements GuestCartPaymentActionsGetInterface
     /**
      * @param string $cartId
      * @param bool $expressActions
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

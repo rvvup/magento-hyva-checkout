@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 interface PaymentActionsGetInterface
 {
@@ -11,7 +11,7 @@ interface PaymentActionsGetInterface
      *
      * @param string $cartId
      * @param string|null $customerId
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute(string $cartId, ?string $customerId = null): array;

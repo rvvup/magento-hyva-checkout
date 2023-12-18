@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin;
+namespace Rvvup\Payments\Hyva\Plugin;
 
 use Magento\Sales\Model\CronJob\CleanExpiredOrders;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 use Psr\Log\LoggerInterface;
 use Magento\Store\Model\StoresConfig;
 

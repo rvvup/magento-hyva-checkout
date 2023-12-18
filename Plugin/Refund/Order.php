@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Refund;
+namespace Rvvup\Payments\Hyva\Plugin\Refund;
 
-use Rvvup\Payments\Model\PendingQty;
+use Rvvup\Payments\Hyva\Model\PendingQty;
 
 class Order
 {

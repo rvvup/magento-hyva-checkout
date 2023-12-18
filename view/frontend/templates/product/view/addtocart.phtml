@@ -8,15 +8,15 @@ if (!isset($escaper)) {
     $escaper = $block;
 }
 
-/** @var \Rvvup\Payments\ViewModel\Clearpay $clearpay */
+/** @var \Rvvup\Payments\Hyva\ViewModel\Clearpay $clearpay */
 $clearpay = $block->getData('clearpay');
 
-/** @var \Rvvup\Payments\ViewModel\Price $priceViewModel */
+/** @var \Rvvup\Payments\Hyva\ViewModel\Price $priceViewModel */
 $priceViewModel = $block->getData('price');
 
-/** @var \Rvvup\Payments\ViewModel\Restrictions $restrictions */
+/** @var \Rvvup\Payments\Hyva\ViewModel\Restrictions $restrictions */
 $restrictions = $block->getData('restrictions');
-/** @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel */
+/** @var \Rvvup\Payments\Hyva\ViewModel\PayPal $paypalViewModel */
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
 
 $product = $block->getProduct();

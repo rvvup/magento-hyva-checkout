@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessRefund;
+namespace Rvvup\Payments\Hyva\Model\ProcessRefund;
 
 use Magento\Framework\Exception\LocalizedException;
 

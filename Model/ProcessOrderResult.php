@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Framework\DataObject;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
 
 class ProcessOrderResult extends DataObject implements ProcessOrderResultInterface
 {

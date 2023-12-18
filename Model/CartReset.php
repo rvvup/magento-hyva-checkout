@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Api\CartRepositoryInterface;
-use Rvvup\Payments\Api\CartResetInterface;
+use Rvvup\Payments\Hyva\Api\CartResetInterface;
 
 class CartReset implements CartResetInterface
 {

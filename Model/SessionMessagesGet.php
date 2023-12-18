@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use LogicException;
 use Magento\Framework\Exception\LocalizedException;
@@ -12,9 +12,9 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\SessionMessageInterface;
-use Rvvup\Payments\Api\Data\SessionMessageInterfaceFactory;
-use Rvvup\Payments\Api\SessionMessagesGetInterface;
+use Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface;
+use Rvvup\Payments\Hyva\Api\Data\SessionMessageInterfaceFactory;
+use Rvvup\Payments\Hyva\Api\SessionMessagesGetInterface;
 
 class SessionMessagesGet implements SessionMessagesGetInterface
 {
@@ -34,12 +34,12 @@ class SessionMessagesGet implements SessionMessagesGetInterface
     private $storeManager;
 
     /**
-     * @var \Rvvup\Payments\Api\Data\SessionMessageInterfaceFactory
+     * @var \Rvvup\Payments\Hyva\Api\Data\SessionMessageInterfaceFactory
      */
     private $sessionMessageFactory;
 
     /**
-     * @var \Rvvup\Payments\Model\ConfigInterface
+     * @var \Rvvup\Payments\Hyva\Model\ConfigInterface
      */
     private $config;
 
@@ -54,8 +54,8 @@ class SessionMessagesGet implements SessionMessagesGetInterface
      * @param \Magento\Framework\Message\ManagerInterface $messageManager
      * @param \Magento\Framework\View\Element\Message\InterpretationStrategyInterface $messageInterpretationStrategy
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Rvvup\Payments\Api\Data\SessionMessageInterfaceFactory $sessionMessageFactory
-     * @param \Rvvup\Payments\Model\ConfigInterface $config
+     * @param \Rvvup\Payments\Hyva\Api\Data\SessionMessageInterfaceFactory $sessionMessageFactory
+     * @param \Rvvup\Payments\Hyva\Model\ConfigInterface $config
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */
@@ -78,7 +78,7 @@ class SessionMessagesGet implements SessionMessagesGetInterface
     /**
      * Get the Rvvup Payments session messages.
      *
-     * @return \Rvvup\Payments\Api\Data\SessionMessageInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface[]
      */
     public function execute(): array
     {
@@ -103,7 +103,7 @@ class SessionMessagesGet implements SessionMessagesGetInterface
 
         foreach ($messageCollection->getItems() as $message) {
             try {
-                /** @var \Rvvup\Payments\Api\Data\SessionMessageInterface $sessionMessage */
+                /** @var \Rvvup\Payments\Hyva\Api\Data\SessionMessageInterface $sessionMessage */
                 $sessionMessage = $this->sessionMessageFactory->create();
                 $sessionMessage->setType($message->getType());
                 $sessionMessage->setText($this->messageInterpretationStrategy->interpret($message));

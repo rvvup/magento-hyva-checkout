@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Api;
+namespace Rvvup\Payments\Hyva\Api;
 
 interface GuestExpressPaymentCreateInterface
 {
@@ -11,10 +11,10 @@ interface GuestExpressPaymentCreateInterface
      *
      * @param string $cartId
      * @param string $methodCode
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(string $cartId, string $methodCode): array;
 }

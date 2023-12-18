@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Block\Adminhtml\Items\Column;
+namespace Rvvup\Payments\Hyva\Block\Adminhtml\Items\Column;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Catalog\Model\Product\OptionFactory;
@@ -10,7 +10,7 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Framework\Registry;
 use Magento\Sales\Model\Order\Item;
-use Rvvup\Payments\Model\PendingQty;
+use Rvvup\Payments\Hyva\Model\PendingQty;
 
 class Qty extends \Magento\Sales\Block\Adminhtml\Items\Column\Qty
 {

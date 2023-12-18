@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface;
+use Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface;
 use Rvvup\Sdk\GraphQlSdkFactory;
 use Rvvup\Sdk\GraphQlSdk;
 
@@ -22,7 +22,7 @@ class SdkProxy
     private $subject;
 
     /**
-     * @var \Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface
+     * @var \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface
      */
     private $getEnvironmentVersions;
 
@@ -40,7 +40,7 @@ class SdkProxy
      * @param ConfigInterface $config
      * @param UserAgentBuilder $userAgent
      * @param GraphQlSdkFactory $sdkFactory
-     * @param \Rvvup\Payments\Model\Environment\GetEnvironmentVersionsInterface $getEnvironmentVersions
+     * @param \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersionsInterface $getEnvironmentVersions
      * @param LoggerInterface $logger
      */
     public function __construct(

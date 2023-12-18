@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Exception;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Payment;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\CartExpressPaymentRemoveInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class CartExpressPaymentRemove implements CartExpressPaymentRemoveInterface
 {

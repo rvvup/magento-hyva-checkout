@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessOrder;
+namespace Rvvup\Payments\Hyva\Model\ProcessOrder;
 
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory;
-use Rvvup\Payments\Controller\Redirect\In;
-use Rvvup\Payments\Exception\PaymentValidationException;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Traits\HasRvvupDataTrait;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory;
+use Rvvup\Payments\Hyva\Controller\Redirect\In;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Traits\HasRvvupDataTrait;
 
 class Cancel implements ProcessorInterface
 {
@@ -32,7 +32,7 @@ class Cancel implements ProcessorInterface
     private $orderManagement;
 
     /**
-     * @var \Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory
+     * @var \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory
      */
     private $processOrderResultFactory;
 
@@ -57,7 +57,7 @@ class Cancel implements ProcessorInterface
     /**
      * @param \Magento\Framework\Event\ManagerInterface|EventManager $eventManager
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
-     * @param \Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory $processOrderResultFactory
+     * @param \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory $processOrderResultFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */
@@ -76,8 +76,8 @@ class Cancel implements ProcessorInterface
     /**
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param array $rvvupData
-     * @return \Rvvup\Payments\Api\Data\ProcessOrderResultInterface
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @return \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(OrderInterface $order, array $rvvupData): ProcessOrderResultInterface
     {
@@ -120,7 +120,7 @@ class Cancel implements ProcessorInterface
         ]);
 
         // Set result, regardless if cancellation failed or not.
-        /** @var \Rvvup\Payments\Api\Data\ProcessOrderResultInterface $processOrderResult */
+        /** @var \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface $processOrderResult */
         $processOrderResult = $this->processOrderResultFactory->create();
         $processOrderResult->setResultType(ProcessOrderResultInterface::RESULT_TYPE_ERROR);
         $processOrderResult->setRedirectPath(In::FAILURE);
@@ -135,7 +135,7 @@ class Cancel implements ProcessorInterface
      *
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @return void
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     private function validateOrderPayment(OrderInterface $order): void
     {

@@ -5,67 +5,67 @@
     <type name="Magento\Customer\CustomerData\SectionPoolInterface">
         <arguments>
             <argument name="sectionSourceMap" xsi:type="array">
-                <item name="rvvup-express-payment" xsi:type="string">Rvvup\Payments\CustomerData\ExpressPayment</item>
+                <item name="rvvup-express-payment" xsi:type="string">Rvvup\Payments\Hyva\CustomerData\ExpressPayment</item>
             </argument>
         </arguments>
     </type>
     <!-- Plugins -->
     <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
-        <plugin name="injectRvvupPaymentMethods" type="Rvvup\Payments\Plugin\JsLayout"/>
+        <plugin name="injectRvvupPaymentMethods" type="Rvvup\Payments\Hyva\Plugin\JsLayout"/>
     </type>
 
     <!-- DI arguments -->
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="rvvup_config_provider" xsi:type="object">Rvvup\Payments\Model\ConfigProvider</item>
+                <item name="rvvup_config_provider" xsi:type="object">Rvvup\Payments\Hyva\Model\ConfigProvider</item>
             </argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Controller\Express\Create">
+    <type name="Rvvup\Payments\Hyva\Controller\Express\Create">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Controller\Redirect\Cancel">
+    <type name="Rvvup\Payments\Hyva\Controller\Redirect\Cancel">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Controller\Redirect\In">
+    <type name="Rvvup\Payments\Hyva\Controller\Redirect\In">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\CustomerData\ExpressPayment">
+    <type name="Rvvup\Payments\Hyva\CustomerData\ExpressPayment">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Model\ConfigProvider">
+    <type name="Rvvup\Payments\Hyva\Model\ConfigProvider">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
     <!-- Observers -->
-    <type name="Rvvup\Payments\Observer\CartRestrictionsWarning">
+    <type name="Rvvup\Payments\Hyva\Observer\CartRestrictionsWarning">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Observer\Model\Payment\ExpressCreateReplaceSessionQuoteObserver">
+    <type name="Rvvup\Payments\Hyva\Observer\Model\Payment\ExpressCreateReplaceSessionQuoteObserver">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\Observer\Restore">
+    <type name="Rvvup\Payments\Hyva\Observer\Restore">
         <arguments>
             <argument name="restrictedPaths" xsi:type="array">
                 <item name="captcha" xsi:type="string">captcha/refresh</item>
@@ -76,25 +76,25 @@
         </arguments>
     </type>
     <!-- View Models -->
-    <type name="Rvvup\Payments\ViewModel\Clearpay">
+    <type name="Rvvup\Payments\Hyva\ViewModel\Clearpay">
         <arguments>
             <argument name="session" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\ViewModel\PayPal">
+    <type name="Rvvup\Payments\Hyva\ViewModel\PayPal">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
-    <type name="Rvvup\Payments\ViewModel\CheckoutConfig">
+    <type name="Rvvup\Payments\Hyva\ViewModel\CheckoutConfig">
         <arguments>
             <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
     <type name="Magento\Payment\Helper\Data">
-        <plugin name="Rvvup_Payments::loadPaymentMethods" type="Rvvup\Payments\Plugin\LoadPaymentMethods"/>
+        <plugin name="Rvvup_Payments::loadPaymentMethods" type="Rvvup\Payments\Hyva\Plugin\LoadPaymentMethods"/>
     </type>
-    <type name="Rvvup\Payments\Plugin\LoadPaymentMethods">
+    <type name="Rvvup\Payments\Hyva\Plugin\LoadPaymentMethods">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>

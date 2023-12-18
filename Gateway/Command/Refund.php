@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Command\CommandException;
@@ -12,8 +12,8 @@ use Magento\Sales\Api\Data\CreditmemoItemInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Payment;
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Service\Cache;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Service\Cache;
 use Rvvup\Sdk\Factories\Inputs\RefundCreateInputFactory;
 
 class Refund implements CommandInterface

@@ -1,13 +1,13 @@
 <?php
 /**
  * @var \Magento\Framework\Escaper $escaper
- * @var \Rvvup\Payments\Block\Info $block
+ * @var \Rvvup\Payments\Hyva\Block\Info $block
  */
 /** Magento 2.3.5 backward compatibility fix */
 if (!isset($escaper)) {
     $escaper = $block;
 }
-use Rvvup\Payments\Block\Info;
+use Rvvup\Payments\Hyva\Block\Info;
 
 $specificInfo = $block->getSpecificInformation();
 $paymentTitle = $block->getMethod()->getConfigData('title', $block->getInfo()->getOrder()->getStoreId());

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\CardPayments;
+namespace Rvvup\Payments\Hyva\Controller\CardPayments;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -14,8 +14,8 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Service\Order;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Service\Order;
 use Psr\Log\LoggerInterface;
 
 class Cancel implements HttpPostActionInterface, CsrfAwareActionInterface

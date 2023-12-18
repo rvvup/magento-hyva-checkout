@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
-use Rvvup\Payments\Api\CartPaymentActionsGetInterface;
-use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
-use Rvvup\Payments\Exception\PaymentValidationException;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\Payment\PaymentCreateExpressInterface;
+use Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpressInterface;
 
 class ExpressPaymentCreate implements ExpressPaymentCreateInterface
 {
@@ -25,20 +25,20 @@ class ExpressPaymentCreate implements ExpressPaymentCreateInterface
     private $paymentMethodManagement;
 
     /**
-     * @var \Rvvup\Payments\Api\CartPaymentActionsGetInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface
      */
     private $cartPaymentActionsGet;
 
     /**
-     * @var \Rvvup\Payments\Model\Payment\PaymentCreateExpressInterface
+     * @var \Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpressInterface
      */
     private $paymentExpressCreate;
 
     /**
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Quote\Api\PaymentMethodManagementInterface $paymentMethodManagement
-     * @param \Rvvup\Payments\Api\CartPaymentActionsGetInterface $cartPaymentActionsGet
-     * @param \Rvvup\Payments\Model\Payment\PaymentCreateExpressInterface $paymentExpressCreate
+     * @param \Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface $cartPaymentActionsGet
+     * @param \Rvvup\Payments\Hyva\Model\Payment\PaymentCreateExpressInterface $paymentExpressCreate
      * @return void
      */
     public function __construct(
@@ -58,10 +58,10 @@ class ExpressPaymentCreate implements ExpressPaymentCreateInterface
      *
      * @param string $cartId
      * @param string $methodCode
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(string $cartId, string $methodCode): array
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Exception;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -12,8 +12,8 @@ use Magento\Payment\Gateway\Command\CommandPoolInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\PaymentActionInterface;
-use Rvvup\Payments\Api\Data\PaymentActionInterfaceFactory;
+use Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface;
+use Rvvup\Payments\Hyva\Api\Data\PaymentActionInterfaceFactory;
 use Throwable;
 
 class PaymentActionsGet implements PaymentActionsGetInterface
@@ -34,7 +34,7 @@ class PaymentActionsGet implements PaymentActionsGetInterface
     private $orderRepository;
 
     /**
-     * @var \Rvvup\Payments\Api\Data\PaymentActionInterfaceFactory
+     * @var \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterfaceFactory
      */
     private $paymentActionInterfaceFactory;
 
@@ -234,11 +234,11 @@ class PaymentActionsGet implements PaymentActionsGetInterface
      * Create & return a PaymentActionInterface Data object.
      *
      * @param array $paymentAction
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface
      */
     private function getPaymentActionDataObject(array $paymentAction): PaymentActionInterface
     {
-        /** @var \Rvvup\Payments\Api\Data\PaymentActionInterface $paymentActionData */
+        /** @var \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface $paymentActionData */
         $paymentActionData = $this->paymentActionInterfaceFactory->create();
 
         if (isset($paymentAction['type'])) {

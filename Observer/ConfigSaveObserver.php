@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Observer;
+namespace Rvvup\Payments\Hyva\Observer;
 
 use Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -12,8 +12,8 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 class ConfigSaveObserver implements ObserverInterface
 {
@@ -23,7 +23,7 @@ class ConfigSaveObserver implements ObserverInterface
     private $urlBuilder;
 
     /**
-     * @var \Rvvup\Payments\Model\ConfigInterface
+     * @var \Rvvup\Payments\Hyva\Model\ConfigInterface
      */
     private $config;
 
@@ -42,7 +42,7 @@ class ConfigSaveObserver implements ObserverInterface
     /**
      * @param State $appState
      * @param UrlInterface $urlBuilder
-     * @param \Rvvup\Payments\Model\ConfigInterface $config
+     * @param \Rvvup\Payments\Hyva\Model\ConfigInterface $config
      * @param SdkProxy $sdkProxy
      * @param ManagerInterface $messageManager
      * @param \Psr\Log\LoggerInterface $logger

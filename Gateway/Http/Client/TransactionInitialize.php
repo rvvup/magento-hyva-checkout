@@ -1,6 +1,6 @@
 <?php
 
-namespace Rvvup\Payments\Gateway\Http\Client;
+namespace Rvvup\Payments\Hyva\Gateway\Http\Client;
 
 use Exception;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -10,15 +10,15 @@ use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Exception\QuoteValidationException;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\OrderDataBuilder;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Exception\QuoteValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\OrderDataBuilder;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 class TransactionInitialize implements ClientInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\SdkProxy
+     * @var \Rvvup\Payments\Hyva\Model\SdkProxy
      */
     private $sdkProxy;
 

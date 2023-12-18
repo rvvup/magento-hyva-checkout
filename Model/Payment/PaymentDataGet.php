@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Payment;
+namespace Rvvup\Payments\Hyva\Model\Payment;
 
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 use Throwable;
 
 class PaymentDataGet implements PaymentDataGetInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\SdkProxy
+     * @var \Rvvup\Payments\Hyva\Model\SdkProxy
      */
     private $sdkProxy;
 
@@ -21,7 +21,7 @@ class PaymentDataGet implements PaymentDataGetInterface
     private $logger;
 
     /**
-     * @param \Rvvup\Payments\Model\SdkProxy $sdkProxy
+     * @param \Rvvup\Payments\Hyva\Model\SdkProxy $sdkProxy
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */

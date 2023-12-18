@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Checkout;
+namespace Rvvup\Payments\Hyva\Plugin\Checkout;
 
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Framework\Validator\Exception;
-use Rvvup\Payments\Model\Checks\HasCartExpressPaymentInterface;
-use Rvvup\Payments\Model\Validation\IsValidAddress;
+use Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPaymentInterface;
+use Rvvup\Payments\Hyva\Model\Validation\IsValidAddress;
 
 class ExpressPaymentValidateCustomerAddress
 {
     /**
-     * @var \Rvvup\Payments\Model\Checks\HasCartExpressPaymentInterface
+     * @var \Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPaymentInterface
      */
     private $hasCartExpressPayment;
 
     /**
-     * @var \Rvvup\Payments\Model\Validation\IsValidAddress
+     * @var \Rvvup\Payments\Hyva\Model\Validation\IsValidAddress
      */
     private $isValidAddress;
 
     /**
-     * @param \Rvvup\Payments\Model\Checks\HasCartExpressPaymentInterface $hasCartExpressPayment
-     * @param \Rvvup\Payments\Model\Validation\IsValidAddress $isValidAddress
+     * @param \Rvvup\Payments\Hyva\Model\Checks\HasCartExpressPaymentInterface $hasCartExpressPayment
+     * @param \Rvvup\Payments\Hyva\Model\Validation\IsValidAddress $isValidAddress
      * @return void
      */
     public function __construct(HasCartExpressPaymentInterface $hasCartExpressPayment, IsValidAddress $isValidAddress)

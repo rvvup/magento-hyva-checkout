@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Payment;
+namespace Rvvup\Payments\Hyva\Model\Payment;
 
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
@@ -12,9 +12,9 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Model\ResourceModel\Quote\Payment;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Exception\PaymentValidationException;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\IsPaymentMethodAvailableInterface;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface;
 
 class PaymentCreateExpress implements PaymentCreateExpressInterface
 {
@@ -34,7 +34,7 @@ class PaymentCreateExpress implements PaymentCreateExpressInterface
     private $paymentResource;
 
     /**
-     * @var \Rvvup\Payments\Model\IsPaymentMethodAvailableInterface
+     * @var \Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface
      */
     private $isPaymentMethodAvailable;
 
@@ -49,7 +49,7 @@ class PaymentCreateExpress implements PaymentCreateExpressInterface
      * @param \Magento\Framework\DataObjectFactory $dataObjectFactory
      * @param \Magento\Quote\Api\CartTotalRepositoryInterface $cartTotalRepository
      * @param \Magento\Quote\Model\ResourceModel\Quote\Payment $paymentResource
-     * @param \Rvvup\Payments\Model\IsPaymentMethodAvailableInterface $isPaymentMethodAvailable
+     * @param \Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface $isPaymentMethodAvailable
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */
@@ -75,7 +75,7 @@ class PaymentCreateExpress implements PaymentCreateExpressInterface
      * @return bool
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(CartInterface $quote, string $methodCode): bool
     {
@@ -117,7 +117,7 @@ class PaymentCreateExpress implements PaymentCreateExpressInterface
      * @param \Magento\Quote\Api\Data\CartInterface $quote
      * @param string $methodCode
      * @return void
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function validatePaymentMethodAvailableForQuote(CartInterface $quote, string $methodCode): void
@@ -140,7 +140,7 @@ class PaymentCreateExpress implements PaymentCreateExpressInterface
      * @param string $methodCode
      * @return \Magento\Quote\Api\Data\PaymentInterface|\Magento\Quote\Model\Quote\Payment
      * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     private function getPaymentData(CartInterface $quote, string $methodCode): PaymentInterface
     {

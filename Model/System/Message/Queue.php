@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\System\Message;
+namespace Rvvup\Payments\Hyva\Model\System\Message;
 
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Notification\MessageInterface;

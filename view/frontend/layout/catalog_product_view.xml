@@ -9,7 +9,7 @@
                    ifconfig="payment/rvvup/active">
                 <arguments>
                     <argument name="rvvup_payments_assets_view_model"
-                              xsi:type="object">Rvvup\Payments\ViewModel\Assets</argument>
+                              xsi:type="object">Rvvup\Payments\Hyva\ViewModel\Assets</argument>
                 </arguments>
             </block>
         </referenceBlock>
@@ -20,10 +20,10 @@
                    ifconfig="payment/rvvup/active"
                    before="product.info">
                 <arguments>
-                    <argument name="clearpay" xsi:type="object">Rvvup\Payments\ViewModel\Clearpay</argument>
-                    <argument name="price" xsi:type="object">Rvvup\Payments\ViewModel\Price</argument>
-                    <argument name="restrictions" xsi:type="object">Rvvup\Payments\ViewModel\Restrictions</argument>
-                    <argument name="rvvup_payments_paypal_view_model" xsi:type="object">Rvvup\Payments\ViewModel\PayPal</argument>
+                    <argument name="clearpay" xsi:type="object">Rvvup\Payments\Hyva\ViewModel\Clearpay</argument>
+                    <argument name="price" xsi:type="object">Rvvup\Payments\Hyva\ViewModel\Price</argument>
+                    <argument name="restrictions" xsi:type="object">Rvvup\Payments\Hyva\ViewModel\Restrictions</argument>
+                    <argument name="rvvup_payments_paypal_view_model" xsi:type="object">Rvvup\Payments\Hyva\ViewModel\PayPal</argument>
                 </arguments>
             </block>
         </referenceContainer>
@@ -35,7 +35,7 @@
                    ifconfig="payment/rvvup/active">
                 <arguments>
                     <argument name="rvvup_payments_paypal_view_model"
-                              xsi:type="object">Rvvup\Payments\ViewModel\PayPal</argument>
+                              xsi:type="object">Rvvup\Payments\Hyva\ViewModel\PayPal</argument>
                 </arguments>
             </block>
         </referenceBlock>
@@ -47,7 +47,7 @@
                    ifconfig="payment/rvvup/active">
                 <arguments>
                     <argument name="rvvup_payments_checkout_config_view_model"
-                              xsi:type="object">Rvvup\Payments\ViewModel\CheckoutConfig</argument>
+                              xsi:type="object">Rvvup\Payments\Hyva\ViewModel\CheckoutConfig</argument>
                 </arguments>
             </block>
         </referenceContainer>

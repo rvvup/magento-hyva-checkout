@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Service;
+namespace Rvvup\Payments\Hyva\Service;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Api\Data\CartInterface;

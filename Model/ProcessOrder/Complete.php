@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessOrder;
+namespace Rvvup\Payments\Hyva\Model\ProcessOrder;
 
 use Exception;
 use Magento\Framework\Event\ManagerInterface as EventManager;
@@ -9,11 +9,11 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\InvoiceOrderInterface;
 use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory;
-use Rvvup\Payments\Controller\Redirect\In;
-use Rvvup\Payments\Exception\PaymentValidationException;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory;
+use Rvvup\Payments\Hyva\Controller\Redirect\In;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class Complete implements ProcessorInterface
 {
@@ -30,7 +30,7 @@ class Complete implements ProcessorInterface
     private $invoiceOrder;
 
     /**
-     * @var \Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory
+     * @var \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory
      */
     private $processOrderResultFactory;
 
@@ -44,7 +44,7 @@ class Complete implements ProcessorInterface
     /**
      * @param \Magento\Framework\Event\ManagerInterface|EventManager $eventManager
      * @param \Magento\Sales\Api\InvoiceOrderInterface $invoiceOrder
-     * @param \Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory $processOrderResultFactory
+     * @param \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory $processOrderResultFactory
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */
@@ -63,8 +63,8 @@ class Complete implements ProcessorInterface
     /**
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param array $rvvupData
-     * @return \Rvvup\Payments\Api\Data\ProcessOrderResultInterface
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @return \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(OrderInterface $order, array $rvvupData): ProcessOrderResultInterface
     {
@@ -74,7 +74,7 @@ class Complete implements ProcessorInterface
             throw new PaymentValidationException(__('Order is not paid via Rvvup'));
         }
 
-        /** @var \Rvvup\Payments\Api\Data\ProcessOrderResultInterface $processOrderResult */
+        /** @var \Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface $processOrderResult */
         $processOrderResult = $this->processOrderResultFactory->create();
 
         try {

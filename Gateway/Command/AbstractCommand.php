@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Gateway\Command;
+namespace Rvvup\Payments\Hyva\Gateway\Command;
 
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 
 abstract class AbstractCommand
 {

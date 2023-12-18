@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\Model\System;
+namespace Rvvup\Payments\Hyva\Test\Unit\Model\System;
 
 use Magento\Cron\Model\ResourceModel\Schedule\Collection;
 use Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory;
 use PHPUnit\Framework\TestCase;
-use Rvvup\Payments\Model\System\Message\Cron;
+use Rvvup\Payments\Hyva\Model\System\Message\Cron;
 
 class CronTest extends TestCase
 {

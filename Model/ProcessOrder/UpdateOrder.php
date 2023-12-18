@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessOrder;
+namespace Rvvup\Payments\Hyva\Model\ProcessOrder;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterface;
-use Rvvup\Payments\Api\Data\ProcessOrderResultInterfaceFactory;
-use Rvvup\Payments\Controller\Redirect\In;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterface;
+use Rvvup\Payments\Hyva\Api\Data\ProcessOrderResultInterfaceFactory;
+use Rvvup\Payments\Hyva\Controller\Redirect\In;
 use Safe\Exceptions\JsonException;
 
 class UpdateOrder implements ProcessorInterface

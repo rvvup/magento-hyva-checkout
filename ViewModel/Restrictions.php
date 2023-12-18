@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\ViewModel;
+namespace Rvvup\Payments\Hyva\ViewModel;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\Restriction\Messages;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\Restriction\Messages;
 
 class Restrictions implements ArgumentInterface
 {

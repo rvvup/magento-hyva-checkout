@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\System\Message;
+namespace Rvvup\Payments\Hyva\Model\System\Message;
 
 use Magento\Cron\Model\ResourceModel\Schedule\Collection;
 use Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory;

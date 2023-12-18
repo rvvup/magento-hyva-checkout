@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
-use Rvvup\Payments\Model\ResourceModel\WebhookResource;
+use Rvvup\Payments\Hyva\Model\ResourceModel\WebhookResource;
 use Magento\Framework\Model\AbstractModel;
 
 class WebhookModel extends AbstractModel

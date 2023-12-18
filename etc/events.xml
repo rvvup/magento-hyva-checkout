@@ -2,52 +2,52 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="payment_method_assign_data">
-        <observer name="Rvvup_Payments::gateway_data_assign" instance="Rvvup\Payments\Observer\DataAssignObserver" />
+        <observer name="Rvvup_Payments::gateway_data_assign" instance="Rvvup\Payments\Hyva\Observer\DataAssignObserver" />
     </event>
 
     <event name="rvvup_payments_process_order_cancel_after">
         <observer name="Rvvup_Payments::Model\ProcessOrder\Cancel\AddOrderHistoryCommentObserver"
-                  instance="Rvvup\Payments\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver"
                   shared="false" />
     </event>
 
     <event name="rvvup_payments_process_order_complete_after">
         <observer name="Rvvup_Payments::Model\ProcessOrder\Complete\EmailSenderObserver"
-                  instance="Rvvup\Payments\Observer\Model\ProcessOrder\EmailSenderObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Model\ProcessOrder\EmailSenderObserver"
                   shared="false" />
     </event>
 
     <event name="rvvup_payments_process_order_processing_after">
         <observer name="Rvvup_Payments::Model\ProcessOrder\Processing\AddOrderHistoryCommentObserver"
-                  instance="Rvvup\Payments\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Model\ProcessOrder\AddOrderHistoryCommentObserver"
                   shared="false" />
     </event>
 
     <event name="checkout_cart_product_add_after">
         <observer name="Rvvup_Payments::Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
-                  instance="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
                   shared="false" />
     </event>
     <event name="sales_quote_remove_item">
         <observer name="Rvvup_Payments::Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
-                  instance="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
                   shared="false" />
     </event>
     <event name="checkout_cart_update_items_after">
         <observer name="Rvvup_Payments::Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
-                  instance="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
                   shared="false" />
     </event>
 
     <event name="sales_quote_add_item">
         <observer name="Rvvup_Payments::Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
-                  instance="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
                   shared="false" />
     </event>
 
     <event name="sales_quote_product_add_after">
         <observer name="Rvvup_Payments::Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
-                  instance="Rvvup\Payments\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
+                  instance="Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item\RemoveExpressPaymentDataObserver"
                   shared="false" />
     </event>
 </config>

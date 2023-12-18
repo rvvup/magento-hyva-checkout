@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Clearpay;
+namespace Rvvup\Payments\Hyva\Model\Clearpay;
 
-use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\ViewModel\Clearpay;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
+use Rvvup\Payments\Hyva\ViewModel\Clearpay;
 
 class Config
 {

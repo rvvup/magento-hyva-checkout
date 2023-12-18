@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Gateway\Command\CommandPoolInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\CartPaymentActionsGetInterface;
-use Rvvup\Payments\Api\Data\PaymentActionInterface;
-use Rvvup\Payments\Api\Data\PaymentActionInterfaceFactory;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Api\CartPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface;
+use Rvvup\Payments\Hyva\Api\Data\PaymentActionInterfaceFactory;
+use Rvvup\Payments\Hyva\Gateway\Method;
 use Throwable;
 
 class CartPaymentActionsGet implements CartPaymentActionsGetInterface
@@ -23,7 +23,7 @@ class CartPaymentActionsGet implements CartPaymentActionsGetInterface
     private $paymentMethodManagement;
 
     /**
-     * @var \Rvvup\Payments\Api\Data\PaymentActionInterfaceFactory
+     * @var \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterfaceFactory
      */
     private $paymentActionInterfaceFactory;
 
@@ -134,7 +134,7 @@ class CartPaymentActionsGet implements CartPaymentActionsGetInterface
      * Create & return a PaymentActionInterface Data object.
      *
      * @param array $paymentAction
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface
      */
     private function getPaymentActionDataObject(array $paymentAction): PaymentActionInterface
     {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin\Refund;
+namespace Rvvup\Payments\Hyva\Plugin\Refund;
 
 use Magento\Sales\Model\Order\Creditmemo as BaseCreditmemo;
-use Rvvup\Payments\Model\PendingQty;
+use Rvvup\Payments\Hyva\Model\PendingQty;
 
 class CreditMemo
 {

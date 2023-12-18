@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Payment;
+namespace Rvvup\Payments\Hyva\Model\Payment;
 
 use Magento\Quote\Api\Data\CartInterface;
 
@@ -15,7 +15,7 @@ interface PaymentCreateExpressInterface
      * @param string $methodCode
      * @return bool
      * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(CartInterface $quote, string $methodCode): bool;
 }

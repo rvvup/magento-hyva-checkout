@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\ProcessOrder;
+namespace Rvvup\Payments\Hyva\Model\ProcessOrder;
 
 use Magento\Framework\Exception\LocalizedException;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
-use Rvvup\Payments\Api\GuestPaymentActionsGetInterface;
+use Rvvup\Payments\Hyva\Api\GuestPaymentActionsGetInterface;
 
 class GuestPaymentActionsGet implements GuestPaymentActionsGetInterface
 {
@@ -15,13 +15,13 @@ class GuestPaymentActionsGet implements GuestPaymentActionsGetInterface
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Rvvup\Payments\Model\PaymentActionsGetInterface
+     * @var \Rvvup\Payments\Hyva\Model\PaymentActionsGetInterface
      */
     private $paymentActionsGet;
 
     /**
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Model\PaymentActionsGetInterface $paymentActionsGet
+     * @param \Rvvup\Payments\Hyva\Model\PaymentActionsGetInterface $paymentActionsGet
      * @return void
      */
     public function __construct(
@@ -36,7 +36,7 @@ class GuestPaymentActionsGet implements GuestPaymentActionsGetInterface
      * Get the payment actions for the masked cart ID.
      *
      * @param string $cartId
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

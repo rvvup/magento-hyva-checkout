@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Observer\Quote\Model\Quote\Item;
+namespace Rvvup\Payments\Hyva\Observer\Quote\Model\Quote\Item;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote\Item;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\CartExpressPaymentRemoveInterface;
+use Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface;
 use Throwable;
 
 class RemoveExpressPaymentDataObserver implements ObserverInterface
 {
     /**
-     * @var \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface
      */
     private $cartExpressPaymentRemove;
 
@@ -26,7 +26,7 @@ class RemoveExpressPaymentDataObserver implements ObserverInterface
     private $logger;
 
     /**
-     * @param \Rvvup\Payments\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
+     * @param \Rvvup\Payments\Hyva\Api\CartExpressPaymentRemoveInterface $cartExpressPaymentRemove
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */

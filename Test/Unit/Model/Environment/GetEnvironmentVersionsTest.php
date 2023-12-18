@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\Model\Environment;
+namespace Rvvup\Payments\Hyva\Test\Unit\Model\Environment;
 
 use InvalidArgumentException;
 use Magento\Framework\App\CacheInterface;
@@ -13,10 +13,10 @@ use Magento\Framework\Serialize\SerializerInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
-use Rvvup\Payments\Model\Environment\GetEnvironmentVersions;
+use Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersions;
 
 /**
- * @covers \Rvvup\Payments\Model\Environment\GetEnvironmentVersions
+ * @covers \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersions
  */
 class GetEnvironmentVersionsTest extends TestCase
 {
@@ -51,7 +51,7 @@ class GetEnvironmentVersionsTest extends TestCase
     private $loggerMock;
 
     /**
-     * @var \Rvvup\Payments\Model\Environment\GetEnvironmentVersions
+     * @var \Rvvup\Payments\Hyva\Model\Environment\GetEnvironmentVersions
      */
     private $systemUnderTest;
 

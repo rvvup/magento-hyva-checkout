@@ -1,6 +1,6 @@
 <?php
 
-namespace Rvvup\Payments\Controller\Express;
+namespace Rvvup\Payments\Hyva\Controller\Express;
 
 use InvalidArgumentException;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -19,9 +19,9 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\Data\PaymentActionInterface;
-use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
-use Rvvup\Payments\Exception\PaymentValidationException;
+use Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface;
+use Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Hyva\Exception\PaymentValidationException;
 
 class Create implements HttpPostActionInterface, CsrfAwareActionInterface
 {
@@ -75,7 +75,7 @@ class Create implements HttpPostActionInterface, CsrfAwareActionInterface
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Rvvup\Payments\Api\ExpressPaymentCreateInterface
+     * @var \Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface
      */
     private $expressPaymentCreate;
 
@@ -109,7 +109,7 @@ class Create implements HttpPostActionInterface, CsrfAwareActionInterface
      * @param \Magento\Framework\Serialize\SerializerInterface $serializer
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Api\ExpressPaymentCreateInterface $expressPaymentCreate
+     * @param \Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface $expressPaymentCreate
      * @param LoggerInterface $logger
      */
     public function __construct(

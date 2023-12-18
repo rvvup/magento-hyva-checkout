@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Test\Unit\ViewModel;
+namespace Rvvup\Payments\Hyva\Test\Unit\ViewModel;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -9,14 +9,14 @@ use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Framework\DataObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Model\Clearpay\Config;
-use Rvvup\Payments\Model\ComplexProductTypePool;
-use Rvvup\Payments\Model\ThresholdProvider;
-use Rvvup\Payments\ViewModel\Clearpay;
+use Rvvup\Payments\Hyva\Model\Clearpay\Config;
+use Rvvup\Payments\Hyva\Model\ComplexProductTypePool;
+use Rvvup\Payments\Hyva\Model\ThresholdProvider;
+use Rvvup\Payments\Hyva\ViewModel\Clearpay;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Locale\Resolver;
 use Magento\Store\Model\StoreManagerInterface;
-use Rvvup\Payments\ViewModel\Price;
+use Rvvup\Payments\Hyva\ViewModel\Price;
 
 class ClearpayMessagingTest extends TestCase
 {

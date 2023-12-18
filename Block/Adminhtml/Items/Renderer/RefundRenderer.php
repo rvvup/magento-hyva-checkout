@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Block\Adminhtml\Items\Renderer;
+namespace Rvvup\Payments\Hyva\Block\Adminhtml\Items\Renderer;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -12,7 +12,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Block\Adminhtml\Items\Renderer\DefaultRenderer;
-use Rvvup\Payments\Model\PendingQty;
+use Rvvup\Payments\Hyva\Model\PendingQty;
 
 class RefundRenderer extends DefaultRenderer
 {

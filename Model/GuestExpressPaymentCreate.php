@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
-use Rvvup\Payments\Api\GuestExpressPaymentCreateInterface;
-use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Hyva\Api\GuestExpressPaymentCreateInterface;
+use Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface;
 
 class GuestExpressPaymentCreate implements GuestExpressPaymentCreateInterface
 {
@@ -16,13 +16,13 @@ class GuestExpressPaymentCreate implements GuestExpressPaymentCreateInterface
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Rvvup\Payments\Api\ExpressPaymentCreateInterface
+     * @var \Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface
      */
     private $expressPaymentCreate;
 
     /**
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Api\ExpressPaymentCreateInterface $expressPaymentCreate
+     * @param \Rvvup\Payments\Hyva\Api\ExpressPaymentCreateInterface $expressPaymentCreate
      * @return void
      */
     public function __construct(
@@ -36,10 +36,10 @@ class GuestExpressPaymentCreate implements GuestExpressPaymentCreateInterface
     /**
      * @param string $cartId
      * @param string $methodCode
-     * @return \Rvvup\Payments\Api\Data\PaymentActionInterface[]
+     * @return \Rvvup\Payments\Hyva\Api\Data\PaymentActionInterface[]
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Rvvup\Payments\Exception\PaymentValidationException
+     * @throws \Rvvup\Payments\Hyva\Exception\PaymentValidationException
      */
     public function execute(string $cartId, string $methodCode): array
     {

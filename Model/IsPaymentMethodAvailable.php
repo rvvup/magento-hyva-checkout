@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class IsPaymentMethodAvailable implements IsPaymentMethodAvailableInterface
 {
     /**
-     * @var \Rvvup\Payments\Model\PaymentMethodsAvailableGetInterface
+     * @var \Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGetInterface
      */
     private $paymentMethodsAvailableGet;
 
@@ -20,7 +20,7 @@ class IsPaymentMethodAvailable implements IsPaymentMethodAvailableInterface
     private $logger;
 
     /**
-     * @param \Rvvup\Payments\Model\PaymentMethodsAvailableGet $paymentMethodsAvailableGet
+     * @param \Rvvup\Payments\Hyva\Model\PaymentMethodsAvailableGet $paymentMethodsAvailableGet
      * @param \Psr\Log\LoggerInterface $logger
      * @return void
      */

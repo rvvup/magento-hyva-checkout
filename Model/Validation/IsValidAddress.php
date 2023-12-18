@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Validation;
+namespace Rvvup\Payments\Hyva\Model\Validation;
 
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Framework\Validation\ValidationResult;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Plugin;
+namespace Rvvup\Payments\Hyva\Plugin;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Payment;
-use Rvvup\Payments\Gateway\Method;
+use Rvvup\Payments\Hyva\Gateway\Method;
 
 class IsVoidable
 {

@@ -8,7 +8,7 @@ use Magento\Sales\Model\Order;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Api\Data\OrderItemInterface;
-use Rvvup\Payments\Model\PendingQty;
+use Rvvup\Payments\Hyva\Model\PendingQty;
 
 class PendingQtyTest extends TestCase
 {

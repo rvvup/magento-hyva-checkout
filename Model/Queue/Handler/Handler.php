@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model\Queue\Handler;
+namespace Rvvup\Payments\Hyva\Model\Queue\Handler;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Serialize\SerializerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\WebhookRepositoryInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\ConfigInterface;
-use Rvvup\Payments\Model\Payment\PaymentDataGetInterface;
-use Rvvup\Payments\Model\ProcessOrder\ProcessorPool;
-use Rvvup\Payments\Service\Order;
+use Rvvup\Payments\Hyva\Api\WebhookRepositoryInterface;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Model\Payment\PaymentDataGetInterface;
+use Rvvup\Payments\Hyva\Model\ProcessOrder\ProcessorPool;
+use Rvvup\Payments\Hyva\Service\Order;
 
 class Handler
 {

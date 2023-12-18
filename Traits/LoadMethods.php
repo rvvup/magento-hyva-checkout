@@ -1,6 +1,6 @@
 <?php
 
-namespace Rvvup\Payments\Traits;
+namespace Rvvup\Payments\Hyva\Traits;
 
 trait LoadMethods
 {

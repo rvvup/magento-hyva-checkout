@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\ViewModel;
+namespace Rvvup\Payments\Hyva\ViewModel;
 
 use Exception;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -10,10 +10,10 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
-use Rvvup\Payments\Api\PaymentMethodsAssetsGetInterface;
-use Rvvup\Payments\Api\PaymentMethodsSettingsGetInterface;
-use Rvvup\Payments\Gateway\Method;
-use Rvvup\Payments\Model\ConfigInterface;
+use Rvvup\Payments\Hyva\Api\PaymentMethodsAssetsGetInterface;
+use Rvvup\Payments\Hyva\Api\PaymentMethodsSettingsGetInterface;
+use Rvvup\Payments\Hyva\Gateway\Method;
+use Rvvup\Payments\Hyva\Model\ConfigInterface;
 
 class Assets implements ArgumentInterface
 {
@@ -23,17 +23,17 @@ class Assets implements ArgumentInterface
     private $serializer;
 
     /**
-     * @var \Rvvup\Payments\Model\ConfigInterface
+     * @var \Rvvup\Payments\Hyva\Model\ConfigInterface
      */
     private $config;
 
     /**
-     * @var \Rvvup\Payments\Api\PaymentMethodsAssetsGetInterface
+     * @var \Rvvup\Payments\Hyva\Api\PaymentMethodsAssetsGetInterface
      */
     private $paymentMethodsAssetsGet;
 
     /**
-     * @var \Rvvup\Payments\Api\PaymentMethodsSettingsGetInterface
+     * @var \Rvvup\Payments\Hyva\Api\PaymentMethodsSettingsGetInterface
      */
     private $paymentMethodsSettingsGet;
 
@@ -66,9 +66,9 @@ class Assets implements ArgumentInterface
 
     /**
      * @param \Magento\Framework\Serialize\SerializerInterface $serializer
-     * @param \Rvvup\Payments\Model\ConfigInterface $config
-     * @param \Rvvup\Payments\Api\PaymentMethodsAssetsGetInterface $paymentMethodsAssetsGet
-     * @param \Rvvup\Payments\Api\PaymentMethodsSettingsGetInterface $paymentMethodsSettingsGet
+     * @param \Rvvup\Payments\Hyva\Model\ConfigInterface $config
+     * @param \Rvvup\Payments\Hyva\Api\PaymentMethodsAssetsGetInterface $paymentMethodsAssetsGet
+     * @param \Rvvup\Payments\Hyva\Api\PaymentMethodsSettingsGetInterface $paymentMethodsSettingsGet
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Psr\Log\LoggerInterface|RvvupLog $logger
      * @return void

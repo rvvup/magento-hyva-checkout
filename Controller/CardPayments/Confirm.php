@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Controller\CardPayments;
+namespace Rvvup\Payments\Hyva\Controller\CardPayments;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\CsrfAwareActionInterface;
@@ -11,7 +11,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Rvvup\Payments\Model\SdkProxy;
+use Rvvup\Payments\Hyva\Model\SdkProxy;
 use Rvvup\Sdk\Exceptions\ApiError;
 
 class Confirm implements HttpPostActionInterface, CsrfAwareActionInterface

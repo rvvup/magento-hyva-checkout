@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
-use Rvvup\Payments\Api\CartResetInterface;
-use Rvvup\Payments\Api\GuestCartResetInterface;
+use Rvvup\Payments\Hyva\Api\CartResetInterface;
+use Rvvup\Payments\Hyva\Api\GuestCartResetInterface;
 
 class GuestCartReset implements GuestCartResetInterface
 {
@@ -16,13 +16,13 @@ class GuestCartReset implements GuestCartResetInterface
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Rvvup\Payments\Api\CartResetInterface
+     * @var \Rvvup\Payments\Hyva\Api\CartResetInterface
      */
     private $cartReset;
 
     /**
      * @param \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
-     * @param \Rvvup\Payments\Api\CartResetInterface $cartReset
+     * @param \Rvvup\Payments\Hyva\Api\CartResetInterface $cartReset
      * @return void
      */
     public function __construct(MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId, CartResetInterface $cartReset)

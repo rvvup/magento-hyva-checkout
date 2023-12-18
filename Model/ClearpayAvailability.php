@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Rvvup\Payments\Model;
+namespace Rvvup\Payments\Hyva\Model;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
-use Rvvup\Payments\Api\ClearpayAvailabilityInterface;
+use Rvvup\Payments\Hyva\Api\ClearpayAvailabilityInterface;
 
 class ClearpayAvailability implements ClearpayAvailabilityInterface
 {
@@ -15,13 +15,13 @@ class ClearpayAvailability implements ClearpayAvailabilityInterface
     private $storeManager;
 
     /**
-     * @var \Rvvup\Payments\Model\IsPaymentMethodAvailableInterface
+     * @var \Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface
      */
     private $isPaymentMethodAvailable;
 
     /**
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Rvvup\Payments\Model\IsPaymentMethodAvailableInterface $isPaymentMethodAvailable
+     * @param \Rvvup\Payments\Hyva\Model\IsPaymentMethodAvailableInterface $isPaymentMethodAvailable
      * @return void
      */
     public function __construct(
