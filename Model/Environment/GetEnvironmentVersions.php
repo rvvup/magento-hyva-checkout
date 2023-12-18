@@ -152,10 +152,10 @@ class GetEnvironmentVersions implements GetEnvironmentVersionsInterface
         $packages = $this->composerInformation->getInstalledMagentoPackages();
 
         // Get the value from the composer.lock file if set.
-        if (isset($packages['rvvup/module-magento-payments']['version'])
-            && is_string($packages['rvvup/module-magento-payments']['version'])
+        if (isset($packages['rvvup/module-magento-payments-hyva-checkout']['version'])
+            && is_string($packages['rvvup/module-magento-payments-hyva-checkout']['version'])
         ) {
-            return (string) $packages['rvvup/module-magento-payments']['version'];
+            return (string) $packages['rvvup/module-magento-payments-hyva-checkout']['version'];
         }
 
         // Otherwise, check for `app/code` installation

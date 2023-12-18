@@ -98,7 +98,7 @@ class GetEnvironmentVersionsTest extends TestCase
     public function testEverythingIsWorkingInstalledViaComposer(): void
     {
         $this->composerInfoMock->expects($this->once())->method('getInstalledMagentoPackages')->willReturn([
-            'rvvup/module-magento-payments' => [
+            'rvvup/module-magento-payments-hyva-checkout' => [
                 'version' => '0.1.0'
             ],
         ]);
@@ -224,7 +224,7 @@ class GetEnvironmentVersionsTest extends TestCase
             ->expects($this->once())
             ->method('getInstalledMagentoPackages')
             ->willReturn([
-                'rvvup/module-magento-payments' => [
+                'rvvup/module-magento-payments-hyva-checkout' => [
                     'version' => '0.1.0'
                 ]
             ]);
