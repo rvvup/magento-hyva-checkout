@@ -4,7 +4,7 @@
     "type": "magento2-module",
     "minimum-stability": "dev",
     "require": {
-        "rvvup/sdk": "0.13.7",
+        "rvvup/sdk": "0.13.9",
         "php": "^7.3 || ^8.0"
     },
     "require-dev": {
