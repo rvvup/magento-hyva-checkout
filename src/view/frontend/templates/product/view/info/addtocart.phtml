@@ -1,0 +1,196 @@
+<?php
+/**
+ * @var \Magento\Catalog\Block\Product\View $block
+ * @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+$paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
+$product = $block->getProduct();
+
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart $magewire */
+
+/*
+ * $product is not available when this template is loaded from Magewire. But Magewire only makes this call
+ * when the product was available initially. So only check when $product is not null.
+ */
+if ($product) {
+    if ($paypalViewModel === null ||
+        !$paypalViewModel->canUseForProductType($product) ||
+        !$paypalViewModel->isAvailable((string)$product->getFinalPrice())
+    ) {
+        // This is required for magewire
+        echo '<div></div>';
+        return;
+    }
+}
+?>
+<div class="rvvup-paypal-express grow z-0"
+     x-data="rvvupPayPalExpressButton()"
+     wire:ignore
+>
+    <div class="rvvup-paypal-express-button-container"></div>
+</div>
+
+<script>
+'use strict';
+function rvvupPayPalExpressButton() {
+    const addToCartForm = document.getElementById('product_addtocart_form');
+    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+
+    return {
+        init() {
+            const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
+
+            if (!window.rvvup_paypal) {
+                console.error('PayPal SDK not loaded');
+                return;
+            }
+
+            rvvup_paypal.Buttons({
+                style: this.getButtonStyle(),
+
+                onClick: (data, actions) => {
+                    if (!this.validateAddToCartForm()) {
+                        actions.reject();
+                    }
+                },
+
+                createOrder: () => {
+                    if (!this.validateAddToCartForm()) {
+                        return;
+                    }
+
+                    // If the token is already set, don't create a new one.
+                    if (component.authorizationToken) {
+                        return component.authorizationToken;
+                    }
+
+                    return new Promise((resolve) => {
+                        const formData = new FormData(addToCartForm);
+                        const request = new URLSearchParams(formData).toString();
+
+                        component.createExpressPayment('paypal', request)
+                            .then(() => resolve(component.authorizationToken))
+                    });
+                },
+
+                onApprove: (data, actions) => {
+                    return actions.order.get().then((orderData) => {
+                        const shippingAddress = this.getShippingAddressFromOrderData(orderData);
+                        const billingAddress = this.getBillingAddressFromOrderData(orderData, shippingAddress);
+
+                        return component.saveAddress(billingAddress);
+                    });
+                }
+            }).render(buttonElement);
+        },
+
+        getButtonStyle() {
+            if (typeof rvvup_parameters !== 'object') {
+                return {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    tagline: false,
+                };
+            }
+
+            const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
+            const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
+            const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
+            const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
+            const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
+            const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
+
+            let style = {
+                layout: layout,
+                color: color,
+                shape: shape,
+                label: label,
+                tagline: tagline,
+            };
+
+            if (size !== null) {
+                style.height = size;
+            }
+
+            return style;
+        },
+
+        getBillingAddressFromOrderData(orderData, shippingAddress) {
+            return {
+                firstname: orderData.payer.name.given_name,
+                lastname: orderData.payer.name.surname,
+                email: orderData.payer.email_address,
+                telephone: shippingAddress.telephone,
+                company: '',
+                street: shippingAddress.street,
+                city: shippingAddress.city,
+                region: shippingAddress.region,
+                postcode: shippingAddress.postcode,
+                country_id: shippingAddress.country_id,
+            }
+        },
+
+        getShippingAddressFromOrderData(orderData) {
+            let address = {
+                firstname: '',
+                lastname: '',
+                email: orderData.payer.email_address,
+                telephone: '',
+                street: [],
+                city: '',
+                region: '',
+                postcode: '',
+                country_id: '',
+            }
+
+            /* Return empty object if no shipping property */
+            if (orderData.purchase_units.length === 0 ||
+                !orderData.purchase_units[0].hasOwnProperty("shipping")
+            ) {
+                return address;
+            }
+
+            let shippingFullName =
+                orderData.purchase_units[0].shipping.hasOwnProperty('name') &&
+                orderData.purchase_units[0].shipping.name.hasOwnProperty('full_name')
+                    ? orderData.purchase_units[0].shipping.name.full_name
+                    : '';
+            let shippingFullNameArray = shippingFullName.split(' ');
+
+            address.firstname = shippingFullNameArray.shift();
+
+            if (shippingFullNameArray.length > 0) {
+                address.lastname = shippingFullNameArray.join(' ');
+            }
+
+            /* Return object if no address property */
+            if (!orderData.purchase_units[0].shipping.hasOwnProperty('address')) {
+                return address;
+            }
+
+            const shippingAddress = orderData.purchase_units[0].shipping.address;
+            address.street.push(shippingAddress?.address_line_1 ?? '');
+            address.street.push(shippingAddress?.address_line_2 ?? '');
+            address.city = shippingAddress?.admin_area_2 ?? '';
+            address.region = shippingAddress?.admin_area_1 ?? '';
+            address.postcode = shippingAddress?.postal_code ?? '';
+            address.country_id = shippingAddress?.country_code ?? '';
+
+            return address;
+        },
+
+        validateAddToCartForm() {
+            // Grouped options has a separate validation method. If it's available, call it.
+            if (typeof initGroupedOptions === 'function' && !initGroupedOptions().validateForm()) {
+                return false;
+            }
+
+            return addToCartForm.reportValidity();
+        }
+    }
+}
+</script>

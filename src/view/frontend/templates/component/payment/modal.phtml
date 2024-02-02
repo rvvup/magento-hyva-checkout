@@ -1,0 +1,75 @@
+<?php
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\Modal;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Modal $modelViewModel */
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+
+$modelViewModel = $viewModels->require(Modal::class);
+
+$modal = $modelViewModel->createModal()
+    ->positionCenter()
+    ->removeDialogClass('p-10', 'rounded-lg')
+    ->addDialogClass('relative rounded-xl flex flex-col text-center mx-8 sm:mx-16')
+    ->withAriaLabelledby('modal-title');
+?>
+<div id="rvvup-modal" x-data="Object.assign({}, hyva.modal(), initRvvupModal())">
+    <?= /** @noEscape */ $modal->withContent(<<<END_OF_CONTENT
+            <template x-if="iframeUrl">
+                <iframe
+                    :src="iframeUrl"
+                    allow="clipboard-read; clipboard-write"
+                    class="rvvup-modal border-0"
+                ></iframe>
+            </template>
+
+    END_OF_CONTENT
+    );?>
+</div>
+
+<script>
+function initRvvupModal() {
+    return {
+        iframeUrl: null,
+        init() {
+            window.addEventListener('rvvup:update:showModal', event =>{
+                this.show('<?= $escaper->escapeHtmlAttr($modal->getDialogRefName()) ?>');
+
+                this.iframeUrl = event.detail.redirectUrl;
+            })
+
+            window.addEventListener('message', event => {
+                let height = event.data.hasOwnProperty('height') ? event.data.height : null,
+                    width = event.data.hasOwnProperty('width') ? event.data.width : null;
+
+                if (event.data.type === 'rvvup-payment-modal|close') {
+                    this.hide();
+                    this.iframeUrl = null;
+                }
+
+                if (event.data.type === 'rvvup-payment-modal|resize') {
+                    let windowHeight = window.innerHeight,
+                        windowWidth = window.innerWidth,
+                        chosenWidth = width > windowWidth ? windowWidth : width,
+                        chosenHeight = height > windowHeight ? windowHeight : height,
+                        finalWidth = width === 'max' ? windowWidth - 100 : chosenWidth,
+                        finalHeight = height === 'max' ? windowHeight - 100 : chosenHeight;
+
+                    document.querySelector('.rvvup-modal').style.width = finalWidth + 'px';
+                    document.querySelector('.rvvup-modal').style.height = finalHeight + 'px';
+                }
+
+                if (event.data.type === 'rvvup-info-widget|resize') {
+                    document.querySelector('.rvvup-summary').style.width = width + 'px';
+                    document.querySelector('.rvvup-summary').style.height = height + 'px';
+                }
+            });
+        }
+    }
+}
+</script>

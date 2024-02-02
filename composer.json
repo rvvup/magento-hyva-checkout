@@ -1,0 +1,18 @@
+{
+    "name": "rvvup/module-magento-payments-hyva-checkout",
+    "description": "Compatibility module for Rvvup payment gateway for Magento 2",
+    "type": "magento2-module",
+    "require": {
+        "php": "^7.4|^8.1",
+        "rvvup/module-magento-payments": "^0.17.0",
+        "hyva-themes/magento2-compat-module-fallback": "^1.0"
+    },
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "Rvvup\\PaymentsHyvaCheckout\\": "src/"
+        }
+    }
+}
