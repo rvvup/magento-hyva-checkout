@@ -1,2 +1,0 @@
-# Rvvup Magento Hyva Checkout
-
