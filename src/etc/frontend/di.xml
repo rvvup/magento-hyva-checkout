@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Hyva\CompatModuleFallback\Model\CompatModuleRegistry">
+        <arguments>
+            <argument name="compatModules" xsi:type="array">
+                <item name="rvvup_map" xsi:type="array">
+                    <item name="original_module" xsi:type="string">Rvvup_Payments</item>
+                    <item name="compat_module" xsi:type="string">Rvvup_PaymentsHyvaCheckout</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Hyva\Checkout\Model\MethodMetaData">
+        <plugin name="rvvup-payment-method-icons"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\RenderMethodIcons"/>
+    </type>
+
+    <type name="Hyva\Theme\ViewModel\SvgIcons">
+        <arguments>
+            <argument name="pathPrefixMapping" xsi:type="array">
+                <item name="rvvup_payments" xsi:type="string">Rvvup_PaymentsHyvaCheckout::images/icons/</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

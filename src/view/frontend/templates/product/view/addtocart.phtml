@@ -1,0 +1,61 @@
+<?php
+/**
+ * @var \Magento\Catalog\Block\Product\View $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+/** @var \Rvvup\Payments\ViewModel\Clearpay $clearpay */
+$clearpay = $block->getData('clearpay');
+
+/** @var \Rvvup\Payments\ViewModel\Price $priceViewModel */
+$priceViewModel = $block->getData('price');
+
+/** @var \Rvvup\Payments\ViewModel\Restrictions $restrictions */
+$restrictions = $block->getData('restrictions');
+/** @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel */
+$paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
+
+$product = $block->getProduct();
+$thresholds = $clearpay->getThresholds($product);
+
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Addtocart $magewire */
+?>
+<div class="rvvup">
+    <?php if ($restrictions->showRestrictionMessage($product)): ?>
+        <p>
+            <?= $escaper->escapeHtml($restrictions->getMessages()->getPdpMessage()) ?>
+        </p>
+    <?php endif; ?>
+    <?php if (is_array($thresholds) && $clearpay->isInThreshold($product, $thresholds) && $magewire->checkIfClearpayIsAvailable()): ?>
+        <div class="clearpay">
+            <afterpay-placement id="clearpay-summary"
+                                data-locale="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentLocale()) ?>"
+                                data-currency="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentCurrencyCode()) ?>"
+                                data-amount="<?= $escaper->escapeHtmlAttr($priceViewModel->getPrice($product)) ?>"
+                                data-logo-type="<?= $escaper->escapeHtmlAttr($clearpay->getLogoType('product')) ?>"
+                                data-badge-theme="<?= $escaper->escapeHtmlAttr($clearpay->getBadgeTheme('product')) ?>"
+                                data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('product')) ?>"
+            ></afterpay-placement>
+        </div>
+    <?php endif; ?>
+    <?php if ($paypalViewModel->canUseForProductType($product)
+        && $paypalViewModel->isAvailable((string) $priceViewModel->getPrice($product))
+        && $paypalViewModel->getPayLaterMessagingValue('enabled') === true
+    ): ?>
+        <div>
+            <div class="rvvup-paypal-paylater-messaging-container"
+                 data-pp-message
+                 data-pp-placement="product"
+                 data-pp-amount="<?= $escaper->escapeHtmlAttr($priceViewModel->getPrice($product)) ?>"
+                 data-pp-style-layout="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('layout')) ?>"
+                 data-pp-style-logo-type="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('logoType')) ?>"
+                 data-pp-style-logo-position="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('logoPosition')) ?>"
+                 data-pp-style-text-color="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('textColor')) ?>"
+                 data-pp-style-text-size="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('textSize')) ?>"
+                 data-pp-style-text-align="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('textAlignment')) ?>"
+                 data-pp-style-color="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('color')) ?>"
+                 data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('ratio')) ?>"
+            ></div>
+        </div>
+    <?php endif; ?>
+</div>
