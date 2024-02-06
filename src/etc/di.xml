@@ -37,4 +37,10 @@
             <argument name="hyvaCheckoutSession" xsi:type="object">Hyva\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\RenderMethodIcons">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>
