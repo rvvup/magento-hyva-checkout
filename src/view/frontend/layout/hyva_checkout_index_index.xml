@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+>
+    <body>
+        <referenceContainer name="hyva.checkout.api-v1.after">
+            <block name="checkout.payment.method.rvvup.card-processor"
+                   as="rvvup.card-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/card-inline-processor.phtml"
+                   after="hyva.checkout.main"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor
+                    </argument>
+                </arguments>
+            </block>
+
+            <block name="checkout.payment.method.rvvup.clearpay-processor"
+                   as="rvvup.clearpay-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/clearpay-processor.phtml"
+                   after="hyva.checkout.main"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ClearpayProcessor
+                    </argument>
+                </arguments>
+            </block>
+
+            <block name="checkout.payment.method.rvvup.paypal-processor"
+                   as="rvvup.paypal-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/paypal-processor.phtml"
+                   after="hyva.checkout.main"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\PayPalProcessor
+                    </argument>
+                </arguments>
+            </block>
+
+            <block name="checkout.payment.method.rvvup.yapily-processor"
+                   as="rvvup.yapily-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/yapily-processor.phtml"
+                   after="hyva.checkout.main"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\YapilyProcessor
+                    </argument>
+                </arguments>
+            </block>
+
+            <block name="checkout.payment.method.rvvup.modal"
+                   as="rvvup.modal"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/modal.phtml"
+                   after="hyva.checkout.main"
+            />
+
+            <block name="checkout.payment.method.rvvup.assets"
+                   as="rvvup.assets"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/assets.phtml"
+                   after="hyva.checkout.main"
+                   class="Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets"
+            />
+        </referenceContainer>
+    </body>
+</page>

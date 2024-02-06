@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var \Magento\Checkout\Block\Cart $block
+ * @var \Rvvup\Payments\ViewModel\Clearpay $clearpay
+ * @var \Magento\Framework\Escaper $escaper
+ */
+/** Magento 2.3.5 backward compatibility fix */
+$clearpay = $block->getClearpay();
+
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Cart\Clearpay $magewire */
+
+if ($block->hasError() || !$clearpay->showByCart()) {
+    // Required for MageWire
+    echo '<div></div>';
+    return;
+}
+?>
+<div class="clearpay" wire:init="load">
+    <?php if ($magewire->isClearpayAvailable): ?>
+        <afterpay-placement id="clearpay-summary"
+                            data-locale="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentLocale()) ?>"
+                            data-currency="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentCurrencyCode()) ?>"
+                            data-amount="<?= $escaper->escapeHtmlAttr($clearpay->getCartTotal()) ?>"
+                            data-logo-type="<?= $escaper->escapeHtmlAttr($clearpay->getLogoType('cart')) ?>"
+                            data-badge-theme="<?= $escaper->escapeHtmlAttr($clearpay->getBadgeTheme('cart')) ?>"
+                            data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('cart')) ?>"
+        ></afterpay-placement>
+    <?php endif; ?>
+</div>

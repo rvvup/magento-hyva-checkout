@@ -1,0 +1,35 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ClearpayProcessor $magewire */
+?>
+
+<script>
+(() => {
+    window.addEventListener('checkout:payment:method-activate', event => {
+        if (event.detail.method !== 'rvvup_YAPILY') {
+            return;
+        }
+
+        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+        hyvaCheckout.payment.activate('rvvup_YAPILY', {
+            initialize() {
+                component.loadPaymentActions();
+            },
+
+            placeOrderViaJs() {
+                return true;
+            },
+
+            placeOrder() {
+                component.placeOrder();
+            }
+        }, document.querySelector('[wire\\:key="rvvup_YAPILY"].active'));
+    });
+})();
+</script>

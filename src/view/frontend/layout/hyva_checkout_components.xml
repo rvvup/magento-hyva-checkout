@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+>
+    <body>
+        <referenceBlock name="checkout.payment.methods">
+            <block name="checkout.payment.method.rvvup_CARD"
+                   as="rvvup_CARD"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/method/card.phtml">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\Card
+                    </argument>
+                </arguments>
+            </block>
+
+            <block name="checkout.payment.method.rvvup_PAYPAL"
+                   as="rvvup_PAYPAL"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/method/paypal.phtml">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

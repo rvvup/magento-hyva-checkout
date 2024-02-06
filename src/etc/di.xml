@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ClearpayProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\PayPalProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\YapilyProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+            <argument name="hyvaCheckoutSession" xsi:type="object">Hyva\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+</config>

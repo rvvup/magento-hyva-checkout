@@ -1,0 +1,19 @@
+<?php
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets $block */
+?>
+
+<?php foreach ($block->getAssets() as $asset): ?>
+    <script type="text/javascript"
+            src="<?= $escaper->escapeHtmlAttr($asset['url']) ?>"
+            <?php
+            foreach ($asset['attributes'] as $name => $value) {
+                if ($value === null) {
+                    echo $escaper->escapeHtmlAttr($name);
+                    continue;
+                }
+                echo $escaper->escapeHtmlAttr($name) . '="' . $escaper->escapeHtmlAttr($value) . '"';
+            }
+            ?>
+    ></script>
+<?php endforeach; ?>
