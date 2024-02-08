@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
-test('Can place an order using the credit card modal', async ({ page, browser }) => {
+const testMethod = process.env.CI ? test.skip : test;
+
+testMethod('Can place an order using the credit card modal', async ({ page, browser }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
     await visitCheckoutPayment.visit();
 

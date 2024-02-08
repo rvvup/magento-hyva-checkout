@@ -46,7 +46,7 @@ class PayPal extends Component
         return (string)$this->checkoutSession->getQuote()->getGrandTotal();
     }
 
-    public function getPayLaterConfigValue(string $key): mixed
+    public function getPayLaterConfigValue(string $key)
     {
         if (!isset($this->parameters['settings']['paypal']['checkout'])) {
             return false;

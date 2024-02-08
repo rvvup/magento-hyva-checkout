@@ -37,7 +37,7 @@ class Addtocart extends Component
         BillingAddressManagementInterface $billingAddressManagement,
         AddressInterfaceFactory $addressFactory,
         HyvaCheckoutSession $hyvaCheckoutSession,
-        ExpressPaymentCreateInterface $expressPaymentCreate,
+        ExpressPaymentCreateInterface $expressPaymentCreate
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartFactory = $cartFactory;
@@ -74,6 +74,8 @@ class Addtocart extends Component
 
         $billingAddress = $this->addressFactory->create();
         $billingAddress->setData($billingAddressInput);
+
+        $cart->setCustomerEmail($billingAddress->getEmail());
 
         $this->billingAddressManagement->assign($cart->getId(), $billingAddress, true);
 
