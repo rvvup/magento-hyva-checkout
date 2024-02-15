@@ -17,11 +17,8 @@
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\RenderMethodIcons"/>
     </type>
 
-    <type name="Hyva\Theme\ViewModel\SvgIcons">
-        <arguments>
-            <argument name="pathPrefixMapping" xsi:type="array">
-                <item name="rvvup_payments" xsi:type="string">Rvvup_PaymentsHyvaCheckout::images/icons/</item>
-            </argument>
-        </arguments>
+    <type name="Hyva\Checkout\Model\MethodMetaData\IconRenderer">
+        <plugin name="rvvup-payment-method-icons"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\IconRenderer\RenderExternalIcon"/>
     </type>
 </config>
