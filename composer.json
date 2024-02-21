@@ -5,7 +5,7 @@
     "require": {
         "rvvup/sdk": "^0.13.8",
         "php": "^7.3 || ^8.1",
-        "rvvup/module-magento-payments": "^0.17.5",
+        "rvvup/module-magento-payments": "dev-main",
         "hyva-themes/magento2-compat-module-fallback": "^1.0",
         "magewirephp/magewire": "dev-main"
     },
