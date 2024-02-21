@@ -15,7 +15,8 @@
         "bitexpert/phpstan-magento": "~0.28",
         "php": "^7.3|^8.1",
         "rvvup/module-magento-payments": "^0.17.2",
-        "hyva-themes/magento2-compat-module-fallback": "^1.0"
+        "hyva-themes/magento2-compat-module-fallback": "^1.0",
+        "magewirephp/magewire": "dev-main"
     },
     "autoload": {
         "files": [
