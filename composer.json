@@ -8,7 +8,7 @@
         "rvvup/module-magento-payments": "dev-main",
         "hyva-themes/magento2-compat-module-fallback": "^1.0",
         "hyva-themes/magento2-hyva-checkout": "^1.1",
-        "magewirephp/magewire": "dev-main"
+        "magewirephp/magewire": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^6 || ^7 || ^8 || ^9 || ^10",
