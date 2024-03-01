@@ -22,6 +22,6 @@ class RenderExternalIcon
             return $result;
         }
 
-        return '<img class="h-11 w-11" src="' . $url . '" alt="Rvvup Payment Method" />';
+        return '<img class="max-h-11 w-11" src="' . $url . '" alt="Rvvup Payment Method" />';
     }
 }
