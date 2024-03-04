@@ -28,7 +28,7 @@ abstract class AbstractProcessor extends Component
         Assets $assetsModel,
         GetPaymentActions $getPaymentActions,
         Session $checkoutSession,
-        SdkProxy $sdkProxy,
+        SdkProxy $sdkProxy
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;
