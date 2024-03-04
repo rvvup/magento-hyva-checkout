@@ -10,11 +10,19 @@ use Rvvup\Payments\Model\SdkProxy;
 
 class RenderMethodIcons
 {
-    private Session $checkoutSession;
-    private SdkProxy $sdkProxy;
+    /** @var Session */
+    private $checkoutSession;
 
-    private ?array $methods = null;
+    /** @var SdkProxy */
+    private $sdkProxy;
 
+    /** @var array|null */
+    private $methods = null;
+
+    /**
+     * @param Session $checkoutSession
+     * @param SdkProxy $sdkProxy
+     */
     public function __construct(
         Session $checkoutSession,
         SdkProxy $sdkProxy

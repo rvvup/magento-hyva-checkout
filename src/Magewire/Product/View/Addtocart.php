@@ -9,10 +9,15 @@ use Rvvup\Payments\Model\ClearpayAvailability;
 
 class Addtocart extends Component
 {
-    private ClearpayAvailability $clearpayAvailability;
+    /** @var ClearpayAvailability */
+    private $clearpayAvailability;
 
-    public bool $isAvailable = false;
+    /** @var bool */
+    public $isAvailable = false;
 
+    /**
+     * @param ClearpayAvailability $clearpayAvailability
+     */
     public function __construct(
         ClearpayAvailability $clearpayAvailability
     ) {

@@ -9,8 +9,14 @@ use Rvvup\Payments\ViewModel\Assets as AssetsModel;
 
 class Assets extends Template
 {
-    private AssetsModel $assetsModel;
+    /** @var AssetsModel  */
+    private $assetsModel;
 
+    /**
+     * @param Template\Context $context
+     * @param AssetsModel $assetsModel
+     * @param array $data
+     */
     public function __construct(
         Template\Context $context,
         AssetsModel $assetsModel,

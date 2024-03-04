@@ -8,14 +8,24 @@ use Rvvup\Payments\Api\Data\PaymentActionInterface;
 
 class GetPaymentsActionsResult
 {
-    private ?PaymentActionInterface $authorization;
-    private ?PaymentActionInterface $cancel;
-    private ?PaymentActionInterface $capture;
+    /** @var PaymentActionInterface|null */
+    private $authorization;
 
+    /** @var PaymentActionInterface|null */
+    private $cancel;
+
+    /** @var PaymentActionInterface|null */
+    private $capture;
+
+    /**
+     * @param PaymentActionInterface|null $authorization
+     * @param PaymentActionInterface|null $cancel
+     * @param PaymentActionInterface|null $capture
+     */
     public function __construct(
         PaymentActionInterface $authorization = null,
         PaymentActionInterface $cancel = null,
-        PaymentActionInterface $capture = null,
+        PaymentActionInterface $capture = null
     ) {
         $this->authorization = $authorization;
         $this->cancel = $cancel;

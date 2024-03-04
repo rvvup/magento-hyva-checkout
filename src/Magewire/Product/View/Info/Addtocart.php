@@ -18,17 +18,43 @@ use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
 
 class Addtocart extends Component
 {
-    private Session $checkoutSession;
-    private CartInterfaceFactory $cartFactory;
-    private CartRepositoryInterface $cartRepository;
-    private ProductRepositoryInterface $productRepository;
-    private BillingAddressManagementInterface $billingAddressManagement;
-    private AddressInterfaceFactory $addressFactory;
-    private HyvaCheckoutSession $hyvaCheckoutSession;
-    private ExpressPaymentCreateInterface $expressPaymentCreate;
+    /** @var Session */
+    private $checkoutSession;
 
-    public string $authorizationToken = '';
+    /** @var CartInterfaceFactory */
+    private $cartFactory;
 
+    /** @var CartRepositoryInterface */
+    private $cartRepository;
+
+    /** @var ProductRepositoryInterface */
+    private $productRepository;
+
+    /** @var BillingAddressManagementInterface */
+    private $billingAddressManagement;
+
+    /** @var AddressInterfaceFactory */
+    private $addressFactory;
+
+    /** @var HyvaCheckoutSession */
+    private $hyvaCheckoutSession;
+
+    /** @var ExpressPaymentCreateInterface */
+    private $expressPaymentCreate;
+
+    /** @var string */
+    public $authorizationToken = '';
+
+    /**
+     * @param Session $checkoutSession
+     * @param CartInterfaceFactory $cartFactory
+     * @param CartRepositoryInterface $cartRepository
+     * @param ProductRepositoryInterface $productRepository
+     * @param BillingAddressManagementInterface $billingAddressManagement
+     * @param AddressInterfaceFactory $addressFactory
+     * @param HyvaCheckoutSession $hyvaCheckoutSession
+     * @param ExpressPaymentCreateInterface $expressPaymentCreate
+     */
     public function __construct(
         Session $checkoutSession,
         CartInterfaceFactory $cartFactory,
@@ -37,7 +63,7 @@ class Addtocart extends Component
         BillingAddressManagementInterface $billingAddressManagement,
         AddressInterfaceFactory $addressFactory,
         HyvaCheckoutSession $hyvaCheckoutSession,
-        ExpressPaymentCreateInterface $expressPaymentCreate,
+        ExpressPaymentCreateInterface $expressPaymentCreate
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartFactory = $cartFactory;

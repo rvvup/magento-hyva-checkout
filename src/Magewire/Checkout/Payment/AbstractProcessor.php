@@ -14,15 +14,34 @@ use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
 
 abstract class AbstractProcessor extends Component
 {
-    private SerializerInterface $serializer;
-    private Assets $assetsModel;
-    private GetPaymentActions $getPaymentActions;
-    protected Session $checkoutSession;
-    protected SdkProxy $sdkProxy;
+    /** @var SerializerInterface */
+    private $serializer;
 
-    public array $paymentActions = [];
-    public array $parameters = [];
+    /** @var Assets */
+    private $assetsModel;
 
+    /** @var GetPaymentActions */
+    private $getPaymentActions;
+
+    /** @var Session */
+    protected $checkoutSession;
+
+    /** @var SdkProxy */
+    protected $sdkProxy;
+
+    /** @var array */
+    public $paymentActions = [];
+
+    /** @var array */
+    public $parameters = [];
+
+    /**
+     * @param SerializerInterface $serializer
+     * @param Assets $assetsModel
+     * @param GetPaymentActions $getPaymentActions
+     * @param Session $checkoutSession
+     * @param SdkProxy $sdkProxy
+     */
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method;
+namespace Rvvup\PaymentsHyvaCheckout\Checkout\Payment\Method;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -14,14 +14,31 @@ use Rvvup\Payments\ViewModel\Assets;
 
 class PayPal extends Component
 {
-    private SerializerInterface $serializer;
-    private Session $checkoutSession;
-    private Assets $assetsModel;
-    private SdkProxy $sdkProxy;
-    private CartExpressPaymentRemove $cartExpressPaymentRemove;
+    /** @var SerializerInterface */
+    private $serializer;
 
-    public array $parameters = [];
+    /** @var Session */
+    private $checkoutSession;
 
+    /** @var Assets */
+    private $assetsModel;
+
+    /** @var SdkProxy */
+    private $sdkProxy;
+
+    /** @var CartExpressPaymentRemove */
+    private $cartExpressPaymentRemove;
+
+    /** @var array */
+    public $parameters = [];
+
+    /**
+     * @param SerializerInterface $serializer
+     * @param Session $checkoutSession
+     * @param Assets $assetsModel
+     * @param SdkProxy $sdkProxy
+     * @param CartExpressPaymentRemove $cartExpressPaymentRemove
+     */
     public function __construct(
         SerializerInterface $serializer,
         Session $checkoutSession,
@@ -46,7 +63,11 @@ class PayPal extends Component
         return (string)$this->checkoutSession->getQuote()->getGrandTotal();
     }
 
-    public function getPayLaterConfigValue(string $key): mixed
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function getPayLaterConfigValue(string $key)
     {
         if (!isset($this->parameters['settings']['paypal']['checkout'])) {
             return false;

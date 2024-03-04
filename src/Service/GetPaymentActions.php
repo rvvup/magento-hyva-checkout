@@ -10,10 +10,20 @@ use Rvvup\Payments\Model\PaymentActionsGetInterface;
 
 class GetPaymentActions
 {
-    private PaymentActionsGetInterface $paymentActionsGet;
-    private GetPaymentsActionsResultFactory $getPaymentsActionsResultFactory;
-    private PaymentActionFactory $paymentActionFactory;
+    /** @var PaymentActionsGetInterface */
+    private $paymentActionsGet;
 
+    /** @var GetPaymentsActionsResultFactory */
+    private $getPaymentsActionsResultFactory;
+
+    /** @var PaymentActionFactory */
+    private $paymentActionFactory;
+
+    /**
+     * @param PaymentActionsGetInterface $paymentActionsGet
+     * @param GetPaymentsActionsResultFactory $getPaymentsActionsResultFactory
+     * @param PaymentActionFactory $paymentActionFactory
+     */
     public function __construct(
         PaymentActionsGetInterface $paymentActionsGet,
         GetPaymentsActionsResultFactory $getPaymentsActionsResultFactory,
