@@ -28,7 +28,7 @@ abstract class AbstractProcessor extends Component
         Assets $assetsModel,
         GetPaymentActions $getPaymentActions,
         Session $checkoutSession,
-        SdkProxy $sdkProxy,
+        SdkProxy $sdkProxy
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;
@@ -44,21 +44,6 @@ abstract class AbstractProcessor extends Component
     }
 
     abstract function getMethodCode(): string;
-
-    public function getInitializationToken(): ?string
-    {
-        return $this->parameters['settings']['card']['initializationToken'];
-    }
-
-    public function getLiveStatus(): int
-    {
-        return $this->parameters['settings']['card']['liveStatus'];
-    }
-
-    public function getTranslation(string $type, string $key, string $default): string
-    {
-        return $this->parameters['settings']['card']['form']['translation'][$type][$key] ?? $default;
-    }
 
     public function loadPaymentActions(): void
     {

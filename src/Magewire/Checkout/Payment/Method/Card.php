@@ -20,7 +20,7 @@ class Card extends Component
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,
-        SdkProxy $sdkProxy,
+        SdkProxy $sdkProxy
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;

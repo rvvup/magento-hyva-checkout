@@ -44,7 +44,7 @@ test.skip('Can place an order', async ({ page, browser }) => {
     await expect(page.getByRole('heading', { name: 'Thank you for your purchase!' })).toBeVisible();
 });
 
-test('Renders the Clearpay on the product page', async ({ page }) => {
+test('Renders the Clearpay widget on the product page', async ({ page }) => {
     await page.goto('/aim-analog-watch.html');
 
     await expect(page.locator('.afterpay-modal-overlay')).toBeHidden();
