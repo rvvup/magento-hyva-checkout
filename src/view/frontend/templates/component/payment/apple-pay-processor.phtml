@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+?>
+
+<script>
+    (() => {
+        window.addEventListener('checkout:payment:method-activate', event => {
+            if (event.detail.method !== 'rvvup_APPLE_PAY') {
+                return;
+            }
+
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_APPLE_PAY', {
+                placeOrderViaJs() {
+                    return true;
+                },
+
+                placeOrder() {
+                    window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                        detail: {
+                            redirectUrl: component.paymentActions.authorization.value
+                        }
+                    }));
+                }
+            }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
+        });
+    })();
+</script>

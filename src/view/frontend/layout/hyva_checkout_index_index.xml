@@ -40,6 +40,17 @@
                 </arguments>
             </block>
 
+            <block name="checkout.payment.method.rvvup.apple-pay-processor"
+                   as="rvvup.apple-pay-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/apple-pay-processor.phtml"
+                   after="hyva.checkout.main">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ApplePayProcessor
+                    </argument>
+                </arguments>
+            </block>
+
             <block name="checkout.payment.method.rvvup.yapily-processor"
                    as="rvvup.yapily-processor"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/yapily-processor.phtml"
