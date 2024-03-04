@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rvvup\PaymentsHyvaCheckout\Checkout\Payment\Method;
+namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
