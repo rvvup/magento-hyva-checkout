@@ -8,20 +8,24 @@ use Hyva\Checkout\Model\MethodMetaData\IconRenderer;
 
 class RenderExternalIcon
 {
+
     /**
-     * Hyvä does not support external images. So render it ourselves.
-     *
      * @param IconRenderer $subject
      * @param string $result
-     * @param string $url
+     * @param array $logo
      * @return string
      */
-    public function afterRenderAsImage(IconRenderer $subject, string $result, string $url): string
+    public function afterRender(IconRenderer $subject, string $result, array $logo): string
     {
-        if (strpos($url, 'rvvup') === false || strpos($url, 'https://') === false) {
-            return $result;
+        if (isset($logo['method_name']) && isset($logo['is_rvvup'])) {
+            if ($logo['is_rvvup']) {
+                $methodName = $logo['method_name'];
+                $url = $logo['url'];
+                $displayName = $logo['display_name'];
+                return "<img class='max-h-11 w-11 $methodName' src='$url' alt='$displayName'/>";
+            }
         }
 
-        return '<img class="max-h-11 w-11" src="' . $url . '" alt="Rvvup Payment Method" />';
+        return $result;
     }
 }

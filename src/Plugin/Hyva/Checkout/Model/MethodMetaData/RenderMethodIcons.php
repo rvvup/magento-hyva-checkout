@@ -30,19 +30,22 @@ class RenderMethodIcons
             return $result;
         }
 
-        $logo = $this->getLogo($code);
+        list($logo, $methodName, $displayName) = $this->getMethodProperties($code);
         if ($logo == null) {
             return $result;
         }
 
         $subject->setData('icon', [
             'src' => $logo,
+            'method_name' => $methodName,
+            'display_name' => $displayName,
+            'is_rvvup' => true
         ]);
 
         return true;
     }
 
-    private function getLogo(string $method): ?string
+    private function getMethodProperties(string $method): ?array
     {
         if ($this->methods === null) {
             $quote = $this->checkoutSession->getQuote();
@@ -53,7 +56,7 @@ class RenderMethodIcons
         $methodName = substr($method, strlen('rvvup_'));
         foreach ($this->methods as $method) {
             if ($method['name'] == $methodName) {
-                return $method['logoUrl'];
+                return [$method['logoUrl'], $method['name'], $method['displayName']];
             }
         }
 
