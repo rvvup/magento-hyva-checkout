@@ -11,21 +11,24 @@ class RenderExternalIcon
 
     /**
      * @param IconRenderer $subject
-     * @param string $result
+     * @param callable $proceed
      * @param array $logo
      * @return string
      */
-    public function afterRender(IconRenderer $subject, string $result, array $logo): string
+    public function aroundRender(IconRenderer $subject, callable $proceed, array $logo): string
     {
-        if (isset($logo['method_name']) && isset($logo['is_rvvup'])) {
-            if ($logo['is_rvvup']) {
-                $methodName = $logo['method_name'];
-                $url = $logo['url'];
-                $displayName = $logo['display_name'];
-                return "<img class='max-h-11 w-11 $methodName' src='$url' alt='$displayName'/>";
+        if (isset($logo['icon'])) {
+            $icon = $logo['icon'];
+            if (isset($icon['method_name']) && isset($icon['is_rvvup'])) {
+                if ($icon['is_rvvup']) {
+                    $methodName = $icon['method_name'];
+                    $url = $icon['src'];
+                    $displayName = $icon['display_name'];
+                    return "<img class='max-h-11 w-11 $methodName' src='$url' alt='$displayName'/>";
+                }
             }
         }
 
-        return $result;
+        return $proceed($logo);
     }
 }
