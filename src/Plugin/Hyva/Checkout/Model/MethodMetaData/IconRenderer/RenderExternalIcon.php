@@ -24,7 +24,7 @@ class RenderExternalIcon
                     $methodName = strtolower(Method::PAYMENT_TITLE_PREFIX . $logo['method_name'] . '_img');
                     $url = $logo['src'];
                     $displayName = $logo['display_name'];
-                    return "<img class='max-h-11 $methodName' src='$url' alt='$displayName'/>";
+                    return "<img class='max-h-11 $methodName' style='margin: 5px' src='$url' alt='$displayName'/>";
                 }
             }
         }
