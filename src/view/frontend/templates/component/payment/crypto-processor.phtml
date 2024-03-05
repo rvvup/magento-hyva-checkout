@@ -11,16 +11,16 @@ use Magento\Framework\Escaper;
 <script>
     (() => {
         window.addEventListener('checkout:payment:method-activate', event => {
-            if (event.detail.method !== 'rvvup_APPLE_PAY') {
+            if (event.detail.method !== 'rvvup_CRYPTO') {
                 return;
             }
 
             const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-            hyvaCheckout.payment.activate('rvvup_APPLE_PAY', {
+            hyvaCheckout.payment.activate('rvvup_CRYPTO', {
+
                 initialize() {
                     component.loadPaymentActions();
                 },
-
                 placeOrderViaJs() {
                     return true;
                 },
@@ -32,7 +32,7 @@ use Magento\Framework\Escaper;
                         }
                     }));
                 }
-            }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
+            }, document.querySelector('[wire\\:key="rvvup_CRYPTO"].active'));
         });
     })();
 </script>
