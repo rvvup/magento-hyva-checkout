@@ -28,6 +28,7 @@ $viewModel = $viewModels->require(ViewModel::class);
 $methods = $viewModel->getList();
 ?>
 <div id="payment-methods">
+    <?php if ($methods): ?>
         <script>
             window.addEventListener('checkout:step:loaded', () => {
                 if('<?= $escaper->escapeJs($magewire->method) ?>' && document.getElementById('payment-method-list')) {
