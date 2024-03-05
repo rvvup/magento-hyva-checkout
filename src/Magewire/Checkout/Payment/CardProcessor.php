@@ -93,7 +93,7 @@ class CardProcessor extends AbstractProcessor
         parent::placeOrder();
     }
 
-    private function showForm(): bool
+    public function showForm(): bool
     {
         return $this->parameters['settings']['card']['flow'] == 'INLINE';
     }

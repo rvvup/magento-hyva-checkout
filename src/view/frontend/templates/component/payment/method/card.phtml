@@ -3,11 +3,8 @@
 /** @var \Magento\Framework\View\Element\Template $block */
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
-
-<div wire:ignore>
     <?php if ($magewire->showForm()): ?>
         <div id="rvvup-card-form">
-            <div id="st-notification-frame"></div>
             <form id="st-form" method="POST">
                 <div id="st-card-number" class="rvvup-card-field rvvup-card-number w-full"></div>
 
@@ -19,10 +16,10 @@
             </form>
         </div>
     <?php endif; ?>
-
     <?php if ($magewire->showFrame()): ?>
+    <div wire:ignore>
         <iframe class="rvvup-summary w-full"
                 allowtransparency="true"
                 src="<?= $escaper->escapeHtmlAttr($magewire->getIframeUrl()); ?>"></iframe>
+    </div>
     <?php endif; ?>
-</div>
