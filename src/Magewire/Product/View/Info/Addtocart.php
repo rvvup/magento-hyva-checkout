@@ -8,11 +8,11 @@ use Hyva\Checkout\Model\Session as HyvaCheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\DataObject;
+use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartInterfaceFactory;
-use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
 
@@ -100,6 +100,10 @@ class Addtocart extends Component
 
         $billingAddress = $this->addressFactory->create();
         $billingAddress->setData($billingAddressInput);
+
+        if (!$cart->getCustomerEmail()) {
+            $cart->setCustomerEmail($billingAddress->getEmail());
+        }
 
         $this->billingAddressManagement->assign($cart->getId(), $billingAddress, true);
 
