@@ -33,6 +33,7 @@ $methods = $viewModel->getList();
         <?php if ($method->getCode() == 'rvvup_APPLE_PAY'): ?>
         <script>
             if (!window.ApplePaySession) {
+                alert('Apple pay session is not defined');
                 <?php unset($methods[$key]);?>
             }
         </script>
