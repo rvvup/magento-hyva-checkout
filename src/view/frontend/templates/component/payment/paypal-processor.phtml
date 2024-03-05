@@ -23,6 +23,7 @@
                     placeOrderButton.style.cursor = "not-allowed";
                     placeOrderButton.disabled = true;
                     component.loadPaymentActions().then(() => {
+                    }).then(() => {
                         this.loadButtons();
                     });
                 }
