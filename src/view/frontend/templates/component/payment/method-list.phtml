@@ -1,10 +1,4 @@
 <?php
-/**
- * Hyvä Themes - https://hyva.io
- * Copyright © Hyvä Themes 2022-present. All rights reserved.
- * This product is licensed per Magento install
- * See https://hyva.io/license
- */
 
 declare(strict_types=1);
 
@@ -94,10 +88,10 @@ $methods = $viewModel->getList();
             <?= $escaper->escapeHtml(__('No Payment method available.')) ?>
         </div>
     <?php endif ?>
+    <script>
+        let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
+        if (applePay && !window.ApplePaySession) {
+            applePay.remove();
+        }
+    </script>
 </div>
-<script>
-    let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
-    if (applePay && !window.ApplePaySession) {
-        applePay.remove();
-    }
-</script>
