@@ -28,18 +28,6 @@ $viewModel = $viewModels->require(ViewModel::class);
 $methods = $viewModel->getList();
 ?>
 <div id="payment-methods">
-    <?php if ($methods): ?>
-        <?php foreach ($methods as $key => $method): ?>
-        <?php if ($method->getCode() == 'rvvup_APPLE_PAY'): ?>
-        <script>
-            if (!window.ApplePaySession) {
-                alert('Apple pay session is not defined');
-                <?php unset($methods[$key]);?>
-            }
-        </script>
-    <?php endif; ?>
-    <?php endforeach; ?>
-
         <script>
             window.addEventListener('checkout:step:loaded', () => {
                 if('<?= $escaper->escapeJs($magewire->method) ?>' && document.getElementById('payment-method-list')) {
@@ -106,3 +94,9 @@ $methods = $viewModel->getList();
         </div>
     <?php endif ?>
 </div>
+<script>
+    let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
+    if (applePay && !window.ApplePaySession) {
+        applePay.remove();
+    }
+</script>
