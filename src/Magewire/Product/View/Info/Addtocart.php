@@ -98,6 +98,10 @@ class Addtocart extends Component
     {
         $cart = $this->checkoutSession->getQuote();
 
+        if (!$cart->getCustomer() || !$cart->getCustomer()->getId()) {
+            $cart->setCustomerIsGuest(true);
+        }
+
         $billingAddress = $this->addressFactory->create();
         $billingAddress->setData($billingAddressInput);
 
