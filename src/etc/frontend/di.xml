@@ -21,4 +21,14 @@
         <plugin name="rvvup-payment-method-icons"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\IconRenderer\RenderExternalIcon"/>
     </type>
+    <type name="Hyva\Checkout\Model\CustomCondition\IsGuest">
+        <plugin name="afterValidateCheckIfCustomerExists"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\IsGuest"
+                sortOrder="1"/>
+    </type>
+    <type name="Hyva\Checkout\Model\CustomCondition\IsCustomer">
+        <plugin name="validateIsCustomer"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\IsCustomer"
+                sortOrder="1"/>
+    </type>
 </config>

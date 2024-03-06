@@ -30,13 +30,22 @@ $methods = $viewModel->getList();
                 }
             }, { once: true })
         </script>
+
         <script>
             window.addEventListener('checkout:payment:method-activate', () => {
+                disableApplePayForIncompatibleBrowsers();
+            }, { once: false })
+
+            window.addEventListener('checkout:step:loaded', () => {
+                disableApplePayForIncompatibleBrowsers();
+            }, { once: false})
+
+            function disableApplePayForIncompatibleBrowsers() {
                 let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
                 if (applePay && !window.ApplePaySession) {
                     applePay.remove();
                 }
-            }, { once: false })
+            }
         </script>
 
         <ol id="payment-method-list" class="space-y-4">
@@ -62,7 +71,7 @@ $methods = $viewModel->getList();
                         <label class="flex justify-between cursor-pointer w-full relative space-x-4"
                                for="payment-method-<?= /* @noEscape */ $methodCodeAttr ?>"
                         >
-                            <div class="text-gray-700 font-bold flex flex-col">
+                            <div class="text-gray-700 font-bold flex flex-col justify-center">
                                 <?= $escaper->escapeHtml($method->getTitle()) ?>
 
                                 <?php if ($methodMetaData->hasSubTitle()): ?>
@@ -73,7 +82,7 @@ $methods = $viewModel->getList();
                             </div>
 
                             <?php if ($methodMetaData->canRenderIcon()): ?>
-                                <div class="-mt-2.5">
+                                <div class="-mt-2.5" style="flex-shrink: 0;">
                                     <?= /* @noEscape */ $methodMetaData->renderIcon() ?>
                                 </div>
                             <?php endif ?>

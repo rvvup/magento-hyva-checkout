@@ -35,7 +35,7 @@ if ($product) {
 <script>
 'use strict';
 function rvvupPayPalExpressButton() {
-    const addToCartForm = document.getElementById('product_addtocart_form');
+    var addToCartForm = document.getElementById('product_addtocart_form');
     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
 
     return {
@@ -67,9 +67,9 @@ function rvvupPayPalExpressButton() {
                     }
 
                     return new Promise((resolve) => {
+                        addToCartForm = document.getElementById('product_addtocart_form');
                         const formData = new FormData(addToCartForm);
                         const request = new URLSearchParams(formData).toString();
-
                         component.createExpressPayment('paypal', request)
                             .then(() => resolve(component.authorizationToken))
                     });
@@ -82,6 +82,10 @@ function rvvupPayPalExpressButton() {
 
                         return component.saveAddress(billingAddress);
                     });
+                },
+
+                onCancel: () => {
+                    component.cancelExpressPayment();
                 }
             }).render(buttonElement);
         },

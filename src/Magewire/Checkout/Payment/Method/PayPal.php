@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method;
-
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Quote\Model\Quote\Payment;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Gateway\Method;
 use Rvvup\Payments\Model\CartExpressPaymentRemove;
@@ -87,18 +87,21 @@ class PayPal extends Component
         return $payment->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY) !== null;
     }
 
-    public function cancel(): void
+    public function cancel(Payment $payment = null): void
     {
         $cart = $this->checkoutSession->getQuote();
-        $payment = $cart->getPayment();
+        if (!$payment) {
+            $payment = $cart->getPayment();
+        }
 
-        $this->cartExpressPaymentRemove->execute((string)$cart->getId());
         if ($payment->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY)) {
-            $rvvupOrderId = $payment->getAdditionalInformation(Method::ORDER_ID);
+            $rvvupOrderId = $payment->getAdditionalInformation(Method::ORDER_ID) ?:
+                $payment->getAdditionalInformation(Method::TRANSACTION_ID);
             $paymentId = $payment->getAdditionalInformation(Method::PAYMENT_ID);
 
             $this->sdkProxy->cancelPayment($paymentId, $rvvupOrderId);
         }
+        $this->cartExpressPaymentRemove->execute((string)$cart->getId());
 
         $this->emitToRefresh('checkout.payment.methods');
     }

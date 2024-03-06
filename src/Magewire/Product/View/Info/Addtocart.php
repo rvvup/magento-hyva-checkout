@@ -15,6 +15,8 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartInterfaceFactory;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Gateway\Method;
+use Rvvup\PaymentsHyvaCheckout\Checkout\Payment\Method\PayPal;
 
 class Addtocart extends Component
 {
@@ -45,6 +47,9 @@ class Addtocart extends Component
     /** @var string */
     public $authorizationToken = '';
 
+    /** @var PayPal  */
+    private $payPal;
+
     /**
      * @param Session $checkoutSession
      * @param CartInterfaceFactory $cartFactory
@@ -54,6 +59,7 @@ class Addtocart extends Component
      * @param AddressInterfaceFactory $addressFactory
      * @param HyvaCheckoutSession $hyvaCheckoutSession
      * @param ExpressPaymentCreateInterface $expressPaymentCreate
+     * @param PayPal $payPal
      */
     public function __construct(
         Session $checkoutSession,
@@ -63,7 +69,8 @@ class Addtocart extends Component
         BillingAddressManagementInterface $billingAddressManagement,
         AddressInterfaceFactory $addressFactory,
         HyvaCheckoutSession $hyvaCheckoutSession,
-        ExpressPaymentCreateInterface $expressPaymentCreate
+        ExpressPaymentCreateInterface $expressPaymentCreate,
+        PayPal $payPal
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartFactory = $cartFactory;
@@ -73,6 +80,7 @@ class Addtocart extends Component
         $this->addressFactory = $addressFactory;
         $this->hyvaCheckoutSession = $hyvaCheckoutSession;
         $this->expressPaymentCreate = $expressPaymentCreate;
+        $this->payPal = $payPal;
     }
 
     public function createExpressPayment(string $method, string $addToCartRequest): void
@@ -98,10 +106,6 @@ class Addtocart extends Component
     {
         $cart = $this->checkoutSession->getQuote();
 
-        if (!$cart->getCustomer() || !$cart->getCustomer()->getId()) {
-            $cart->setCustomerIsGuest(true);
-        }
-
         $billingAddress = $this->addressFactory->create();
         $billingAddress->setData($billingAddressInput);
 
@@ -118,6 +122,16 @@ class Addtocart extends Component
         $this->redirect('checkout');
     }
 
+    /** Cancel Express Paypal Payment */
+    public function cancelExpressPayment(): void
+    {
+        $cart = $this->checkoutSession->getQuote();
+        $payment = $cart->getPayment();
+        $payment->setAdditionalInformation(Method::EXPRESS_PAYMENT_KEY, true);
+
+        $this->payPal->cancel($payment);
+    }
+
     private function getAuthorizationToken(array $paymentActions): string
     {
         foreach ($paymentActions as $paymentAction) {
@@ -129,6 +143,7 @@ class Addtocart extends Component
         throw new \Exception('No authorization token found');
     }
 
+    /** Creates new cart */
     private function getCart(): CartInterface
     {
         $cart = $this->cartFactory->create();
