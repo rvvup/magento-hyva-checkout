@@ -10,4 +10,20 @@ class ApplePayProcessor extends AbstractProcessor
     {
         return 'rvvup_APPLE_PAY';
     }
+
+    public function placeOrder(): void
+    {
+        $redirectUrl = null;
+        if (array_key_exists('capture', $this->paymentActions)) {
+            $redirectUrl = $this->paymentActions['capture']['value'];
+        }
+
+        if (array_key_exists('authorization', $this->paymentActions) &&
+            $this->paymentActions['authorization']['method'] == 'redirect_url'
+        ) {
+            $redirectUrl = $this->paymentActions['authorization']['value'];
+        }
+
+        $this->redirect($redirectUrl);
+    }
 }
