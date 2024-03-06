@@ -16,7 +16,7 @@ use Magento\Quote\Api\Data\CartInterfaceFactory;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
 use Rvvup\Payments\Gateway\Method;
-use Rvvup\PaymentsHyvaCheckout\Checkout\Payment\Method\PayPal;
+use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal;
 
 class Addtocart extends Component
 {
