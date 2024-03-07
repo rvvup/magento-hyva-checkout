@@ -41,6 +41,7 @@ function rvvupPayPalExpressButton() {
     return {
         init() {
             const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
+            let orderStarted = false;
 
             if (!window.rvvup_paypal) {
                 console.error('PayPal SDK not loaded');
@@ -53,6 +54,15 @@ function rvvupPayPalExpressButton() {
                 onClick: (data, actions) => {
                     if (!this.validateAddToCartForm()) {
                         actions.reject();
+                    }
+
+                    if (orderStarted) {
+                        addToCartForm = document.getElementById('product_addtocart_form');
+                        const formData = new FormData(addToCartForm);
+                        const request = new URLSearchParams(formData).toString();
+
+                        return component.updateExpressPayment('paypal', request)
+                            .then(() => actions.resolve())
                     }
                 },
 
@@ -70,6 +80,7 @@ function rvvupPayPalExpressButton() {
                         addToCartForm = document.getElementById('product_addtocart_form');
                         const formData = new FormData(addToCartForm);
                         const request = new URLSearchParams(formData).toString();
+                        orderStarted = true;
                         component.createExpressPayment('paypal', request)
                             .then(() => resolve(component.authorizationToken))
                     });

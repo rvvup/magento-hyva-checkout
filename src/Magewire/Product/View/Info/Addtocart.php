@@ -85,14 +85,21 @@ class Addtocart extends Component
 
     public function createExpressPayment(string $method, string $addToCartRequest): void
     {
-        parse_str($addToCartRequest, $request);
-        $product = $this->productRepository->getById($request['product']);
-
         $cart = $this->getCart();
-        $cart->addProduct($product, new DataObject($request));
-        $this->cartRepository->save($cart);
+        $this->addProductToCart($addToCartRequest, $cart);
 
-        $cart->collectTotals();
+        $paymentActions = $this->expressPaymentCreate->execute(
+            (string)$cart->getEntityId(),
+            $method
+        );
+
+        $this->authorizationToken = $this->getAuthorizationToken($paymentActions);
+    }
+
+    public function updateExpressPayment(string $method, string $addToCartRequest): void
+    {
+        $cart = $this->checkoutSession->getQuote()->removeAllItems();
+        $this->addProductToCart($addToCartRequest, $cart);
 
         $paymentActions = $this->expressPaymentCreate->execute(
             (string)$cart->getEntityId(),
@@ -153,5 +160,16 @@ class Addtocart extends Component
         $this->checkoutSession->replaceQuote($cart);
 
         return $cart;
+    }
+
+    private function addProductToCart(string $addToCartRequest, CartInterface $cart): void
+    {
+        parse_str($addToCartRequest, $request);
+        $product = $this->productRepository->getById($request['product']);
+
+        $cart->addProduct($product, new DataObject($request));
+        $this->cartRepository->save($cart);
+
+        $cart->collectTotals();
     }
 }
