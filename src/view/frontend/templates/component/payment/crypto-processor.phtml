@@ -31,6 +31,7 @@ use Magento\Framework\Escaper;
                             redirectUrl: component.paymentActions.authorization.value
                         }
                     }));
+                    component.placeOrder();
                 }
             }, document.querySelector('[wire\\:key="rvvup_CRYPTO"].active'));
         });
