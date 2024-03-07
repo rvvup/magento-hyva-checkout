@@ -134,6 +134,8 @@ class Addtocart extends Component
     {
         $cart = $this->checkoutSession->getQuote();
         $payment = $cart->getPayment();
+        $cart->removeAllItems();
+        $this->cartRepository->save($cart);
         $payment->setAdditionalInformation(Method::EXPRESS_PAYMENT_KEY, true);
 
         $this->payPal->cancel($payment);
