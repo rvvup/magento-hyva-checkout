@@ -8,6 +8,7 @@ use Hyva\Checkout\Model\Session as HyvaCheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
@@ -86,7 +87,11 @@ class Addtocart extends Component
     public function createExpressPayment(string $method, string $addToCartRequest): void
     {
         $cart = $this->getCart();
-        $this->addProductToCart($addToCartRequest, $cart);
+        $message = $this->addProductToCart($addToCartRequest, $cart);
+        if ($message) {
+            $this->dispatchErrorMessage($message);
+            return;
+        }
 
         $paymentActions = $this->expressPaymentCreate->execute(
             (string)$cart->getEntityId(),
@@ -99,7 +104,12 @@ class Addtocart extends Component
     public function updateExpressPayment(string $method, string $addToCartRequest): void
     {
         $cart = $this->checkoutSession->getQuote()->removeAllItems();
-        $this->addProductToCart($addToCartRequest, $cart);
+
+        $message = $this->addProductToCart($addToCartRequest, $cart);
+        if ($message) {
+            $this->dispatchErrorMessage($message);
+            return;
+        }
 
         $paymentActions = $this->expressPaymentCreate->execute(
             (string)$cart->getEntityId(),
@@ -164,14 +174,22 @@ class Addtocart extends Component
         return $cart;
     }
 
-    private function addProductToCart(string $addToCartRequest, CartInterface $cart): void
+    /**
+     * @param string $addToCartRequest
+     * @param CartInterface $cart
+     * @return string|null
+     */
+    private function addProductToCart(string $addToCartRequest, CartInterface $cart): ?string
     {
         parse_str($addToCartRequest, $request);
         $product = $this->productRepository->getById($request['product']);
-
-        $cart->addProduct($product, new DataObject($request));
-        $this->cartRepository->save($cart);
-
-        $cart->collectTotals();
+        try {
+            $cart->addProduct($product, new DataObject($request));
+            $this->cartRepository->save($cart);
+            $cart->collectTotals();
+            return null;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
