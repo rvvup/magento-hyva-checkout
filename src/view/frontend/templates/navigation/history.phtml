@@ -1,0 +1,50 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2022-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Checkout\ViewModel\Navigation;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+/** @var Navigation $viewModel */
+
+$viewModel = $viewModels->require(Navigation::class);
+$config = $viewModel->getConfig();
+?>
+<?php if ($config->hasSteps() && $config->isMultiStepper()): ?>
+    <?php $previous = $config->getStepBefore() ?>
+    <?php $next = $config->getStepAfter() ?>
+
+    <?php if (is_array($previous) && $viewModel->getSystemConfig()->showNavigationBackButton()): ?>
+        <button type="button"
+                rel="prev"
+                class="btn btn-secondary"
+                x-spread="buttonPrevious('<?= $escaper->escapeJs($previous['route']) ?>')"
+                x-bind="buttonPrevious('<?= $escaper->escapeJs($previous['route']) ?>')"
+                style="padding-right: 10px;padding-left: 10px;margin: 1px 15px 1px auto;"
+        >
+            <?= $escaper->escapeHtml(__('Back to %1', [strtolower((string) __($previous['label'] ?? 'previous step'))])) ?>
+        </button>
+    <?php endif ?>
+
+    <?php if (is_array($next)): ?>
+        <button type="button"
+                rel="next"
+                class="btn btn-primary"
+                x-spread="buttonNext('<?= $escaper->escapeJs($next['route']) ?>')"
+                x-bind="buttonNext('<?= $escaper->escapeJs($next['route']) ?>')"
+        >
+            <?= $escaper->escapeHtml(__('Proceed to %1', [strtolower((string) __($next['label'] ?? 'next step'))])) ?>
+        </button>
+    <?php endif ?>
+<?php endif ?>

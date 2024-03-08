@@ -92,5 +92,8 @@
                    class="Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets"
             />
         </referenceContainer>
+        <referenceBlock name="hyva.checkout.navigation.history"
+                        template="Rvvup_PaymentsHyvaCheckout::navigation/history.phtml">
+        </referenceBlock>
     </body>
 </page>
