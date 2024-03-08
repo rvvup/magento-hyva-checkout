@@ -42,6 +42,16 @@ use Magento\Framework\Escaper;
                     },
                     errorCallback: function () {
                         validationPromise.resolve(false);
+
+                        var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
+                        fetch(
+                            url,
+                            {
+                                method: 'post',
+                                headers: {contentType: 'application/json'}
+                            }
+                        )
+
                         /** Hide loader */
                         let magewire = document.getElementById('magewire-loader');
                         magewire.children[0].style.display = 'none';
