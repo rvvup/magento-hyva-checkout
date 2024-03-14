@@ -161,6 +161,9 @@ class CardProcessor extends AbstractProcessor
 
     public function showForm(): bool
     {
-        return $this->parameters['settings']['card']['flow'] == 'INLINE';
+        if (isset($this->parameters['settings']['card']['flow'])) {
+            return $this->parameters['settings']['card']['flow'] == 'INLINE';
+        }
+        return false;
     }
 }
