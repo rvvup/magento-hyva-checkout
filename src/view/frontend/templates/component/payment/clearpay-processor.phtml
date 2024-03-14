@@ -8,7 +8,7 @@ use Magento\Framework\Escaper;
 /** @var Escaper $escaper */
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ClearpayProcessor $magewire */
 ?>
-
+<div wire:ignore>
 <script>
     (() => {
         window.addEventListener('checkout:payment:method-activate', event => {
@@ -30,3 +30,4 @@ use Magento\Framework\Escaper;
         });
     })();
 </script>
+</div>

@@ -2,6 +2,7 @@
 /** @var \Magento\Framework\View\Element\Template $block */
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
+<div wire:ignore>
 <script>
     window.addEventListener('checkout:payment:method-activate', (event) => {
         const divId = 'rvvup-paypal-button-container';
@@ -129,3 +130,4 @@
         }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
     });
 </script>
+</div>

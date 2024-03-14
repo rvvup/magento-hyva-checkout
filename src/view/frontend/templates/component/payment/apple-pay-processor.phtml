@@ -7,7 +7,7 @@ use Magento\Framework\Escaper;
 /** @var Template $block */
 /** @var Escaper $escaper */
 ?>
-
+<div wire:ignore>
 <script>
     (() => {
         window.addEventListener('checkout:payment:method-activate', event => {
@@ -22,10 +22,10 @@ use Magento\Framework\Escaper;
                 },
 
                 placeOrder() {
-                    component.loadPaymentActions();
-                    window.location.replace(component.paymentActions.authorization.value);
+                    return component.placeOrder();
                 }
             }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
         });
     })();
 </script>
+</div>
