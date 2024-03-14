@@ -17,16 +17,20 @@ use Magento\Framework\Escaper;
 
             const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_CARD', {
-
                 placeOrderViaJs() {
                     return true;
                 },
 
                 placeOrder() {
-                    component.placeOrder();
-                }
-            }, document.querySelector('.rvvup-summary'));
+                    component.loadPaymentActions().then(() => {
+                        window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                            detail: {
+                                redirectUrl: component.paymentActions.capture.value
+                            }
+                        }))
+                    });
+                },
+            }, document.querySelector('[wire\\:key="rvvup_CARD"].active'));
         });
     })();
 </script>
-
