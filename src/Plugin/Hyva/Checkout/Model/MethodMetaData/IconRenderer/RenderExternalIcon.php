@@ -5,23 +5,30 @@ declare(strict_types=1);
 namespace Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\IconRenderer;
 
 use Hyva\Checkout\Model\MethodMetaData\IconRenderer;
+use Rvvup\Payments\Gateway\Method;
 
 class RenderExternalIcon
 {
+
     /**
-     * Hyvä does not support external images. So render it ourselves.
-     *
      * @param IconRenderer $subject
-     * @param string $result
-     * @param string $url
+     * @param callable $proceed
+     * @param array $logo
      * @return string
      */
-    public function afterRenderAsImage(IconRenderer $subject, string $result, string $url): string
+    public function aroundRender(IconRenderer $subject, callable $proceed, array $logo): string
     {
-        if (strpos($url, 'rvvup') === false || strpos($url, 'https://') === false) {
-            return $result;
+        if (isset($logo['src'])) {
+            if (isset($logo['method_name']) && isset($logo['is_rvvup'])) {
+                if ($logo['is_rvvup']) {
+                    $methodName = strtolower(Method::PAYMENT_TITLE_PREFIX . $logo['method_name'] . '_img');
+                    $url = $logo['src'];
+                    $displayName = $logo['display_name'];
+                    return "<img class='max-h-11 m-4 $methodName' src='$url' alt='$displayName' style='min-width: 40px'/>";
+                }
+            }
         }
 
-        return '<img class="max-h-11 w-11" src="' . $url . '" alt="Rvvup Payment Method" />';
+        return $proceed($logo);
     }
 }

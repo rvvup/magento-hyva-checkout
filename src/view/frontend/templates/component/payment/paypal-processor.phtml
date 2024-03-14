@@ -16,24 +16,30 @@
 
         const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
         hyvaCheckout.payment.activate('rvvup_PAYPAL', {
-            alreadyRendered: false,
 
             initialize() {
-                component.loadPaymentActions().then(() => {
-                    this.loadButtons();
-                });
+                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                if (placeOrderButton) {
+                    placeOrderButton.style.cursor = "not-allowed";
+                    placeOrderButton.disabled = true;
+                    component.loadPaymentActions().then(() => {
+                    }).then(() => {
+                        this.loadButtons();
+                    });
+                }
             },
 
             loadButtons() {
+                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 if (component.isExpressPayment) {
+                    placeOrderButton.disabled = false;
+                    placeOrderButton.style.cursor = "auto";
                     return;
                 }
-
                 if (document.getElementById(divId)) {
                     return;
                 }
 
-                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 if (!placeOrderButton) {
                     console.error('Error: Place order button not found')
                     return;
@@ -46,6 +52,8 @@
                 paypalDiv.setAttribute('class', 'z-0');
 
                 placeOrderButton.style.display = 'none';
+                placeOrderButton.disabled = false;
+                placeOrderButton.style.cursor = "auto";
                 placeOrderButton.appendChild(paypalDiv);
                 placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
 

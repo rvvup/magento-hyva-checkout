@@ -8,27 +8,60 @@ use Hyva\Checkout\Model\Session as HyvaCheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartInterfaceFactory;
-use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Gateway\Method;
+use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal;
 
 class Addtocart extends Component
 {
-    private Session $checkoutSession;
-    private CartInterfaceFactory $cartFactory;
-    private CartRepositoryInterface $cartRepository;
-    private ProductRepositoryInterface $productRepository;
-    private BillingAddressManagementInterface $billingAddressManagement;
-    private AddressInterfaceFactory $addressFactory;
-    private HyvaCheckoutSession $hyvaCheckoutSession;
-    private ExpressPaymentCreateInterface $expressPaymentCreate;
+    /** @var Session */
+    private $checkoutSession;
 
-    public string $authorizationToken = '';
+    /** @var CartInterfaceFactory */
+    private $cartFactory;
 
+    /** @var CartRepositoryInterface */
+    private $cartRepository;
+
+    /** @var ProductRepositoryInterface */
+    private $productRepository;
+
+    /** @var BillingAddressManagementInterface */
+    private $billingAddressManagement;
+
+    /** @var AddressInterfaceFactory */
+    private $addressFactory;
+
+    /** @var HyvaCheckoutSession */
+    private $hyvaCheckoutSession;
+
+    /** @var ExpressPaymentCreateInterface */
+    private $expressPaymentCreate;
+
+    /** @var string */
+    public $authorizationToken = '';
+
+    /** @var PayPal  */
+    private $payPal;
+
+    /**
+     * @param Session $checkoutSession
+     * @param CartInterfaceFactory $cartFactory
+     * @param CartRepositoryInterface $cartRepository
+     * @param ProductRepositoryInterface $productRepository
+     * @param BillingAddressManagementInterface $billingAddressManagement
+     * @param AddressInterfaceFactory $addressFactory
+     * @param HyvaCheckoutSession $hyvaCheckoutSession
+     * @param ExpressPaymentCreateInterface $expressPaymentCreate
+     * @param PayPal $payPal
+     */
     public function __construct(
         Session $checkoutSession,
         CartInterfaceFactory $cartFactory,
@@ -38,6 +71,7 @@ class Addtocart extends Component
         AddressInterfaceFactory $addressFactory,
         HyvaCheckoutSession $hyvaCheckoutSession,
         ExpressPaymentCreateInterface $expressPaymentCreate,
+        PayPal $payPal
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartFactory = $cartFactory;
@@ -47,18 +81,35 @@ class Addtocart extends Component
         $this->addressFactory = $addressFactory;
         $this->hyvaCheckoutSession = $hyvaCheckoutSession;
         $this->expressPaymentCreate = $expressPaymentCreate;
+        $this->payPal = $payPal;
     }
 
     public function createExpressPayment(string $method, string $addToCartRequest): void
     {
-        parse_str($addToCartRequest, $request);
-        $product = $this->productRepository->getById($request['product']);
-
         $cart = $this->getCart();
-        $cart->addProduct($product, new DataObject($request));
-        $this->cartRepository->save($cart);
+        $message = $this->addProductToCart($addToCartRequest, $cart);
+        if ($message) {
+            $this->dispatchErrorMessage($message);
+            return;
+        }
 
-        $cart->collectTotals();
+        $paymentActions = $this->expressPaymentCreate->execute(
+            (string)$cart->getEntityId(),
+            $method
+        );
+
+        $this->authorizationToken = $this->getAuthorizationToken($paymentActions);
+    }
+
+    public function updateExpressPayment(string $method, string $addToCartRequest): void
+    {
+        $cart = $this->checkoutSession->getQuote()->removeAllItems();
+
+        $message = $this->addProductToCart($addToCartRequest, $cart);
+        if ($message) {
+            $this->dispatchErrorMessage($message);
+            return;
+        }
 
         $paymentActions = $this->expressPaymentCreate->execute(
             (string)$cart->getEntityId(),
@@ -75,6 +126,10 @@ class Addtocart extends Component
         $billingAddress = $this->addressFactory->create();
         $billingAddress->setData($billingAddressInput);
 
+        if (!$cart->getCustomerEmail()) {
+            $cart->setCustomerEmail($billingAddress->getEmail());
+        }
+
         $this->billingAddressManagement->assign($cart->getId(), $billingAddress, true);
 
         if ($this->hyvaCheckoutSession->getSteps()) {
@@ -82,6 +137,18 @@ class Addtocart extends Component
         }
 
         $this->redirect('checkout');
+    }
+
+    /** Cancel Express Paypal Payment */
+    public function cancelExpressPayment(): void
+    {
+        $cart = $this->checkoutSession->getQuote();
+        $payment = $cart->getPayment();
+        $cart->removeAllItems();
+        $this->cartRepository->save($cart);
+        $payment->setAdditionalInformation(Method::EXPRESS_PAYMENT_KEY, true);
+
+        $this->payPal->cancel($payment);
     }
 
     private function getAuthorizationToken(array $paymentActions): string
@@ -95,6 +162,7 @@ class Addtocart extends Component
         throw new \Exception('No authorization token found');
     }
 
+    /** Creates new cart */
     private function getCart(): CartInterface
     {
         $cart = $this->cartFactory->create();
@@ -104,5 +172,24 @@ class Addtocart extends Component
         $this->checkoutSession->replaceQuote($cart);
 
         return $cart;
+    }
+
+    /**
+     * @param string $addToCartRequest
+     * @param CartInterface $cart
+     * @return string|null
+     */
+    private function addProductToCart(string $addToCartRequest, CartInterface $cart): ?string
+    {
+        parse_str($addToCartRequest, $request);
+        $product = $this->productRepository->getById($request['product']);
+        try {
+            $cart->addProduct($product, new DataObject($request));
+            $this->cartRepository->save($cart);
+            $cart->collectTotals();
+            return null;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }

@@ -48,8 +48,8 @@ function initRvvupModal() {
                     width = event.data.hasOwnProperty('width') ? event.data.width : null;
 
                 if (event.data.type === 'rvvup-payment-modal|close') {
-                    this.hide();
                     this.iframeUrl = null;
+                    this.hide();
                 }
 
                 if (event.data.type === 'rvvup-payment-modal|resize') {
@@ -69,7 +69,19 @@ function initRvvupModal() {
                     document.querySelector('.rvvup-summary').style.height = height + 'px';
                 }
             });
-        }
+            const originalHide = this.hide;
+            this.hide = (value) => {
+                var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
+                fetch(
+                    url,
+                    {
+                        method: 'post',
+                        headers: {contentType: 'application/json'}
+                    }
+                )
+                return originalHide.call(this, value);
+            }
+        },
     }
 }
 </script>

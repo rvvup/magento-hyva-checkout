@@ -9,10 +9,15 @@ use Rvvup\Payments\Model\ClearpayAvailability;
 
 class Clearpay extends Component
 {
-    private ClearpayAvailability $clearpayAvailability;
+    /** @var ClearpayAvailability */
+    private $clearpayAvailability;
 
-    public bool $isClearpayAvailable = false;
+    /** @var bool */
+    public $isClearpayAvailable = false;
 
+    /**
+     * @param ClearpayAvailability $clearpayAvailability
+     */
     public function __construct(
         ClearpayAvailability $clearpayAvailability
     ) {

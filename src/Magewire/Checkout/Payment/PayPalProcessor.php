@@ -12,7 +12,8 @@ use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
 
 class PayPalProcessor extends AbstractProcessor
 {
-    public bool $isExpressPayment = false;
+    /** @var bool */
+    public $isExpressPayment = false;
 
     public function getMethodCode(): string
     {

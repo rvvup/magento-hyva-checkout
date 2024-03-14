@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method;
-
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Quote\Model\Quote\Payment;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Gateway\Method;
 use Rvvup\Payments\Model\CartExpressPaymentRemove;
@@ -14,14 +14,31 @@ use Rvvup\Payments\ViewModel\Assets;
 
 class PayPal extends Component
 {
-    private SerializerInterface $serializer;
-    private Session $checkoutSession;
-    private Assets $assetsModel;
-    private SdkProxy $sdkProxy;
-    private CartExpressPaymentRemove $cartExpressPaymentRemove;
+    /** @var SerializerInterface */
+    private $serializer;
 
-    public array $parameters = [];
+    /** @var Session */
+    private $checkoutSession;
 
+    /** @var Assets */
+    private $assetsModel;
+
+    /** @var SdkProxy */
+    private $sdkProxy;
+
+    /** @var CartExpressPaymentRemove */
+    private $cartExpressPaymentRemove;
+
+    /** @var array */
+    public $parameters = [];
+
+    /**
+     * @param SerializerInterface $serializer
+     * @param Session $checkoutSession
+     * @param Assets $assetsModel
+     * @param SdkProxy $sdkProxy
+     * @param CartExpressPaymentRemove $cartExpressPaymentRemove
+     */
     public function __construct(
         SerializerInterface $serializer,
         Session $checkoutSession,
@@ -46,7 +63,11 @@ class PayPal extends Component
         return (string)$this->checkoutSession->getQuote()->getGrandTotal();
     }
 
-    public function getPayLaterConfigValue(string $key): mixed
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function getPayLaterConfigValue(string $key)
     {
         if (!isset($this->parameters['settings']['paypal']['checkout'])) {
             return false;
@@ -66,18 +87,21 @@ class PayPal extends Component
         return $payment->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY) !== null;
     }
 
-    public function cancel(): void
+    public function cancel(Payment $payment = null): void
     {
         $cart = $this->checkoutSession->getQuote();
-        $payment = $cart->getPayment();
+        if (!$payment) {
+            $payment = $cart->getPayment();
+        }
 
-        $this->cartExpressPaymentRemove->execute((string)$cart->getId());
         if ($payment->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY)) {
-            $rvvupOrderId = $payment->getAdditionalInformation(Method::ORDER_ID);
+            $rvvupOrderId = $payment->getAdditionalInformation(Method::ORDER_ID) ?:
+                $payment->getAdditionalInformation(Method::TRANSACTION_ID);
             $paymentId = $payment->getAdditionalInformation(Method::PAYMENT_ID);
 
             $this->sdkProxy->cancelPayment($paymentId, $rvvupOrderId);
         }
+        $this->cartExpressPaymentRemove->execute((string)$cart->getId());
 
         $this->emitToRefresh('checkout.payment.methods');
     }

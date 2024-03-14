@@ -1,0 +1,39 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+?>
+
+<script>
+    (() => {
+        window.addEventListener('checkout:payment:method-activate', event => {
+            if (event.detail.method !== 'rvvup_FAKE_PAYMENT_METHOD') {
+                return;
+            }
+
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_FAKE_PAYMENT_METHOD', {
+
+                initialize() {
+                    component.loadPaymentActions();
+                },
+                placeOrderViaJs() {
+                    return true;
+                },
+
+                placeOrder() {
+                    window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                        detail: {
+                            redirectUrl: component.paymentActions.authorization.value
+                        }
+                    }));
+                    component.placeOrder();
+                }
+            }, document.querySelector('[wire\\:key="rvvup_FAKE_PAYMENT_METHOD"].active'));
+        });
+    })();
+</script>

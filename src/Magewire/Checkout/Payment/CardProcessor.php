@@ -14,8 +14,17 @@ use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
 
 class CardProcessor extends AbstractProcessor
 {
-    private CartRepositoryInterface $cartRepository;
+    /** @var CartRepositoryInterface */
+    private $cartRepository;
 
+    /**
+     * @param SerializerInterface $serializer
+     * @param Assets $assetsModel
+     * @param Session $checkoutSession
+     * @param SdkProxy $sdkProxy
+     * @param GetPaymentActions $getPaymentActions
+     * @param CartRepositoryInterface $cartRepository
+     */
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,
@@ -84,7 +93,7 @@ class CardProcessor extends AbstractProcessor
         parent::placeOrder();
     }
 
-    private function showForm(): bool
+    public function showForm(): bool
     {
         return $this->parameters['settings']['card']['flow'] == 'INLINE';
     }

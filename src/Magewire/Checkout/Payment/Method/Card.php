@@ -11,16 +11,27 @@ use Rvvup\Payments\ViewModel\Assets;
 
 class Card extends Component
 {
-    private SerializerInterface $serializer;
-    private Assets $assetsModel;
-    private SdkProxy $sdkProxy;
+    /** @var SerializerInterface */
+    private $serializer;
 
-    public array $parameters = [];
+    /** @var Assets */
+    private $assetsModel;
 
+    /** @var SdkProxy */
+    private $sdkProxy;
+
+    /** @var array */
+    public $parameters = [];
+
+    /**
+     * @param SerializerInterface $serializer
+     * @param Assets $assetsModel
+     * @param SdkProxy $sdkProxy
+     */
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,
-        SdkProxy $sdkProxy,
+        SdkProxy $sdkProxy
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;

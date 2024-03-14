@@ -3,7 +3,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
 >
     <body>
-        <referenceBlock name="checkout.payment.methods">
+        <referenceBlock name="checkout.payment.methods" template="Rvvup_PaymentsHyvaCheckout::component/payment/method-list.phtml">
             <block name="checkout.payment.method.rvvup_CARD"
                    as="rvvup_CARD"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/method/card.phtml">

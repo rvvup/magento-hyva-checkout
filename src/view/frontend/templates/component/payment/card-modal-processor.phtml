@@ -27,9 +27,15 @@ use Magento\Framework\Escaper;
             },
 
             placeOrder() {
+                window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                    detail: {
+                        redirectUrl: component.paymentActions.authorization.value
+                    }
+                }));
                 component.placeOrder();
             }
         }, document.querySelector('.rvvup-summary'));
     });
 })();
 </script>
+
