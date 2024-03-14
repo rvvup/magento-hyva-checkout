@@ -17,15 +17,12 @@ use Magento\Framework\Escaper;
 
             const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_APPLE_PAY', {
-
-                initialize() {
-                    component.loadPaymentActions();
-                },
                 placeOrderViaJs() {
                     return true;
                 },
 
                 placeOrder() {
+                    component.loadPaymentActions();
                     window.location.replace(component.paymentActions.authorization.value);
                 }
             }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));

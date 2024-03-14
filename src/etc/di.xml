@@ -10,6 +10,7 @@
     <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+            <argument name="logger" xsi:type="object">RvvupLog</argument>
         </arguments>
     </type>
 

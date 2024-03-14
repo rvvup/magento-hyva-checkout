@@ -17,20 +17,11 @@ use Magento\Framework\Escaper;
 
             const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_CRYPTO', {
-
-                initialize() {
-                    component.loadPaymentActions();
-                },
                 placeOrderViaJs() {
                     return true;
                 },
 
                 placeOrder() {
-                    window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
-                        detail: {
-                            redirectUrl: component.paymentActions.authorization.value
-                        }
-                    }));
                     component.placeOrder();
                 }
             }, document.querySelector('[wire\\:key="rvvup_CRYPTO"].active'));

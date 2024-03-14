@@ -3,23 +3,23 @@
 /** @var \Magento\Framework\View\Element\Template $block */
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
-    <?php if ($magewire->showForm()): ?>
-        <div id="rvvup-card-form">
-            <form id="st-form" method="POST">
-                <div id="st-card-number" class="rvvup-card-field rvvup-card-number w-full"></div>
+<?php if ($magewire->showForm()): ?>
+    <div id="rvvup-card-form">
+        <form id="st-form" method="POST">
+            <div id="st-card-number" class="rvvup-card-field rvvup-card-number w-full"></div>
 
-                <div class="flex">
-                    <div id="st-expiration-date" class="rvvup-card-field rvvup-card-expiry mr-4"></div>
-                    <div id="st-security-code" class="rvvup-card-field rvvup-card-security-code ml-4"></div>
-                </div>
-                <input type="submit" id="tp_place_order" class="hidden">
-            </form>
-        </div>
-    <?php endif; ?>
-    <?php if ($magewire->showFrame()): ?>
+            <div class="flex">
+                <div id="st-expiration-date" class="rvvup-card-field rvvup-card-expiry mr-4"></div>
+                <div id="st-security-code" class="rvvup-card-field rvvup-card-security-code ml-4"></div>
+            </div>
+            <input type="submit" id="tp_place_order" class="hidden">
+        </form>
+    </div>
+<?php endif; ?>
+<?php if ($magewire->showFrame()): ?>
     <div wire:ignore>
         <iframe class="rvvup-summary w-full"
                 allowtransparency="true"
                 src="<?= $escaper->escapeHtmlAttr($magewire->getIframeUrl()); ?>"></iframe>
     </div>
-    <?php endif; ?>
+<?php endif; ?>

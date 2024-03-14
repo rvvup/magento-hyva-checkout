@@ -20,20 +20,17 @@
             initialize() {
                 let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 if (placeOrderButton) {
-                    placeOrderButton.style.cursor = "not-allowed";
-                    placeOrderButton.disabled = true;
-                    component.loadPaymentActions().then(() => {
-                    }).then(() => {
-                        this.loadButtons();
-                    });
+                    let magewire = document.getElementById('magewire-loader');
+                    magewire.children[0].style.display = 'block';
+                    this.loadButtons();
                 }
             },
 
             loadButtons() {
                 let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 if (component.isExpressPayment) {
-                    placeOrderButton.disabled = false;
-                    placeOrderButton.style.cursor = "auto";
+                    let magewire = document.getElementById('magewire-loader');
+                    magewire.children[0].style.display = 'none';
                     return;
                 }
                 if (document.getElementById(divId)) {
@@ -50,10 +47,7 @@
                 paypalDiv.id = divId;
                 paypalDiv.setAttribute('class', 'rvvup-paypal-button');
                 paypalDiv.setAttribute('class', 'z-0');
-
                 placeOrderButton.style.display = 'none';
-                placeOrderButton.disabled = false;
-                placeOrderButton.style.cursor = "auto";
                 placeOrderButton.appendChild(paypalDiv);
                 placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
 
@@ -61,7 +55,10 @@
                     style: this.getButtonStyle(),
 
                     createOrder: () => {
-                        return component.paymentActions.authorization.value
+                        /** Show loader */
+                        let magewire = document.getElementById('magewire-loader');
+                        magewire.children[0].style.display = 'none';
+                        return component.paymentActions.authorization.value;
                     },
                     onApprove: () => {
                         window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
@@ -70,15 +67,31 @@
                             }
                         }))
                     },
+                    onCancel: () => {
+                        let magewire = document.getElementById('magewire-loader');
+                        magewire.children[0].style.display = 'none';
+                    },
+                    onError: (error) => {
+                        let magewire = document.getElementById('magewire-loader');
+                        magewire.children[0].style.display = 'none';
+                        console.log(error);
+                    },
+                    onClick: (data, actions) => {
+                        let magewire = document.getElementById('magewire-loader');
+                        magewire.children[0].style.display = 'block';
+                        return component.loadPaymentActions()
+                            .then(function () {
+                                return actions.resolve();
+                            });
+                    },
                 }).render('#' + paypalDiv.id);
+
+                let magewire = document.getElementById('magewire-loader');
+                magewire.children[0].style.display = 'none';
             },
 
             placeOrderViaJs() {
                 return true;
-            },
-
-            placeOrder() {
-                component.placeOrder();
             },
 
             getButtonStyle() {

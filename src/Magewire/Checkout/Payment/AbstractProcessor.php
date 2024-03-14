@@ -7,7 +7,6 @@ namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magewirephp\Magewire\Component;
-use Rvvup\Payments\Gateway\Method;
 use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
 use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
@@ -59,7 +58,6 @@ abstract class AbstractProcessor extends Component
     public function mount(): void
     {
         $this->parameters = $this->serializer->unserialize($this->assetsModel->getRvvupParametersJsObject());
-        $this->loadPaymentActions();
     }
 
     abstract function getMethodCode(): string;
@@ -112,6 +110,22 @@ abstract class AbstractProcessor extends Component
 
     public function placeOrder(): void
     {
+        $this->loadPaymentActions();
+        $redirectUrl = $this->getRedirectUrl();
+
+        $this->dispatchBrowserEvent(
+            'rvvup:update:showModal',
+            [
+                'redirectUrl' => $redirectUrl,
+            ]
+        );
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRedirectUrl(): ?string
+    {
         $redirectUrl = null;
         if (array_key_exists('capture', $this->paymentActions)) {
             $redirectUrl = $this->paymentActions['capture']['value'];
@@ -122,12 +136,6 @@ abstract class AbstractProcessor extends Component
         ) {
             $redirectUrl = $this->paymentActions['authorization']['value'];
         }
-
-        $this->dispatchBrowserEvent(
-            'rvvup:update:showModal',
-            [
-                'redirectUrl' => $redirectUrl,
-            ]
-        );
+        return $redirectUrl;
     }
 }

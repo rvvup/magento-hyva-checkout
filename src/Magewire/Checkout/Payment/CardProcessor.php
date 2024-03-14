@@ -6,16 +6,26 @@ namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\Validation\ValidationException;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Psr\Log\LoggerInterface;
+use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
 use Rvvup\Payments\Gateway\Method;
 use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
-use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
+use Rvvup\Sdk\Exceptions\ApiError;
 
 class CardProcessor extends AbstractProcessor
 {
     /** @var CartRepositoryInterface */
     private $cartRepository;
+
+    /** @var LoggerInterface */
+    private $logger;
+
+    /** @var UrlInterface */
+    private $url;
 
     /**
      * @param SerializerInterface $serializer
@@ -24,6 +34,8 @@ class CardProcessor extends AbstractProcessor
      * @param SdkProxy $sdkProxy
      * @param GetPaymentActions $getPaymentActions
      * @param CartRepositoryInterface $cartRepository
+     * @param UrlInterface $url
+     * @param LoggerInterface $logger
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -31,11 +43,15 @@ class CardProcessor extends AbstractProcessor
         Session $checkoutSession,
         SdkProxy $sdkProxy,
         GetPaymentActions $getPaymentActions,
-        CartRepositoryInterface $cartRepository
+        CartRepositoryInterface $cartRepository,
+        UrlInterface $url,
+        LoggerInterface $logger
     ) {
         parent::__construct($serializer, $assetsModel, $getPaymentActions, $checkoutSession, $sdkProxy);
 
         $this->cartRepository = $cartRepository;
+        $this->url = $url;
+        $this->logger = $logger;
     }
 
     public function mount(): void
@@ -83,14 +99,64 @@ class CardProcessor extends AbstractProcessor
         $rvvupOrderId = (string)$payment->getAdditionalInformation('transaction_id');
         $rvvupPaymentId = $payment->getAdditionalInformation(Method::PAYMENT_ID);
 
-        $this->sdkProxy->confirmCardAuthorization(
-            $rvvupPaymentId,
-            $rvvupOrderId,
-            $authorizationResponse,
-            $threeDSecureResponse
-        );
+        $data = [$rvvupPaymentId, $rvvupOrderId, $authorizationResponse, $threeDSecureResponse];
+        $message = $this->confirmCardAuthorization($data);
 
-        parent::placeOrder();
+        $redirectUrl = $this->getRedirectUrl();
+
+        if (!$message) {
+            $this->dispatchBrowserEvent(
+                'rvvup:update:showModal',
+                ['redirectUrl' => $redirectUrl]
+            );
+        } else {
+            $this->sdkProxy->cancelPayment($rvvupPaymentId, $rvvupOrderId);
+            $this->checkoutSession->setRvvupErrorMessage($message);
+            $redirectUrl = $this->url->getCurrentUrl();
+            $this->redirect($redirectUrl);
+        }
+    }
+
+    public function getErrorMessage(): ?string
+    {
+        return $this->checkoutSession->getRvvupErrorMessage();
+    }
+
+    /**
+     * @param array $data
+     * @param int $retries
+     * @return string|null
+     */
+    private function confirmCardAuthorization(array $data, int $retries = 5): ?string
+    {
+        try {
+            list($rvvupPaymentId, $rvvupOrderId, $authorizationResponse, $threeDSecureResponse) = $data;
+
+            $this->sdkProxy->confirmCardAuthorization(
+                $rvvupPaymentId,
+                $rvvupOrderId,
+                $authorizationResponse,
+                $threeDSecureResponse
+            );
+            return null;
+        } catch (\Exception $exception) {
+            if ($exception instanceof ApiError) {
+                 if ($exception->getErrorCode() == 'card_authorization_not_found') {
+                    if ($retries > 0) {
+                        $retries--;
+                        sleep(1);
+                        $this->confirmCardAuthorization($data, $retries);
+                    } else {
+                        $this->logger->error(
+                            'Rvvup hyva card inline processor failed, payment id: '.
+                            $rvvupPaymentId . ' order id :'. $rvvupOrderId .
+                            ' message:' . $exception->getMessage()
+                        );
+                    }
+                }
+            }
+            return $exception->getMessage();
+        }
     }
 
     public function showForm(): bool

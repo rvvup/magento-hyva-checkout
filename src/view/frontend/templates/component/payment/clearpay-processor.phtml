@@ -10,26 +10,23 @@ use Magento\Framework\Escaper;
 ?>
 
 <script>
-(() => {
-    window.addEventListener('checkout:payment:method-activate', event => {
-        if (event.detail.method !== 'rvvup_CLEARPAY') {
-            return;
-        }
-
-        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-        hyvaCheckout.payment.activate('rvvup_CLEARPAY', {
-            initialize() {
-                component.loadPaymentActions();
-            },
-
-            placeOrderViaJs() {
-                return true;
-            },
-
-            placeOrder() {
-                component.placeOrder();
+    (() => {
+        window.addEventListener('checkout:payment:method-activate', event => {
+            if (event.detail.method !== 'rvvup_CLEARPAY') {
+                return;
             }
-        }, document.querySelector('[wire\\:key="rvvup_CLEARPAY"].active'));
-    });
-})();
+
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_CLEARPAY', {
+
+                placeOrderViaJs() {
+                    return true;
+                },
+
+                placeOrder() {
+                    component.placeOrder();
+                }
+            }, document.querySelector('[wire\\:key="rvvup_CLEARPAY"].active'));
+        });
+    })();
 </script>

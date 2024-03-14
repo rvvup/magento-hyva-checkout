@@ -8,34 +8,25 @@ use Magento\Framework\Escaper;
 /** @var Escaper $escaper */
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor $magewire */
 ?>
-
 <script>
-(() => {
-    window.addEventListener('checkout:payment:method-activate', event => {
-        if (event.detail.method !== 'rvvup_CARD') {
-            return;
-        }
-
-        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-        hyvaCheckout.payment.activate('rvvup_CARD', {
-            initialize() {
-                component.loadPaymentActions();
-            },
-
-            placeOrderViaJs() {
-                return true;
-            },
-
-            placeOrder() {
-                window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
-                    detail: {
-                        redirectUrl: component.paymentActions.authorization.value
-                    }
-                }));
-                component.placeOrder();
+    (() => {
+        window.addEventListener('checkout:payment:method-activate', event => {
+            if (event.detail.method !== 'rvvup_CARD') {
+                return;
             }
-        }, document.querySelector('.rvvup-summary'));
-    });
-})();
+
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_CARD', {
+
+                placeOrderViaJs() {
+                    return true;
+                },
+
+                placeOrder() {
+                    component.placeOrder();
+                }
+            }, document.querySelector('.rvvup-summary'));
+        });
+    })();
 </script>
 

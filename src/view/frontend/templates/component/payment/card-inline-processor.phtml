@@ -9,111 +9,106 @@ use Magento\Framework\Escaper;
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor $magewire */
 ?>
 <div wire:ignore>
-<script>
-(() => {
-    let ST = null;
-    let validationPromise = null;
+    <script>
+        (() => {
+            let ST = null;
+            let validationPromise = null;
 
-    window.addEventListener('checkout:payment:method-activate', event => {
-        if (event.detail.method !== 'rvvup_CARD') {
-            return;
-        }
+            window.addEventListener('checkout:payment:method-activate', event => {
+                if (event.detail.method !== 'rvvup_CARD') {
+                    return;
+                }
 
-        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-        hyvaCheckout.payment.activate('rvvup_CARD', {
-            initialize() {
-                component.loadPaymentActions();
+                const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
 
-                ST = SecureTrading({
-                    jwt: '<?= $magewire->getInitializationToken() ?>',
-                    animatedCard: true,
-                    livestatus: <?= $magewire->getLiveStatus() ?>,
-                    buttonId: "tp_place_order",
-                    deferInit: true,
-                    submitOnSuccess: false,
-                    panIcon: true,
-                    stopSubmitFormOnEnter: true,
-                    formId: "st-form",
-                    submitCallback: function (data) {
-                        let threeD = data.threedresponse || null;
-                        let authorization = data.jwt;
+                hyvaCheckout.payment.activate('rvvup_CARD', {
+                    initialize() {
+                        ST = SecureTrading({
+                            jwt: '<?= $magewire->getInitializationToken() ?>',
+                            animatedCard: true,
+                            livestatus: <?= $magewire->getLiveStatus() ?>,
+                            buttonId: "tp_place_order",
+                            deferInit: true,
+                            submitOnSuccess: false,
+                            panIcon: true,
+                            stopSubmitFormOnEnter: true,
+                            formId: "st-form",
+                            submitCallback: function (data) {
+                                let threeD = data.threedresponse || null;
+                                let authorization = data.jwt;
 
-                        component.handleCallback(authorization, threeD).then(() => validationPromise.resolve(true));
+                                component.handleCallback(authorization, threeD).then(() => validationPromise.resolve(true));
+                            },
+                            errorCallback: function () {
+                                validationPromise.resolve(false);
+                                var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
+                                fetch(
+                                    url,
+                                    {
+                                        method: 'post',
+                                        headers: {contentType: 'application/json'}
+                                    }
+                                )
+
+                                /** Hide loader */
+                                let magewire = document.getElementById('magewire-loader');
+                                magewire.children[0].style.display = 'none';
+                            },
+                            translations: {
+                                "Card number": '<?php echo $magewire->getTranslation('label', 'cardNumber', 'Card Number'); ?>',
+                                "Expiration date": '<?php echo $magewire->getTranslation('label', 'expiryDate', 'Expiration Date'); ?>',
+                                "Security code": '<?php echo $magewire->getTranslation('label', 'securityCode', 'Security Code'); ?>',
+                                Pay: '<?php echo $magewire->getTranslation('button', 'pay', 'Pay'); ?>',
+                                Processing: '<?php echo $magewire->getTranslation('button', 'processing', 'Processing'); ?>',
+                                "Field is required":
+                                    '<?php echo $magewire->getTranslation('error', 'fieldRequired', 'Field is required'); ?>',
+                                "Value is too short":
+                                    '<?php echo $magewire->getTranslation('error', 'valueTooShort', 'Value is too short'); ?>',
+                                "Value mismatch pattern":
+                                    '<?php echo $magewire->getTranslation('error', 'valueMismatch', 'Value is invalid'); ?>',
+                            },
+                            styles: {
+                                "background-color-input": "#FFFFFF",
+                                "border-color-input": "#EBEBF2",
+                                "border-radius-input": "8px",
+                                "border-size-input": "1px",
+                                "color-input": "#050505",
+                                "border-color-input-error": "#ff4545",
+                                "color-label": "#050505",
+                                "position-left-label": "0.5rem",
+                                "font-size-label": "1.2rem",
+                                "font-size-message": "1rem",
+                                "space-outset-message": "0rem 0px 0px 0.5rem",
+                            },
+                        });
+
+                        ST.Components();
                     },
-                    errorCallback: function () {
-                        validationPromise.resolve(false);
 
-                        var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
-                        fetch(
-                            url,
-                            {
-                                method: 'post',
-                                headers: {contentType: 'application/json'}
-                            }
-                        )
+                    validate() {
+                        return new Promise((resolve, reject) => {
+                            /** Show loader */
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'block';
 
-                        /** Hide loader */
-                        let magewire = document.getElementById('magewire-loader');
-                        magewire.children[0].style.display = 'none';
+                            validationPromise = {resolve, reject};
+
+                            component.loadPaymentActions().then(() => {
+                                ST.updateJWT(component.paymentActions.authorization.value);
+                                document.getElementById('tp_place_order').click();
+                            });
+                        });
                     },
-                    translations: {
-                        "Card number": '<?php echo $magewire->getTranslation('label', 'cardNumber', 'Card Number'); ?>',
-                        "Expiration date": '<?php echo $magewire->getTranslation('label', 'expiryDate', 'Expiration Date'); ?>',
-                        "Security code": '<?php echo $magewire->getTranslation('label', 'securityCode', 'Security Code'); ?>',
-                        Pay: '<?php echo $magewire->getTranslation('button', 'pay', 'Pay'); ?>',
-                        Processing: '<?php echo $magewire->getTranslation('button', 'processing', 'Processing'); ?>',
-                        "Field is required":
-                            '<?php echo $magewire->getTranslation('error', 'fieldRequired', 'Field is required'); ?>',
-                        "Value is too short":
-                            '<?php echo $magewire->getTranslation('error', 'valueTooShort', 'Value is too short'); ?>',
-                        "Value mismatch pattern":
-                            '<?php echo $magewire->getTranslation('error', 'valueMismatch', 'Value is invalid'); ?>',
+
+                    placeOrderViaJs() {
+                        return true;
                     },
-                    styles: {
-                        "background-color-input": "#FFFFFF",
-                        "border-color-input": "#EBEBF2",
-                        "border-radius-input": "8px",
-                        "border-size-input": "1px",
-                        "color-input": "#050505",
-                        "border-color-input-error": "#ff4545",
-                        "color-label": "#050505",
-                        "position-left-label": "0.5rem",
-                        "font-size-label": "1.2rem",
-                        "font-size-message": "1rem",
-                        "space-outset-message": "0rem 0px 0px 0.5rem",
-                    },
-                });
 
-                ST.Components();
-            },
-
-            validate() {
-                return new Promise((resolve, reject) => {
-                    /** Show loader */
-                    let magewire = document.getElementById('magewire-loader');
-                    magewire.children[0].style.display = 'block';
-
-                    validationPromise = {resolve, reject};
-
-                    if (!component.paymentActions) {
-                        resolve(false);
-                        return;
+                    placeOrder() {
+                        component.placeOrder();
                     }
-
-                    ST.updateJWT(component.paymentActions.authorization.value);
-                    document.getElementById('tp_place_order').click();
-                });
-            },
-
-            placeOrderViaJs() {
-                return true;
-            },
-
-            placeOrder() {
-                component.placeOrder();
-            }
-        }, document.querySelector('[wire\\:key="rvvup_CARD"].active'));
-    });
-})();
-</script>
+                }, document.querySelector('[wire\\:key="rvvup_CARD"].active'));
+            });
+        })();
+    </script>
 </div>
