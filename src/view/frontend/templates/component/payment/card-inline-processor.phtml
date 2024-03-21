@@ -49,10 +49,6 @@ use Magento\Framework\Escaper;
                                         headers: {contentType: 'application/json'}
                                     }
                                 )
-
-                                /** Hide loader */
-                                let magewire = document.getElementById('magewire-loader');
-                                magewire.children[0].style.display = 'none';
                             },
                             translations: {
                                 "Card number": '<?php echo $magewire->getTranslation('label', 'cardNumber', 'Card Number'); ?>',

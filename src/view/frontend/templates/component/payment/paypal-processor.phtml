@@ -3,131 +3,152 @@
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
 <div wire:ignore>
-<script>
-    window.addEventListener('checkout:payment:method-activate', (event) => {
-        const divId = 'rvvup-paypal-button-container';
-        if (event.detail.method !== 'rvvup_PAYPAL') {
-            if (document.getElementById(divId)) {
-                document.getElementById(divId).remove();
-                document.querySelector('.nav-main .btn-primary').removeAttribute('style');
+    <script>
+        window.addEventListener('checkout:payment:method-activate', (event) => {
+            const divId = 'rvvup-paypal-button-container';
+            if (event.detail.method !== 'rvvup_PAYPAL') {
+                if (document.getElementById(divId)) {
+                    document.getElementById(divId).remove();
+                    document.querySelector('.nav-main .btn-primary').removeAttribute('style');
+                }
+
+                return;
             }
 
-            return;
-        }
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_PAYPAL', {
 
-        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-        hyvaCheckout.payment.activate('rvvup_PAYPAL', {
-
-            initialize() {
-                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
-                if (placeOrderButton) {
-                    let magewire = document.getElementById('magewire-loader');
-                    magewire.children[0].style.display = 'block';
-                    this.loadButtons();
-                }
-            },
-
-            loadButtons() {
-                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
-                if (component.isExpressPayment) {
-                    let magewire = document.getElementById('magewire-loader');
-                    magewire.children[0].style.display = 'none';
-                    return;
-                }
-                if (document.getElementById(divId)) {
-                    return;
-                }
-
-                if (!placeOrderButton) {
-                    console.error('Error: Place order button not found')
-                    return;
-                }
-
-                // Append an empty div to .nav-main
-                const paypalDiv = document.createElement('div');
-                paypalDiv.id = divId;
-                paypalDiv.setAttribute('class', 'rvvup-paypal-button');
-                paypalDiv.setAttribute('class', 'z-0');
-                placeOrderButton.style.display = 'none';
-                placeOrderButton.appendChild(paypalDiv);
-                placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
-
-                rvvup_paypal.Buttons({
-                    style: this.getButtonStyle(),
-
-                    createOrder: () => {
-                        /** Show loader */
-                        let magewire = document.getElementById('magewire-loader');
-                        magewire.children[0].style.display = 'none';
-                        return component.paymentActions.authorization.value;
-                    },
-                    onApprove: () => {
-                        window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
-                            detail: {
-                                redirectUrl: component.paymentActions.capture.value
-                            }
-                        }))
-                    },
-                    onCancel: () => {
-                        let magewire = document.getElementById('magewire-loader');
-                        magewire.children[0].style.display = 'none';
-                    },
-                    onError: (error) => {
-                        let magewire = document.getElementById('magewire-loader');
-                        magewire.children[0].style.display = 'none';
-                        console.log(error);
-                    },
-                    onClick: (data, actions) => {
+                initialize() {
+                    let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                    if (placeOrderButton) {
                         let magewire = document.getElementById('magewire-loader');
                         magewire.children[0].style.display = 'block';
-                        return component.loadPaymentActions()
-                            .then(function () {
-                                return actions.resolve();
-                            });
-                    },
-                }).render('#' + paypalDiv.id);
+                        this.loadButtons();
+                    }
+                },
 
-                let magewire = document.getElementById('magewire-loader');
-                magewire.children[0].style.display = 'none';
-            },
+                loadButtons() {
+                    let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                    if (component.isExpressPayment) {
+                        let magewire = document.getElementById('magewire-loader');
+                        magewire.children[0].style.display = 'none';
+                        return;
+                    }
+                    if (document.getElementById(divId)) {
+                        return;
+                    }
 
-            placeOrderViaJs() {
-                return true;
-            },
+                    if (!placeOrderButton) {
+                        console.error('Error: Place order button not found')
+                        return;
+                    }
 
-            getButtonStyle() {
-                if (typeof rvvup_parameters !== 'object') {
-                    return {
-                        layout: 'vertical',
-                        color: 'gold',
-                        shape: 'rect',
-                        label: 'paypal',
-                        tagline: false,
+                    // Append an empty div to .nav-main
+                    const paypalDiv = document.createElement('div');
+                    paypalDiv.id = divId;
+                    paypalDiv.setAttribute('class', 'rvvup-paypal-button');
+                    paypalDiv.setAttribute('class', 'z-0');
+                    placeOrderButton.style.display = 'none';
+                    placeOrderButton.appendChild(paypalDiv);
+                    placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
+
+                    rvvup_paypal.Buttons({
+                        style: this.getButtonStyle(),
+
+                        createOrder: () => {
+                            /** Show loader */
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'none';
+                            return component.paymentActions.authorization.value;
+                        },
+                        onApprove: () => {
+                            window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                                detail: {
+                                    redirectUrl: component.paymentActions.capture.value
+                                }
+                            }))
+                        },
+                        onCancel: () => {
+                            var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
+                            fetch(
+                                url,
+                                {
+                                    method: 'post',
+                                    headers: {contentType: 'application/json'}
+                                }
+                            )
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'none';
+                        },
+                        onError: (error) => {
+                            var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
+                            fetch(
+                                url,
+                                {
+                                    method: 'post',
+                                    headers: {contentType: 'application/json'}
+                                }
+                            )
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'none';
+                            window.rvvup_error = error;
+                            window.location.reload();
+                        },
+                        onClick: (data, actions) => {
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'block';
+                            return component.loadPaymentActions()
+                                .then(function () {
+                                    return actions.resolve();
+                                });
+                        },
+                    }).render('#' + paypalDiv.id);
+
+                    let magewire = document.getElementById('magewire-loader');
+                    magewire.children[0].style.display = 'none';
+                },
+
+                placeOrderViaJs() {
+                    return true;
+                },
+
+                placeOrder() {
+                    return component.placeOrder();
+                },
+
+                getButtonStyle() {
+                    if (typeof rvvup_parameters !== 'object') {
+                        return {
+                            layout: 'vertical',
+                            color: 'gold',
+                            shape: 'rect',
+                            label: 'paypal',
+                            tagline: false,
+                        };
+                    }
+
+                    const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
+                    const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
+                    const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
+                    const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
+                    const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
+                    const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
+
+                    let style = {
+                        layout: layout,
+                        color: color,
+                        shape: shape,
+                        label: label,
+                        tagline: tagline,
                     };
+
+                    if (size !== null) {
+                        style.height = size;
+                    }
+
+                    return style;
                 }
-
-                const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
-                const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
-                const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
-                const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
-                const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
-                const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
-
-                let style = {
-                    layout: layout,
-                    color: color,
-                    shape: shape,
-                    label: label,
-                    tagline: tagline,
-                };
-
-                if (size !== null) {
-                    style.height = size;
-                }
-
-                return style;
-            }
-        }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
-    });
-</script>
+            }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
+        });
+    </script>
 </div>

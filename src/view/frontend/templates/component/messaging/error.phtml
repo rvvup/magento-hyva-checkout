@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Rvvup\PaymentsHyvaCheckout\Block\Checkout\Messaging;
+
+/** @var Messaging $block */
+/** @var Escaper $escaper */
+
+$error = $block->getRvvupError();
+?>
+
+<?php if ($error): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            window.dispatchMessages([
+                {
+                    type: "error",
+                    text: '<?= $escaper->escapeJs($error) ?>'
+                }
+            ]);
+        });
+    </script>
+<?php endif; ?>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var rvvupError = window.rvvup_error;
+        window.rvvup_error = null;
+        if (rvvupError) {
+            window.dispatchMessages([
+                {
+                    type: "error",
+                    text: rvvupError
+                }
+            ]);
+        }
+    });
+</script>

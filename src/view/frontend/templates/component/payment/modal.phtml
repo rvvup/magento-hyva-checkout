@@ -42,7 +42,11 @@ $modal = $modelViewModel->createModal()
                     this.show('<?= $escaper->escapeHtmlAttr($modal->getDialogRefName()) ?>');
 
                     this.iframeUrl = event.detail.redirectUrl;
-                })
+                });
+
+                window.addEventListener('rvvup:reload', () => {
+                    window.location.reload();
+                });
 
                 window.addEventListener('message', event => {
                     let height = event.data.hasOwnProperty('height') ? event.data.height : null,
