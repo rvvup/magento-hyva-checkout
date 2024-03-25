@@ -4,29 +4,29 @@
 ?>
 <div>
     <?php if ($magewire->getPayLaterConfigValue('enabled')): ?>
-    <div class="rvvup-pp-message"
-         data-pp-message
-         data-pp-placement="payment"
-         data-pp-style-layout="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('layout')); ?>"
-         data-pp-style-logo-type="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('logoType')); ?>"
-         data-pp-style-logo-position="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('logoPosition')); ?>"
-         data-pp-style-text-color="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textColor')); ?>"
-         data-pp-style-text-size="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textSize')); ?>"
-         data-pp-style-text-align="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textAlignment')); ?>"
-         data-pp-style-color="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('color')); ?>"
-         data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('ratio')); ?>"
-         data-pp-amount="<?= $escaper->escapeHtmlAttr($magewire->getTotal()); ?>"
-    ></div>
+        <div class="rvvup-pp-message"
+             data-pp-message
+             data-pp-placement="payment"
+             data-pp-style-layout="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('layout')); ?>"
+             data-pp-style-logo-type="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('logoType')); ?>"
+             data-pp-style-logo-position="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('logoPosition')); ?>"
+             data-pp-style-text-color="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textColor')); ?>"
+             data-pp-style-text-size="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textSize')); ?>"
+             data-pp-style-text-align="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('textAlignment')); ?>"
+             data-pp-style-color="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('color')); ?>"
+             data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($magewire->getPayLaterConfigValue('ratio')); ?>"
+             data-pp-amount="<?= $escaper->escapeHtmlAttr($magewire->getTotal()); ?>"
+        ></div>
     <?php endif; ?>
 
     <?php if ($magewire->isExpressPayment()): ?>
-    <div class="mt-4 text-xs">
-        <?= __(
+        <div class="mt-4 text-xs">
+            <?= __(
                 'You are currently paying with %1. If you want to cancel this process, please click <a %2>here</a>',
                 'PayPal',
                 'href="#" onclick="hyvaCheckout.loader.start()" wire:click.prevent="cancel" class="underline"'
             );
-        ?>
-    </div>
+            ?>
+        </div>
     <?php endif; ?>
 </div>

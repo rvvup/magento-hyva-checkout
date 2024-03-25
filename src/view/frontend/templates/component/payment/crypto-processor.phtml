@@ -7,7 +7,7 @@ use Magento\Framework\Escaper;
 /** @var Template $block */
 /** @var Escaper $escaper */
 ?>
-
+<div wire:ignore>
 <script>
     (() => {
         window.addEventListener('checkout:payment:method-activate', event => {
@@ -17,23 +17,15 @@ use Magento\Framework\Escaper;
 
             const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_CRYPTO', {
-
-                initialize() {
-                    component.loadPaymentActions();
-                },
                 placeOrderViaJs() {
                     return true;
                 },
 
                 placeOrder() {
-                    window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
-                        detail: {
-                            redirectUrl: component.paymentActions.authorization.value
-                        }
-                    }));
-                    component.placeOrder();
+                    return component.placeOrder();
                 }
             }, document.querySelector('[wire\\:key="rvvup_CRYPTO"].active'));
         });
     })();
 </script>
+</div>

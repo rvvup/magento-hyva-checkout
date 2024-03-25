@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info;
 
+use Hyva\Checkout\Exception\CheckoutException;
 use Hyva\Checkout\Model\Session as HyvaCheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -16,6 +19,7 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartInterfaceFactory;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
+use Rvvup\Payments\Exception\PaymentValidationException;
 use Rvvup\Payments\Gateway\Method;
 use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal;
 
@@ -84,24 +88,15 @@ class Addtocart extends Component
         $this->payPal = $payPal;
     }
 
+    /**
+     * @param string $method
+     * @param string $addToCartRequest
+     * @return void
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
+     * @throws PaymentValidationException
+     */
     public function createExpressPayment(string $method, string $addToCartRequest): void
-    {
-        $cart = $this->getCart();
-        $message = $this->addProductToCart($addToCartRequest, $cart);
-        if ($message) {
-            $this->dispatchErrorMessage($message);
-            return;
-        }
-
-        $paymentActions = $this->expressPaymentCreate->execute(
-            (string)$cart->getEntityId(),
-            $method
-        );
-
-        $this->authorizationToken = $this->getAuthorizationToken($paymentActions);
-    }
-
-    public function updateExpressPayment(string $method, string $addToCartRequest): void
     {
         $cart = $this->checkoutSession->getQuote()->removeAllItems();
 
@@ -119,6 +114,14 @@ class Addtocart extends Component
         $this->authorizationToken = $this->getAuthorizationToken($paymentActions);
     }
 
+    /**
+     * @param array $billingAddressInput
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     * @throws CheckoutException
+     * @throws InputException
+     */
     public function saveAddress(array $billingAddressInput): void
     {
         $cart = $this->checkoutSession->getQuote();
@@ -162,22 +165,11 @@ class Addtocart extends Component
         throw new \Exception('No authorization token found');
     }
 
-    /** Creates new cart */
-    private function getCart(): CartInterface
-    {
-        $cart = $this->cartFactory->create();
-        $cart->setStoreId($this->checkoutSession->getStoreId());
-        $this->cartRepository->save($cart);
-
-        $this->checkoutSession->replaceQuote($cart);
-
-        return $cart;
-    }
-
     /**
      * @param string $addToCartRequest
      * @param CartInterface $cart
      * @return string|null
+     * @throws NoSuchEntityException
      */
     private function addProductToCart(string $addToCartRequest, CartInterface $cart): ?string
     {
