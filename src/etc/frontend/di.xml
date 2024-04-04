@@ -11,7 +11,6 @@
             </argument>
         </arguments>
     </type>
-
     <type name="Hyva\Checkout\Model\MethodMetaData">
         <plugin name="rvvup-payment-method-icons"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\RenderMethodIcons"/>
@@ -29,6 +28,11 @@
     <type name="Hyva\Checkout\Model\CustomCondition\IsCustomer">
         <plugin name="validateIsCustomer"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\IsCustomer"
+                sortOrder="1"/>
+    </type>
+    <type name="Magento\Framework\View\Model\Layout\Merge">
+        <plugin name="addClearpayToHyva"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\MergeClearpay"
                 sortOrder="1"/>
     </type>
 </config>
