@@ -24,7 +24,7 @@ This plugin comes with Playwright tests to ensure its functionality. To run the 
 
 ```bash
 npm ci # Install the required dependencies
-npx playwright test --ui
+ENV TEST_BASE_URL=https://magento.test npx playwright test --ui # change your base url to point to the right domain
 ```
 
 **Please note:** There are tests included for credit card for both the inline and the modal versions. It depends on the configuration of the payment method which test will succeed.
