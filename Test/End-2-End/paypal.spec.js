@@ -5,14 +5,14 @@ test('Can place an order using PayPal', async ({ page, browser }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
     await visitCheckoutPayment.visit();
 
-    await page.getByLabel('PayPal').click();
+    await page.getByLabel('PayPal', { exact: true }).click();
 
     await expect(page.locator('#rvvup-paypal-button-container')).toBeVisible();
 
     page.on('popup', async popup => {
         await popup.waitForLoadState();
 
-        await popup.getByPlaceholder('Email or mobile number').fill('sb-uqeqf29136249@personal.example.com');
+        await popup.getByPlaceholder('Email').fill('sb-uqeqf29136249@personal.example.com');
         await popup.getByPlaceholder('Password').fill('h5Hc/b8M');
 
         await popup.getByRole('button', { name: 'Log In' }).click();
@@ -33,12 +33,12 @@ test('Can place an order using PayPal', async ({ page, browser }) => {
 test('Can place an order from the product page using PayPal', async ({ page }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
 
-    await page.goto('/aim-analog-watch.html');
+    await page.goto('./joust-duffle-bag.html');
 
     page.on('popup', async popup => {
         await popup.waitForLoadState();
 
-        await popup.getByPlaceholder('Email or mobile number').fill('sb-uqeqf29136249@personal.example.com');
+        await popup.getByPlaceholder('Email').fill('sb-uqeqf29136249@personal.example.com');
         await popup.getByRole('button', { name: 'Next' }).click();
 
         await popup.getByPlaceholder('Password').fill('h5Hc/b8M');

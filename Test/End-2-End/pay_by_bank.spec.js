@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
-test('Can place an order using Yapily', async ({ page, browser }) => {
+test('Can place an order using pay by bank', async ({ page, browser }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
     await visitCheckoutPayment.visit();
 
