@@ -45,7 +45,7 @@ test.skip('Can place an order', async ({ page, browser }) => {
 });
 
 test('Renders the Clearpay on the product page', async ({ page }) => {
-    await page.goto('/aim-analog-watch.html');
+    await page.goto('./joust-duffle-bag.html');
 
     await expect(page.locator('.afterpay-modal-overlay')).toBeHidden();
 
@@ -56,13 +56,12 @@ test('Renders the Clearpay on the product page', async ({ page }) => {
 });
 
 test('Renders the Clearpay widget in the checkout', async ({ page }) => {
-    await page.goto('/');
-
-    await page.getByRole('button', { name: 'Add to Cart Aim Analog Watch' }).click();
+    await page.goto('./');
+    await page.locator('button[aria-label="Add to Cart Joust Duffle Bag"]').click();
 
     await expect(page.getByRole('button', { name: 'Toggle minicart, You have 1 product in your cart.'})).toBeVisible();
 
-    await page.goto('/checkout/cart');
+    await page.goto('./checkout/cart');
 
     await expect(page.locator('.afterpay-modal-overlay')).toBeHidden();
 

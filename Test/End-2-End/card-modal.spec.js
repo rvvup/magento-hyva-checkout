@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
-test('Can place an order using the credit card modal', async ({ page, browser }) => {
+// This test is dependent on test store configuration, if they are using modal model. Rvvup supports inline by default.s
+test.skip('Can place an order using the credit card modal', async ({ page, browser }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
     await visitCheckoutPayment.visit();
 

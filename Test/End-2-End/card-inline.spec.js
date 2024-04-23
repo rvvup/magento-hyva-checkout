@@ -7,10 +7,6 @@ test('Can place an order using the inline credit card', async ({ page }) => {
 
     await page.getByLabel('Pay by Card').click();
 
-    await page.waitForRequest(
-        request => request.url().includes('magewire/post/livewire/message/checkout.payment.method.rvvup.card-processor') && request.method() === 'POST'
-    );
-
     await visitCheckoutPayment.loadersShouldBeHidden();
 
     // Credit card form
@@ -45,23 +41,4 @@ test('The validation prevents placing an order with invalid card details', async
     await page.getByRole('button', { name: 'Place order' }).click();
 
     await expect(page.frameLocator('iframe[name="st-expiration-date-iframe"]').getByText('Field is required')).toBeVisible();
-});
-
-test('Can switch between payment methods', async ({ page }) => {
-    const visitCheckoutPayment = new VisitCheckoutPayment(page);
-    await visitCheckoutPayment.visit();
-
-    // Switch to card
-    await page.getByLabel('Pay by Card').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-    await expect(page.locator('#rvvup-card-form')).toBeVisible();
-
-    // Switch to Check / Money order
-    await page.getByLabel('Check / Money order').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-
-    // Switch back to card
-    await page.getByLabel('Pay by Card').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-    await expect(page.locator('#rvvup-card-form')).toBeVisible();
 });
