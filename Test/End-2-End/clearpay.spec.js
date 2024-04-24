@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
+import Cart from "./Components/Cart";
 
 // This test is quite far, but the Clearpay modal is quite a bit flakey. It sometimes works, sometimes doesn't.
 test.skip('Can place an order', async ({ page, browser }) => {
@@ -56,10 +57,8 @@ test('Renders the Clearpay on the product page', async ({ page }) => {
 });
 
 test('Renders the Clearpay widget in the checkout', async ({ page }) => {
-    await page.goto('./');
-    await page.locator('button[aria-label="Add to Cart Joust Duffle Bag"]').click();
-
-    await expect(page.getByRole('button', { name: 'Toggle minicart, You have 1 product in your cart.'})).toBeVisible();
+    const cart = new Cart(page);
+    await cart.addItemToCart("Joust Duffle Bag");
 
     await page.goto('./checkout/cart');
 

@@ -1,4 +1,5 @@
 import {expect} from "@playwright/test";
+import Cart from "../Components/Cart";
 
 export default class VisitCheckoutPayment {
     constructor(page) {
@@ -6,9 +7,8 @@ export default class VisitCheckoutPayment {
     }
 
     async visit() {
-        await this.page.goto('./');
-
-        await this.page.locator('button[aria-label="Add to Cart Joust Duffle Bag"]').click();
+        const cart = new Cart(this.page);
+        await cart.addItemToCart("Joust Duffle Bag");
 
         await this.page.goto('./checkout');
 
