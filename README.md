@@ -17,7 +17,15 @@ After that, run setup:upgrade to install the plugin:
 ```bash
 bin/magento setup:upgrade
 ```
+## Dockerized Setup of Test Store
 
+If you would like to have a quick local installation of the plugin on a magento store (for testing), you can follow these steps:
+
+- Copy .env.sample to .env and update the values as needed.
+- Run the following command to start the docker containers:
+```
+docker-compose up -d --build
+```
 ## End to End Testing
 This plugin comes with Playwright tests to ensure it's functionality.
 
@@ -27,7 +35,16 @@ npm i
 npx playwright install
 ```
 
-### To run the tests, use the following command:
+### (Recommended), Running the E2E tests against a dockerized store installation
+
+This will spin up a docker container with magento with hyva + rvvup plugin installed and run the test against this
+container.
+```bash
+./run-e2e-tests.sh
+```
+
+### If you have an existing store, to run the tests, use the following command:
+
 ```bash
 ENV TEST_BASE_URL=https://magento.test npx playwright test --ui # change your base url to point to the right domain
 ```
