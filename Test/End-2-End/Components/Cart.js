@@ -5,9 +5,9 @@ export default class Cart {
         this.page = page;
     }
 
-    async addItemToCart(itemName) {
-        await this.page.goto('./');
-        await this.page.locator('button[aria-label="Add to Cart '+itemName+'"]').click();
-        await expect(this.page.getByRole('button', { name: 'Toggle minicart, You have 1 product in your cart.'})).toBeVisible();
+    async addStandardItemToCart() {
+        await this.page.goto('./affirm-water-bottle.html');
+        await this.page.getByRole('button', { name: 'Add to Cart', exact: true }).click();
+        await expect(this.page.getByText(/You added [A-Za-z0-9 ]+ to your shopping cart/i)).toBeVisible();
     }
 }

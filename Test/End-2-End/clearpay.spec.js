@@ -57,10 +57,9 @@ test('Renders the Clearpay on the product page', async ({ page }) => {
 });
 
 test('Renders the Clearpay widget in the checkout', async ({ page }) => {
-    const cart = new Cart(page);
-    await cart.addItemToCart("Joust Duffle Bag");
+    await new Cart(page).addStandardItemToCart();
 
-    await page.goto('./checkout/cart');
+    await page.goto('/checkout/cart');
 
     await expect(page.locator('.afterpay-modal-overlay')).toBeHidden();
 

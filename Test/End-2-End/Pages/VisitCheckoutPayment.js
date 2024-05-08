@@ -7,8 +7,7 @@ export default class VisitCheckoutPayment {
     }
 
     async visit() {
-        const cart = new Cart(this.page);
-        await cart.addItemToCart("Joust Duffle Bag");
+        await new Cart(this.page).addStandardItemToCart();
 
         await this.page.goto('./checkout');
 
