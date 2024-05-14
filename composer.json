@@ -3,7 +3,6 @@
     "description": "Compatibility module for Rvvup payment gateway for Magento 2",
     "type": "magento2-module",
     "require": {
-        "rvvup/sdk": "1.1.0",
         "php": "^7.3 || ^8.1",
         "rvvup/module-magento-payments": "1.1.0",
         "hyva-themes/magento2-compat-module-fallback": "^1.0",
