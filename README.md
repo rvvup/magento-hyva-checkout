@@ -17,14 +17,36 @@ After that, run setup:upgrade to install the plugin:
 ```bash
 bin/magento setup:upgrade
 ```
+## Dockerized Setup of Test Store
 
-## Testing
+If you would like to have a quick local installation of the plugin on a magento store (for testing), you can follow these steps:
 
-This plugin comes with Playwright tests to ensure its functionality. To run the tests, use the following command:
+- Copy .env.sample to .env and update the values as needed.
+- Run the following command to start the docker containers:
+```
+docker-compose up -d --build
+```
+## End to End Testing
+This plugin comes with Playwright tests to ensure it's functionality.
+
+### Get Started (install dependencies):
+```bash
+npm i
+npx playwright install
+```
+
+### (Recommended), Running the E2E tests against a dockerized store installation
+
+This will spin up a docker container with magento with hyva + rvvup plugin installed and run the test against this
+container.
+```bash
+./run-e2e-tests.sh
+```
+
+### If you have an existing store, to run the tests, use the following command:
 
 ```bash
-npm ci # Install the required dependencies
-npx playwright test --ui
+ENV TEST_BASE_URL=https://magento.test npx playwright test --ui # change your base url to point to the right domain
 ```
 
 **Please note:** There are tests included for credit card for both the inline and the modal versions. It depends on the configuration of the payment method which test will succeed.

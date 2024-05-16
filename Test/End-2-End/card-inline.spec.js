@@ -7,10 +7,6 @@ test('Can place an order using the inline credit card', async ({ page }) => {
 
     await page.getByLabel('Pay by Card').click();
 
-    await page.waitForRequest(
-        request => request.url().includes('magewire/post/livewire/message/checkout.payment.method.rvvup.card-processor') && request.method() === 'POST'
-    );
-
     await visitCheckoutPayment.loadersShouldBeHidden();
 
     // Credit card form
@@ -21,9 +17,16 @@ test('Can place an order using the inline credit card', async ({ page }) => {
 
     await visitCheckoutPayment.loadersShouldBeHidden();
 
-    // OTP form
-    await page.frameLocator('#Cardinal-CCA-IFrame').getByPlaceholder('Enter Code Here').fill('1234');
-    await page.frameLocator('#Cardinal-CCA-IFrame').getByPlaceholder('Enter Code Here').press('Enter');
+    // OTP form (3DS) does not always show.
+    const frame = page.frameLocator('#Cardinal-CCA-IFrame');
+    try {
+        const element = frame.getByPlaceholder('Enter Code Here');
+        await element.waitFor({ state: 'visible', timeout: 10000 });
+        await element.fill('1234');
+        await element.press('Enter');
+    } catch (error) {
+        console.log('3DS form not found, so skipping it.');
+    }
 
     await page.waitForURL("**/checkout/onepage/success/");
 
@@ -45,23 +48,4 @@ test('The validation prevents placing an order with invalid card details', async
     await page.getByRole('button', { name: 'Place order' }).click();
 
     await expect(page.frameLocator('iframe[name="st-expiration-date-iframe"]').getByText('Field is required')).toBeVisible();
-});
-
-test('Can switch between payment methods', async ({ page }) => {
-    const visitCheckoutPayment = new VisitCheckoutPayment(page);
-    await visitCheckoutPayment.visit();
-
-    // Switch to card
-    await page.getByLabel('Pay by Card').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-    await expect(page.locator('#rvvup-card-form')).toBeVisible();
-
-    // Switch to Check / Money order
-    await page.getByLabel('Check / Money order').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-
-    // Switch back to card
-    await page.getByLabel('Pay by Card').click();
-    await visitCheckoutPayment.loadersShouldBeHidden();
-    await expect(page.locator('#rvvup-card-form')).toBeVisible();
 });

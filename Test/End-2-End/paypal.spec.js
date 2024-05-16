@@ -1,29 +1,25 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
+import PaypalPopup from "./Components/PaypalPopup";
 
 test('Can place an order using PayPal', async ({ page, browser }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
     await visitCheckoutPayment.visit();
 
-    await page.getByLabel('PayPal').click();
+    await page.getByLabel('PayPal', { exact: true }).click();
 
     await expect(page.locator('#rvvup-paypal-button-container')).toBeVisible();
+    await page.waitForTimeout(2000);
 
-    page.on('popup', async popup => {
-        await popup.waitForLoadState();
-
-        await popup.getByPlaceholder('Email or mobile number').fill('sb-uqeqf29136249@personal.example.com');
-        await popup.getByPlaceholder('Password').fill('h5Hc/b8M');
-
-        await popup.getByRole('button', { name: 'Log In' }).click();
-        await popup.getByRole('button', { name: 'Complete Purchase' }).click();
-    });
-
-    const paypalFrame = page.frameLocator('#rvvup-paypal-button-container iframe:first-of-type')
+    const popupPromise = page.waitForEvent('popup');
+    const paypalFrame = page.frameLocator('#rvvup-paypal-button-container iframe').first();
     await paypalFrame.getByRole('link', { name: 'PayPal' }).click();
+
+    await new PaypalPopup(await popupPromise).acceptPayment();
 
     await expect(page.locator('#payment-method-view-rvvup_PAYPAL'))
         .not.toContainText('You are currently paying with PayPal. If you want to cancel this process');
+    await expect(page.frameLocator('#rvvup-modal iframe').getByText("Payment being processed")).toBeVisible();
 
     await page.waitForURL("**/checkout/onepage/success/");
 
@@ -33,22 +29,12 @@ test('Can place an order using PayPal', async ({ page, browser }) => {
 test('Can place an order from the product page using PayPal', async ({ page }) => {
     const visitCheckoutPayment = new VisitCheckoutPayment(page);
 
-    await page.goto('/aim-analog-watch.html');
+    await page.goto('./joust-duffle-bag.html');
 
-    page.on('popup', async popup => {
-        await popup.waitForLoadState();
-
-        await popup.getByPlaceholder('Email or mobile number').fill('sb-uqeqf29136249@personal.example.com');
-        await popup.getByRole('button', { name: 'Next' }).click();
-
-        await popup.getByPlaceholder('Password').fill('h5Hc/b8M');
-        await popup.getByRole('button', { name: 'Log In' }).click();
-
-        await popup.getByRole('button', { name: 'Continue to review order' }).click();
-    });
-
-    const paypalFrame = page.frameLocator('.rvvup-paypal-express-button-container iframe:first-of-type')
+    const popupPromise = page.waitForEvent('popup');
+    const paypalFrame = page.frameLocator('.rvvup-paypal-express-button-container iframe').first();
     await paypalFrame.getByRole('link', { name: 'PayPal' }).click();
+    await new PaypalPopup(await popupPromise).acceptPayment();
 
     await page.waitForURL("**/checkout/");
 
@@ -56,7 +42,7 @@ test('Can place an order from the product page using PayPal', async ({ page }) =
 
     await page.getByLabel('Fixed').click();
 
-    visitCheckoutPayment.loadersShouldBeHidden();
+    await visitCheckoutPayment.loadersShouldBeHidden();
 
     await page.getByRole('button', { name: 'Proceed to review & payments' }).click();
 
@@ -69,6 +55,7 @@ test('Can place an order from the product page using PayPal', async ({ page }) =
     await expect(children.length).toBe(1);
 
     await page.getByRole('button', { name: 'Place order' }).click();
+    await expect(page.frameLocator('#rvvup-modal iframe').getByText("Payment being processed")).toBeVisible();
     await page.waitForURL("**/checkout/onepage/success/");
     await expect(page.getByRole('heading', { name: 'Thank you for your purchase!' })).toBeVisible();
 });

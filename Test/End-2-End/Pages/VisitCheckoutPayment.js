@@ -1,4 +1,5 @@
 import {expect} from "@playwright/test";
+import Cart from "../Components/Cart";
 
 export default class VisitCheckoutPayment {
     constructor(page) {
@@ -6,13 +7,9 @@ export default class VisitCheckoutPayment {
     }
 
     async visit() {
-        await this.page.goto('/');
+        await new Cart(this.page).addStandardItemToCart();
 
-        await this.page.getByRole('button', { name: 'Add to Cart Aim Analog Watch' }).click();
-
-        await expect(this.page.getByRole('button', { name: 'Toggle minicart, You have 1 product in your cart.'})).toBeVisible();
-
-        await this.page.goto('/checkout');
+        await this.page.goto('./checkout');
 
         await this.page.getByLabel('Email address', { exact: true }).fill('johndoe@example.com');
         await this.page.getByLabel('First name').fill('John');
