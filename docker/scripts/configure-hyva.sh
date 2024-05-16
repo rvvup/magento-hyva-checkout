@@ -17,4 +17,4 @@ composer require --prefer-source hyva-themes/magento2-hyva-checkout:^1.1
 bin/magento setup:upgrade
 bin/magento config:set dev/template/minify_html 0
 vendor/bin/n98-magerun2 config:store:set design/theme/theme_id 5 --scope=stores --scope-id=1
-bin/magento config:set hyva_themes_checkout/general/checkout default
+vendor/bin/n98-magerun2 config:store:set hyva_themes_checkout/general/checkout default
