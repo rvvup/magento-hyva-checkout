@@ -45,14 +45,14 @@ jobs:
       - name: Wait for Magento Store
         uses: mydea/action-wait-for-api@v1.0.0
         with:
-          url: http://local.dev.rvvuptech.com/magento_version
+          url: http://local.dev.rvvuptech.com:89/magento_version
           method: GET
           expected-status: "200"
           timeout: "500"
           interval: "5"
 
       - name: Run Playwright tests
-        run: TEST_BASE_URL=http://local.dev.rvvuptech.com npx playwright test
+        run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test
 
       - name: Prepare logs
         if: always()
