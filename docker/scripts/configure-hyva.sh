@@ -13,7 +13,7 @@ composer config repositories.hyva-themes/magento2-compat-module-fallback git git
 composer config repositories.hyva-themes/magento2-order-cancellation-webapi git git@gitlab.hyva.io:hyva-themes/magento2-order-cancellation-webapi.git
 composer config repositories.hyva-themes/hyva-checkout git git@gitlab.hyva.io:hyva-checkout/checkout.git
 composer require --prefer-source hyva-themes/magento2-default-theme
-composer require --prefer-source hyva-themes/magento2-hyva-checkout:^1.1
+composer require --prefer-source hyva-themes/magento2-hyva-checkout:1.1.17
 bin/magento setup:upgrade
 bin/magento config:set dev/template/minify_html 0
 vendor/bin/n98-magerun2 config:store:set design/theme/theme_id 5 --scope=stores --scope-id=1
