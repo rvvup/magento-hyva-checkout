@@ -32,10 +32,8 @@ if ($paypalViewModel === null ||
             init() {
                 let orderStarted = false;
                 const buttonElement = document.querySelector('.rvvup-paypal-cart-container');
+                const component = Magewire.find('rvvup-paypal-minicart-block');
 
-                document.addEventListener('magewire:load', () => {
-                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                })
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;

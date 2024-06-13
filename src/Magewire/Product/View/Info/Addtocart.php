@@ -90,20 +90,27 @@ class Addtocart extends Component
 
     /**
      * @param string $method
-     * @param string $addToCartRequest
+     * @param string|null $addToCartRequest
+     * @param bool $isCart
      * @return void
-     * @throws NoSuchEntityException
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      * @throws PaymentValidationException
      */
-    public function createExpressPayment(string $method, string $addToCartRequest): void
+    public function createExpressPayment(
+        string $method,
+        ?string $addToCartRequest = null,
+        bool $isCart = false
+    ): void
     {
-        $cart = $this->checkoutSession->getQuote()->removeAllItems();
-
-        $message = $this->addProductToCart($addToCartRequest, $cart);
-        if ($message) {
-            $this->dispatchErrorMessage($message);
-            return;
+        $cart = $this->checkoutSession->getQuote();
+        if (!$isCart) {
+            $cart = $cart->removeAllItems();
+            $message = $this->addProductToCart($addToCartRequest, $cart);
+            if ($message) {
+                $this->dispatchErrorMessage($message);
+                return;
+            }
         }
 
         $paymentActions = $this->expressPaymentCreate->execute(
@@ -143,14 +150,15 @@ class Addtocart extends Component
     }
 
     /** Cancel Express Paypal Payment */
-    public function cancelExpressPayment(): void
+    public function cancelExpressPayment(bool $isCart = false): void
     {
         $cart = $this->checkoutSession->getQuote();
         $payment = $cart->getPayment();
-        $cart->removeAllItems();
-        $this->cartRepository->save($cart);
-        $payment->setAdditionalInformation(Method::EXPRESS_PAYMENT_KEY, true);
-
+        if (!$isCart) {
+            $cart->removeAllItems();
+            $this->cartRepository->save($cart);
+        }
+        $payment->setAdditionalInformation(Method::EXPRESS_PAYMENT_KEY, false);
         $this->payPal->cancel($payment);
     }
 
