@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<page xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="rvvup_payments.checkout_index_index.head.additional.assets"
+                   template="Rvvup_Payments::head/additional/assets.phtml"
+                   ifconfig="payment/rvvup/active">
+                <arguments>
+                    <argument name="rvvup_payments_assets_view_model"
+                              xsi:type="object">Rvvup\Payments\ViewModel\Assets</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="extra_actions">
+            <block name="rvvup-paypal-block"
+                   template="Rvvup_PaymentsHyvaCheckout::cart/paypal.phtml"
+                   class="Rvvup\PaymentsHyvaCheckout\Block\Paypal" ifconfig="payment/rvvup/active">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
+                    <argument name="rvvup_payments_paypal_view_model" xsi:type="object">Rvvup\Payments\ViewModel\PayPal</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

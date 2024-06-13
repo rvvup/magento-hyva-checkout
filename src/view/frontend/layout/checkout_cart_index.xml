@@ -5,5 +5,15 @@
         <arguments>
             <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Cart\Clearpay</argument>
         </arguments>
+        <referenceContainer name="cart.summary">
+            <block name="rvvup-paypal-block" after="checkout.cart.methods.bottom"
+                   template="Rvvup_PaymentsHyvaCheckout::cart/paypal.phtml"
+                   class="Rvvup\PaymentsHyvaCheckout\Block\Paypal">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
+                    <argument name="rvvup_payments_paypal_view_model" xsi:type="object">Rvvup\Payments\ViewModel\PayPal</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </referenceBlock>
 </page>
