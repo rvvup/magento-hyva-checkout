@@ -36,13 +36,14 @@ if ($product) {
     'use strict';
     function rvvupPayPalExpressButton() {
         var addToCartForm = document.getElementById('product_addtocart_form');
-        const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
 
         return {
             init() {
                 const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
                 let orderStarted = false;
-
+                document.addEventListener('magewire:load', () => {
+                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                })
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;
