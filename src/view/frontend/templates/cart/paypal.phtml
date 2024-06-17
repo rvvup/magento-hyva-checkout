@@ -22,7 +22,7 @@ if ($paypalViewModel === null ||
 <div class="rvvup-paypal-express grow z-0"
      x-data="rvvupPayPalExpressButton()"
      wire:ignore>
-    <div class="rvvup-paypal-cart-container"></div>
+    <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
 
 <script>
@@ -31,7 +31,13 @@ if ($paypalViewModel === null ||
         return {
             init() {
                 let orderStarted = false;
+<<<<<<< Updated upstream
                 const buttonElement = document.querySelector('.rvvup-paypal-cart-container');
+=======
+                const buttonElement = document.querySelector('.<?= $block->getNameInLayout() ?>-container');
+                Magewire.rescan();
+                const component = Magewire.find('rvvup-paypal-minicart-block');
+>>>>>>> Stashed changes
 
                 document.addEventListener('magewire:load', () => {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');

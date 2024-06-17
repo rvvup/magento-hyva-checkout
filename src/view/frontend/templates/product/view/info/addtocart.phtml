@@ -41,9 +41,14 @@ if ($product) {
             init() {
                 const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
                 let orderStarted = false;
+<<<<<<< Updated upstream
                 document.addEventListener('magewire:load', () => {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                 })
+=======
+                Magewire.rescan();
+                const component = Magewire.find('rvvup-paypal-minicart-block');
+>>>>>>> Stashed changes
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;
