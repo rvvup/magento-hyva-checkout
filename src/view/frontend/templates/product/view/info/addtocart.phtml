@@ -70,6 +70,7 @@ if ($product) {
                         if (!this.validateAddToCartForm()) {
                             return;
                         }
+                        window.isRvvupExpressPaypal = true;
 
                         // If the token is already set, don't create a new one.
                         if (component.authorizationToken) {
