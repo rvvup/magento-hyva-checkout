@@ -13,21 +13,16 @@
             </block>
         </referenceBlock>
         <referenceBlock name="extra_actions">
-            <block name="rvvup-paypal-block"
+            <block name="rvvup-paypal-minicart-block"
                    template="Rvvup_PaymentsHyvaCheckout::cart/paypal.phtml"
                    class="Rvvup\PaymentsHyvaCheckout\Block\Paypal" ifconfig="payment/rvvup/active">
                 <arguments>
-<<<<<<< Updated upstream:src/view/frontend/layout/default.xml
-                    <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
-                    <argument name="rvvup_payments_paypal_view_model" xsi:type="object">Rvvup\Payments\ViewModel\PayPal</argument>
-=======
                     <argument name="magewire" xsi:type="object">
                         Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart
                     </argument>
                     <argument name="rvvup_payments_paypal_view_model" xsi:type="object">
                         Rvvup\Payments\ViewModel\PayPal
                     </argument>
->>>>>>> Stashed changes:src/view/frontend/layout/default_hyva.xml
                 </arguments>
             </block>
         </referenceBlock>

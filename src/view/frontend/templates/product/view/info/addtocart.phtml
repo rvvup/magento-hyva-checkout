@@ -41,14 +41,8 @@ if ($product) {
             init() {
                 const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
                 let orderStarted = false;
-<<<<<<< Updated upstream
-                document.addEventListener('magewire:load', () => {
-                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                })
-=======
                 Magewire.rescan();
                 const component = Magewire.find('rvvup-paypal-minicart-block');
->>>>>>> Stashed changes
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;
@@ -96,12 +90,13 @@ if ($product) {
                         return actions.order.get().then((orderData) => {
                             const shippingAddress = this.getShippingAddressFromOrderData(orderData);
                             const billingAddress = this.getBillingAddressFromOrderData(orderData, shippingAddress);
-
+                            window.isRvvupExpressPaypal = true;
                             return component.saveAddress(billingAddress);
                         });
                     },
 
                     onCancel: () => {
+                        window.isRvvupExpressPaypal = false;
                         component.cancelExpressPayment();
                     }
                 }).render(buttonElement);
