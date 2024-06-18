@@ -50,6 +50,7 @@ if ($paypalViewModel === null ||
                     },
 
                     createOrder: () => {
+                        window.isRvvupExpressPaypal = true;
                         // If the token is already set, don't create a new one.
                         if (component.authorizationToken) {
                             return component.authorizationToken;
