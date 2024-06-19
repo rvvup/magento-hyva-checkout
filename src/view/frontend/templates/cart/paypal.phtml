@@ -50,7 +50,6 @@ if ($paypalViewModel === null ||
                     },
 
                     createOrder: () => {
-                        window.isRvvupExpressPaypal = true;
                         // If the token is already set, don't create a new one.
                         if (component.authorizationToken) {
                             return component.authorizationToken;
@@ -67,13 +66,11 @@ if ($paypalViewModel === null ||
                         return actions.order.get().then((orderData) => {
                             const shippingAddress = this.getShippingAddressFromOrderData(orderData);
                             const billingAddress = this.getBillingAddressFromOrderData(orderData, shippingAddress);
-                            window.isRvvupExpressPaypal = true;
                             return component.saveAddress(billingAddress);
                         });
                     },
 
                     onCancel: () => {
-                        window.isRvvupExpressPaypal = false;
                         component.cancelExpressPayment();
                     }
                 }).render(buttonElement);
