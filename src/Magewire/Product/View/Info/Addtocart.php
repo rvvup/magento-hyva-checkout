@@ -17,6 +17,7 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartInterfaceFactory;
+use Magento\Quote\Model\ShippingAddressManagementInterface;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Api\ExpressPaymentCreateInterface;
 use Rvvup\Payments\Exception\PaymentValidationException;
@@ -55,12 +56,16 @@ class Addtocart extends Component
     /** @var PayPal  */
     private $payPal;
 
+    /** @var ShippingAddressManagementInterface */
+    private $shippingAddressManagement;
+
     /**
      * @param Session $checkoutSession
      * @param CartInterfaceFactory $cartFactory
      * @param CartRepositoryInterface $cartRepository
      * @param ProductRepositoryInterface $productRepository
      * @param BillingAddressManagementInterface $billingAddressManagement
+     * @param ShippingAddressManagementInterface $shippingAddressManagement
      * @param AddressInterfaceFactory $addressFactory
      * @param HyvaCheckoutSession $hyvaCheckoutSession
      * @param ExpressPaymentCreateInterface $expressPaymentCreate
@@ -72,6 +77,7 @@ class Addtocart extends Component
         CartRepositoryInterface $cartRepository,
         ProductRepositoryInterface $productRepository,
         BillingAddressManagementInterface $billingAddressManagement,
+        ShippingAddressManagementInterface $shippingAddressManagement,
         AddressInterfaceFactory $addressFactory,
         HyvaCheckoutSession $hyvaCheckoutSession,
         ExpressPaymentCreateInterface $expressPaymentCreate,
@@ -82,6 +88,7 @@ class Addtocart extends Component
         $this->cartRepository = $cartRepository;
         $this->productRepository = $productRepository;
         $this->billingAddressManagement = $billingAddressManagement;
+        $this->shippingAddressManagement = $shippingAddressManagement;
         $this->addressFactory = $addressFactory;
         $this->hyvaCheckoutSession = $hyvaCheckoutSession;
         $this->expressPaymentCreate = $expressPaymentCreate;
@@ -129,7 +136,7 @@ class Addtocart extends Component
      * @throws CheckoutException
      * @throws InputException
      */
-    public function saveAddress(array $billingAddressInput): void
+    public function saveBillingAddress(array $billingAddressInput): void
     {
         $cart = $this->checkoutSession->getQuote();
 
@@ -140,13 +147,37 @@ class Addtocart extends Component
             $cart->setCustomerEmail($billingAddress->getEmail());
         }
 
-        $this->billingAddressManagement->assign($cart->getId(), $billingAddress, true);
+        $this->billingAddressManagement->assign($cart->getId(), $billingAddress);
 
         if ($this->hyvaCheckoutSession->getSteps()) {
             $this->hyvaCheckoutSession->restart();
         }
 
         $this->redirect('checkout');
+    }
+
+    /**
+     * @param array $shippingAddressInput
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     * @throws CheckoutException
+     * @throws InputException
+     */
+    public function saveShippingAddress(array $shippingAddressInput): void
+    {
+        $cart = $this->checkoutSession->getQuote();
+
+        $shippingAddress = $this->addressFactory->create();
+        $shippingAddress->setData($shippingAddressInput);
+
+        if (!$cart->getCustomerEmail()) {
+            $cart->setCustomerEmail($shippingAddress->getEmail());
+        }
+
+        if(!$cart->isVirtual()) {
+            $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
+        }
     }
 
     /** Cancel Express Paypal Payment */

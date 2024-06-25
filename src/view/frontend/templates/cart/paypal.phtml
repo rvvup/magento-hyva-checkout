@@ -33,7 +33,6 @@ if ($paypalViewModel === null ||
                 const buttonElement = document.querySelector('.<?= $block->getNameInLayout() ?>-container');
                 Magewire.rescan();
                 const component = Magewire.find('rvvup-paypal-minicart-block');
-
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;
@@ -65,13 +64,14 @@ if ($paypalViewModel === null ||
                     onApprove: (data, actions) => {
                         return actions.order.get().then((orderData) => {
                             const shippingAddress = this.getShippingAddressFromOrderData(orderData);
+                            component.saveShippingAddress(shippingAddress);
                             const billingAddress = this.getBillingAddressFromOrderData(orderData, shippingAddress);
-                            return component.saveAddress(billingAddress);
+                            return component.saveBillingAddress(billingAddress);
                         });
                     },
 
                     onCancel: () => {
-                        component.cancelExpressPayment();
+                        component.cancelExpressPayment(true);
                     }
                 }).render(buttonElement);
             },
@@ -86,13 +86,15 @@ if ($paypalViewModel === null ||
                         tagline: false,
                     };
                 }
+                const isCart = '<?= $block->getData("is_cart_page") ?>';
+                let scope = isCart ? 'cart' : 'miniCart';
 
-                const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
-                const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
-                const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
-                const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
-                const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
-                const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
+                const layout = rvvup_parameters?.settings?.paypal?.[scope]?.button?.layout?.value || 'vertical';
+                const color = rvvup_parameters?.settings?.paypal?.[scope]?.button?.color?.value || 'gold';
+                const shape = rvvup_parameters?.settings?.paypal?.[scope]?.button?.shape?.value || 'rect';
+                const label = rvvup_parameters?.settings?.paypal?.[scope]?.button?.label?.value || 'paypal';
+                const tagline = rvvup_parameters?.settings?.paypal?.[scope]?.button?.tagline || false;
+                const size = rvvup_parameters?.settings?.paypal?.[scope]?.button?.size || null;
 
                 let style = {
                     layout: layout,
@@ -152,7 +154,6 @@ if ($paypalViewModel === null ||
                 let shippingFullNameArray = shippingFullName.split(' ');
 
                 address.firstname = shippingFullNameArray.shift();
-
                 if (shippingFullNameArray.length > 0) {
                     address.lastname = shippingFullNameArray.join(' ');
                 }

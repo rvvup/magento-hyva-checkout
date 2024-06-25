@@ -89,8 +89,9 @@ if ($product) {
                     onApprove: (data, actions) => {
                         return actions.order.get().then((orderData) => {
                             const shippingAddress = this.getShippingAddressFromOrderData(orderData);
+                            component.saveShippingAddress(shippingAddress);
                             const billingAddress = this.getBillingAddressFromOrderData(orderData, shippingAddress);
-                            return component.saveAddress(billingAddress);
+                            return component.saveBillingAddress(billingAddress);
                         });
                     },
 
