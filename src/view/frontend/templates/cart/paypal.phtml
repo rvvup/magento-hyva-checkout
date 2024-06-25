@@ -27,6 +27,8 @@ if ($paypalViewModel === null ||
 <script>
     'use strict';
     function rvvupPayPalExpressButton() {
+        const isCart = '<?= $block->getData("is_cart_page") ?>';
+        const scope = isCart ? 'cart' : 'miniCart';
         return {
             init() {
                 let orderStarted = false;
@@ -35,6 +37,10 @@ if ($paypalViewModel === null ||
                 const component = Magewire.find('rvvup-paypal-minicart-block');
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
+                    return;
+                }
+
+                if (!rvvup_parameters?.settings?.paypal?.[scope]?.enabled) {
                     return;
                 }
 
@@ -86,8 +92,6 @@ if ($paypalViewModel === null ||
                         tagline: false,
                     };
                 }
-                const isCart = '<?= $block->getData("is_cart_page") ?>';
-                let scope = isCart ? 'cart' : 'miniCart';
 
                 const layout = rvvup_parameters?.settings?.paypal?.[scope]?.button?.layout?.value || 'vertical';
                 const color = rvvup_parameters?.settings?.paypal?.[scope]?.button?.color?.value || 'gold';

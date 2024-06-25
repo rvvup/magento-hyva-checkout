@@ -43,8 +43,13 @@ if ($product) {
                 let orderStarted = false;
                 Magewire.rescan();
                 const component = Magewire.find('rvvup-paypal-minicart-block');
+                const isAvailable = rvvup_parameters?.settings?.paypal?.product?.enabled;
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
+                    return;
+                }
+
+                if (!isAvailable) {
                     return;
                 }
 
