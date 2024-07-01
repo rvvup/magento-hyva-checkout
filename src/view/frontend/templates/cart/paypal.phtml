@@ -1,55 +1,46 @@
 <?php
 /**
- * @var \Magento\Catalog\Block\Product\View $block
- * @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel
  * @var \Magento\Framework\Escaper $escaper
+ * @var \Rvvup\PaymentsHyvaCheckout\Block\Paypal $block
+ * @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel
  */
-
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
-$product = $block->getProduct();
 
-/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart $magewire */
+if (!$block->isHyvaThemeUsed()) {
+    return;
+}
 
-/*
- * $product is not available when this template is loaded from Magewire. But Magewire only makes this call
- * when the product was available initially. So only check when $product is not null.
- */
-if ($product) {
-    if ($paypalViewModel === null ||
-        !$paypalViewModel->canUseForProductType($product) ||
-        !$paypalViewModel->isAvailable((string)$product->getFinalPrice())
-    ) {
-        // This is required for magewire
-        echo '<div></div>';
-        return;
-    }
+if ($paypalViewModel === null ||
+    $block->getQuote() === null ||
+    !$paypalViewModel->isAvailable((string) $block->getQuote()->getGrandTotal())) {
+    // This is required for magewire
+    echo '<div></div>';
+    return;
 }
 ?>
+
 <div class="rvvup-paypal-express grow z-0"
      x-data="rvvupPayPalExpressButton()"
-     wire:ignore
->
-    <div class="rvvup-paypal-express-button-container"></div>
+     wire:ignore>
+    <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
-
 <script>
     'use strict';
     function rvvupPayPalExpressButton() {
-        var addToCartForm = document.getElementById('product_addtocart_form');
-
+        const isCart = '<?= $block->getData("is_cart_page") ?>';
+        const scope = isCart ? 'cart' : 'miniCart';
         return {
             init() {
-                const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
                 let orderStarted = false;
+                const buttonElement = document.querySelector('.<?= $block->getNameInLayout() ?>-container');
                 Magewire.rescan();
                 const component = Magewire.find('rvvup-paypal-minicart-block');
-                const isAvailable = rvvup_parameters?.settings?.paypal?.product?.button?.enabled;
                 if (!window.rvvup_paypal) {
                     console.error('PayPal SDK not loaded');
                     return;
                 }
 
-                if (!isAvailable) {
+                if (!rvvup_parameters?.settings?.paypal?.[scope]?.button?.enabled) {
                     return;
                 }
 
@@ -57,36 +48,21 @@ if ($product) {
                     style: this.getButtonStyle(),
 
                     onClick: (data, actions) => {
-                        if (!this.validateAddToCartForm()) {
-                            actions.reject();
-                        }
-
                         if (orderStarted) {
-                            addToCartForm = document.getElementById('product_addtocart_form');
-                            const formData = new FormData(addToCartForm);
-                            const request = new URLSearchParams(formData).toString();
-
-                            return component.createExpressPayment('paypal', request)
+                            return component.createExpressPayment('paypal', null, true)
                                 .then(() => actions.resolve())
                         }
                     },
 
                     createOrder: () => {
-                        if (!this.validateAddToCartForm()) {
-                            return;
-                        }
-
                         // If the token is already set, don't create a new one.
                         if (component.authorizationToken) {
                             return component.authorizationToken;
                         }
 
                         return new Promise((resolve) => {
-                            addToCartForm = document.getElementById('product_addtocart_form');
-                            const formData = new FormData(addToCartForm);
-                            const request = new URLSearchParams(formData).toString();
                             orderStarted = true;
-                            component.createExpressPayment('paypal', request)
+                            component.createExpressPayment('paypal', null, true)
                                 .then(() => resolve(component.authorizationToken))
                         });
                     },
@@ -101,7 +77,7 @@ if ($product) {
                     },
 
                     onCancel: () => {
-                        component.cancelExpressPayment();
+                        component.cancelExpressPayment(true);
                     }
                 }).render(buttonElement);
             },
@@ -117,12 +93,12 @@ if ($product) {
                     };
                 }
 
-                const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
-                const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
-                const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
-                const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
-                const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
-                const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
+                const layout = rvvup_parameters?.settings?.paypal?.[scope]?.button?.layout?.value || 'vertical';
+                const color = rvvup_parameters?.settings?.paypal?.[scope]?.button?.color?.value || 'gold';
+                const shape = rvvup_parameters?.settings?.paypal?.[scope]?.button?.shape?.value || 'rect';
+                const label = rvvup_parameters?.settings?.paypal?.[scope]?.button?.label?.value || 'paypal';
+                const tagline = rvvup_parameters?.settings?.paypal?.[scope]?.button?.tagline || false;
+                const size = rvvup_parameters?.settings?.paypal?.[scope]?.button?.size || null;
 
                 let style = {
                     layout: layout,
@@ -182,7 +158,6 @@ if ($product) {
                 let shippingFullNameArray = shippingFullName.split(' ');
 
                 address.firstname = shippingFullNameArray.shift();
-
                 if (shippingFullNameArray.length > 0) {
                     address.lastname = shippingFullNameArray.join(' ');
                 }
@@ -202,15 +177,6 @@ if ($product) {
 
                 return address;
             },
-
-            validateAddToCartForm() {
-                // Grouped options has a separate validation method. If it's available, call it.
-                if (typeof initGroupedOptions === 'function' && !initGroupedOptions().validateForm()) {
-                    return false;
-                }
-
-                return addToCartForm.reportValidity();
-            }
         }
     }
 </script>

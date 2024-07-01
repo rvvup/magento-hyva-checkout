@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <move element="rvvup_payments.product.catalog_product_view.product.info.addtocart"
-          destination="addtocart.shortcut.buttons"
-    />
-
-    <referenceBlock name="rvvup_payments.product.catalog_product_view.product.info.addtocart">
-        <arguments>
-            <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
-        </arguments>
-    </referenceBlock>
+    <body>
+        <move element="rvvup_payments.product.catalog_product_view.product.info.addtocart"
+              destination="addtocart.shortcut.buttons"
+        />
+        <referenceBlock name="rvvup_payments.product.catalog_product_view.product.info.addtocart">
+            <arguments>
+                <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
 </page>

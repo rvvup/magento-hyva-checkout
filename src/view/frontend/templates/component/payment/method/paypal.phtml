@@ -24,7 +24,8 @@
             <?= __(
                 'You are currently paying with %1. If you want to cancel this process, please click <a %2>here</a>',
                 'PayPal',
-                'href="#" onclick="hyvaCheckout.loader.start()" wire:click.prevent="cancel" class="underline"'
+                'href="#" onclick="hyvaCheckout.loader.start();window.location.reload();"
+                 wire:click.prevent="cancel" class="underline"'
             );
             ?>
         </div>
