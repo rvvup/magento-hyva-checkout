@@ -27,7 +27,7 @@ if ($product) {
 ?>
 <div class="rvvup-paypal-express grow z-0"
      x-data="rvvupPayPalExpressButton()"
-     x-init="init()"
+     x-init="initRvvup()"
      wire:ignore
 >
     <div class="rvvup-paypal-express-button-container"></div>
@@ -39,7 +39,7 @@ if ($product) {
         var addToCartForm = document.getElementById('product_addtocart_form');
 
         return {
-            init() {
+            initRvvup() {
                 const buttonElement = document.querySelector('.rvvup-paypal-express-button-container');
                 let orderStarted = false;
                 Magewire.rescan();
