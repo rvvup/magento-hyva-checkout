@@ -21,6 +21,7 @@ if ($paypalViewModel === null ||
 
 <div class="rvvup-paypal-express grow z-0"
      x-data="rvvupPayPalExpressButton()"
+     x-init="init()"
      wire:ignore>
     <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
