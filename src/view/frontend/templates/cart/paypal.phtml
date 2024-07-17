@@ -21,7 +21,7 @@ if ($paypalViewModel === null ||
 
 <div class="rvvup-paypal-express grow z-0"
      x-data="rvvupPayPalExpressButton()"
-     x-init="init()"
+     x-init="initRvvup()"
      wire:ignore>
     <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
@@ -30,8 +30,9 @@ if ($paypalViewModel === null ||
     function rvvupPayPalExpressButton() {
         const isCart = '<?= $block->getData("is_cart_page") ?>';
         const scope = isCart ? 'cart' : 'miniCart';
+
         return {
-            init() {
+            initRvvup() {
                 let orderStarted = false;
                 const buttonElement = document.querySelector('.<?= $block->getNameInLayout() ?>-container');
                 Magewire.rescan();
