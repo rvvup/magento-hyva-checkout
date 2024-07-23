@@ -2,9 +2,11 @@
     "name": "rvvup/module-magento-payments-hyva-checkout",
     "description": "Compatibility module for Rvvup payment gateway for Magento 2",
     "type": "magento2-module",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "^7.3 || ^8.1",
-        "rvvup/module-magento-payments": "1.3.2",
+        "rvvup/module-magento-payments": "dev-aash/test",
         "hyva-themes/magento2-compat-module-fallback": "^1.0",
         "hyva-themes/magento2-hyva-checkout": "^1.1",
         "magewirephp/magewire": "*"
