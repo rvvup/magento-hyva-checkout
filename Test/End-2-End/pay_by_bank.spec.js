@@ -6,7 +6,10 @@ test("Can place an order using pay by bank", async ({ page, browser }) => {
   await visitCheckoutPayment.visit();
 
   await page.getByLabel("Pay by Bank").click();
-
+  /** Add timeout to prevent clicking 'Place Order' too fast, which will result in
+   * failure to open popup modal
+   */
+  await page.waitForTimeout(3000);
   await page.getByRole("button", { name: "Place order" }).click();
 
   // Credit card form

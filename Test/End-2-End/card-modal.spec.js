@@ -11,6 +11,11 @@ test.skip("Can place an order using the credit card modal", async ({
 
   await page.getByLabel("Pay by Card").click();
 
+  /** Add timeout to prevent clicking 'Place Order' too fast, which will result in
+   * failure to open popup modal
+   */
+  await page.waitForTimeout(3000);
+
   await page.getByRole("button", { name: "Place order" }).click();
 
   // Credit card form
