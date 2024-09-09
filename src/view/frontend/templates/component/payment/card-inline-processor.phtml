@@ -97,7 +97,7 @@ use Magento\Framework\Escaper;
                     },
 
                     placeOrderViaJs() {
-                        return true;
+                        return document.querySelector('[wire\\:key="rvvup_CARD"].active') !== null;
                     },
 
                     placeOrder() {
