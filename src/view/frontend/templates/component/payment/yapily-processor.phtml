@@ -21,6 +21,10 @@ use Magento\Framework\Escaper;
                 placeOrderViaJs() {
                     return true;
                 },
+                isVisibleInStep() {
+                    return hyvaCheckout.main.getElement().contains(this.el)
+                        && document.querySelector('[wire\\:key="rvvup_YAPILY"].active')
+                },
 
                 placeOrder() {
                     return component.placeOrder();

@@ -112,6 +112,11 @@
                     return true;
                 },
 
+                isVisibleInStep() {
+                    return hyvaCheckout.main.getElement().contains(this.el)
+                        && document.querySelector('[wire\\:key="rvvup_PAYPAL"].active')
+                },
+
                 placeOrder() {
                     return component.placeOrder();
                 },

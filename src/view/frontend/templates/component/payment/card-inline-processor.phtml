@@ -100,6 +100,11 @@ use Magento\Framework\Escaper;
                         return true;
                     },
 
+                    isVisibleInStep() {
+                        return hyvaCheckout.main.getElement().contains(this.el)
+                            && document.querySelector('[wire\\:key="rvvup_CARD"].active')
+                    },
+
                     placeOrder() {
                         return component.placeOrder();
                     }
