@@ -19,12 +19,7 @@ use Magento\Framework\Escaper;
                 const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                 hyvaCheckout.payment.activate('rvvup_CARD', {
                     placeOrderViaJs() {
-                        return true;
-                    },
-
-                    isVisibleInStep() {
-                        return hyvaCheckout.main.getElement().contains(this.el)
-                            && document.querySelector('[wire\\:key="rvvup_CARD"].active')
+                        return document.querySelector('[wire\\:key="rvvup_CARD"].active') !== null;
                     },
 
                     placeOrder() {

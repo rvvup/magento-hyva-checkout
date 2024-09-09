@@ -20,12 +20,7 @@ use Magento\Framework\Escaper;
             hyvaCheckout.payment.activate('rvvup_CLEARPAY', {
 
                 placeOrderViaJs() {
-                    return true;
-                },
-
-                isVisibleInStep() {
-                    return hyvaCheckout.main.getElement().contains(this.el)
-                        && document.querySelector('[wire\\:key="rvvup_CLEARPAY"].active')
+                    return document.querySelector('[wire\\:key="rvvup_CLEARPAY"].active') !== null;
                 },
 
                 placeOrder() {
