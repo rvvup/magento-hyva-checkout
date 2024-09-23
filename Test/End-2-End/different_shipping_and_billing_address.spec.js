@@ -27,7 +27,7 @@ test("Can place an order using different billing and shipping address", async ({
   // Credit card form
   const frame = page.frameLocator("iframe.rvvup-modal");
   await frame.getByLabel("Mock Bank").click();
-  await frame.getByRole("button", { name: "Log in on this device" }).click();
+  await frame.getByRole("button", { name: "Continue on desktop" }).click();
 
   await page.waitForURL("**/checkout/onepage/success/");
 
