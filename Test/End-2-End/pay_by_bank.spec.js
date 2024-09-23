@@ -15,7 +15,7 @@ test("Can place an order using pay by bank", async ({ page, browser }) => {
   // Credit card form
   const frame = page.frameLocator("iframe.rvvup-modal");
   await frame.getByLabel("Mock Bank").click();
-  await frame.getByRole("button", { name: "Log in on this device" }).click();
+  await frame.getByRole("button", { name: "Continue on desktop" }).click();
 
   await page.waitForURL("**/checkout/onepage/success/");
 
