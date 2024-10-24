@@ -110,15 +110,26 @@ abstract class AbstractProcessor extends Component
 
     public function placeOrder(): void
     {
-        $this->loadPaymentActions();
-        $redirectUrl = $this->getRedirectUrl();
+        try {
+            $this->loadPaymentActions();
+            $redirectUrl = $this->getRedirectUrl();
 
-        $this->dispatchBrowserEvent(
-            'rvvup:update:showModal',
-            [
-                'redirectUrl' => $redirectUrl,
-            ]
-        );
+            $this->dispatchBrowserEvent(
+                'rvvup:update:showModal',
+                [
+                    'redirectUrl' => $redirectUrl,
+                ]
+            );
+        } catch (\Exception $exception) {
+            $detail = [
+                'text' => $exception->getMessage(),
+                'method' => $this->getMethodCode(),
+            ];
+
+            $this->dispatchBrowserEvent('order:place:error', $detail);
+            $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
+            $this->dispatchErrorMessage($detail['text']);
+        }
     }
 
     /**
