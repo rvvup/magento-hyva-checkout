@@ -89,6 +89,17 @@
                 </arguments>
             </block>
 
+            <block name="checkout.payment.method.rvvup.google-pay-processor"
+                   as="rvvup.google-pay-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/google-pay-processor.phtml"
+                   after="hyva.checkout.main">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\GooglePayProcessor
+                    </argument>
+                </arguments>
+            </block>
+
             <block name="checkout.payment.method.rvvup.assets"
                    as="rvvup.assets"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/assets.phtml"
