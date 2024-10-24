@@ -128,6 +128,7 @@ abstract class AbstractProcessor extends Component
 
             $this->dispatchBrowserEvent('order:place:error', $detail);
             $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
+            $this->dispatchErrorMessage($detail['text']);
         }
     }
 
