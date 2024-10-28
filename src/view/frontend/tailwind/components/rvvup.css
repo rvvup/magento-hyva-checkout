@@ -1,0 +1,10 @@
+@layer components {
+    .rvvup-card-field {
+        flex-grow: 1;
+        height: 90px;
+    }
+
+    .rvvup-card-field iframe {
+        width: 100%;
+    }
+}
