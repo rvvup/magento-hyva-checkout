@@ -46,8 +46,10 @@
                     // Append an empty div to .nav-main
                     const paypalDiv = document.createElement('div');
                     paypalDiv.id = divId;
-                    paypalDiv.setAttribute('class', 'rvvup-paypal-button');
-                    paypalDiv.setAttribute('class', 'z-0');
+                    paypalDiv.className = 'rvvup-paypal-button z-0';
+                    if (placeOrderButton.className && placeOrderButton.className.indexOf("w-full") > -1) {
+                        paypalDiv.className += ' w-full';
+                    }
                     placeOrderButton.style.display = 'none';
                     placeOrderButton.appendChild(paypalDiv);
                     placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
