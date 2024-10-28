@@ -35,7 +35,9 @@ $methods = $viewModel->getList();
             window.addEventListener('checkout:payment:method-activate', () => {
                 disableApplePayForIncompatibleBrowsers();
             }, { once: false })
-
+            window.addEventListener('checkout:shipping:method-activate', () => {
+                disableApplePayForIncompatibleBrowsers();
+            }, { once: false })
             window.addEventListener('checkout:step:loaded', () => {
                 disableApplePayForIncompatibleBrowsers();
             }, { once: false})
