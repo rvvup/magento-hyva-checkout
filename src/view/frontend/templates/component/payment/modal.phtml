@@ -1,4 +1,5 @@
 <?php
+
 use Hyva\Theme\Model\ViewModelRegistry;
 use Hyva\Theme\ViewModel\Modal;
 use Magento\Framework\Escaper;
@@ -37,6 +38,7 @@ $modal = $modelViewModel->createModal()
     function initRvvupModal() {
         return {
             iframeUrl: null,
+            canCloseModal: true,
             init() {
                 window.addEventListener('rvvup:update:showModal', event =>{
                     this.show('<?= $escaper->escapeHtmlAttr($modal->getDialogRefName()) ?>');
@@ -49,33 +51,47 @@ $modal = $modelViewModel->createModal()
                 });
 
                 window.addEventListener('message', event => {
-                    let height = event.data.hasOwnProperty('height') ? event.data.height : null,
-                        width = event.data.hasOwnProperty('width') ? event.data.width : null;
+                    switch (event.data.type) {
+                        case "rvvup-payment-modal|close": {
+                            this.iframeUrl = null;
+                            this.canCloseModal = true;
+                            this.hide();
+                            break;
+                        }
+                        case "rvvup-payment-modal|prevent-close": {
+                            this.canCloseModal = !event.data.preventClose;
+                            break;
+                        }
+                        case "rvvup-payment-modal|resize": {
+                            let height = event.data.hasOwnProperty('height') ? event.data.height : null,
+                                width = event.data.hasOwnProperty('width') ? event.data.width : null;
 
-                    if (event.data.type === 'rvvup-payment-modal|close') {
-                        this.iframeUrl = null;
-                        this.hide();
-                    }
+                            let windowHeight = window.innerHeight,
+                                windowWidth = window.innerWidth,
+                                chosenWidth = width > windowWidth ? windowWidth : width,
+                                chosenHeight = height > windowHeight ? windowHeight : height,
+                                finalWidth = width === 'max' ? windowWidth - 100 : chosenWidth,
+                                finalHeight = height === 'max' ? windowHeight - 100 : chosenHeight;
 
-                    if (event.data.type === 'rvvup-payment-modal|resize') {
-                        let windowHeight = window.innerHeight,
-                            windowWidth = window.innerWidth,
-                            chosenWidth = width > windowWidth ? windowWidth : width,
-                            chosenHeight = height > windowHeight ? windowHeight : height,
-                            finalWidth = width === 'max' ? windowWidth - 100 : chosenWidth,
-                            finalHeight = height === 'max' ? windowHeight - 100 : chosenHeight;
+                            document.querySelector('.rvvup-modal').style.width = finalWidth + 'px';
+                            document.querySelector('.rvvup-modal').style.height = finalHeight + 'px';
+                            break;
+                        }
+                        case "rvvup-info-widget|resize": {
+                            let height = event.data.hasOwnProperty('height') ? event.data.height : null,
+                                width = event.data.hasOwnProperty('width') ? event.data.width : null;
 
-                        document.querySelector('.rvvup-modal').style.width = finalWidth + 'px';
-                        document.querySelector('.rvvup-modal').style.height = finalHeight + 'px';
-                    }
-
-                    if (event.data.type === 'rvvup-info-widget|resize') {
-                        document.querySelector('.rvvup-summary').style.width = width + 'px';
-                        document.querySelector('.rvvup-summary').style.height = height + 'px';
+                            document.querySelector('.rvvup-summary').style.width = width + 'px';
+                            document.querySelector('.rvvup-summary').style.height = height + 'px';
+                            break;
+                        }
+                        default:
+                            break;
                     }
                 });
                 const originalHide = this.hide;
                 this.hide = (value) => {
+                    if (!this.canCloseModal) return;
                     var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                     fetch(
                         url,
