@@ -1,12 +1,17 @@
 <?php
 declare(strict_types=1);
 
-use Magento\Framework\View\Element\Template;
 use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
 
 /** @var Template $block */
 /** @var Escaper $escaper */
 ?>
+<style>
+    #payment-method-option-rvvup_APPLE_PAY {
+        display: none;
+    }
+</style>
 <div wire:ignore>
 <script>
     (() => {
@@ -26,6 +31,22 @@ use Magento\Framework\Escaper;
                 }
             }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
         });
+        window.addEventListener('checkout:payment:method-activate', () => {
+            enableApplePay();
+        }, {once: false});
+        window.addEventListener('checkout:shipping:method-activate', () => {
+            enableApplePay();
+        }, {once: false});
+        window.addEventListener('checkout:step:loaded', () => {
+            enableApplePay();
+        }, {once: false});
+
+        function enableApplePay() {
+            let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
+            if (applePay && window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+                applePay.style.display = 'block';
+            }
+        }
     })();
 </script>
 </div>
