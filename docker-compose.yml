@@ -41,6 +41,8 @@ services:
     depends_on:
       - mariadb
       - elasticsearch
+    volumes:
+      - "./src/:/rvvup/src"
   elasticsearch:
     image: docker.io/bitnami/elasticsearch:7
     volumes:

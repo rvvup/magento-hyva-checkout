@@ -1,7 +1,7 @@
 echo "Running configure-rvvup.sh"
 
 cd /bitnami/magento
-composer require rvvup/module-magento-payments-hyva-checkout:$RVVUP_HYVA_CHECKOUT_VERSION
+#composer require rvvup/module-magento-payments-hyva-checkout:$RVVUP_HYVA_CHECKOUT_VERSION
 
 rm -rf generated/
 bin/magento setup:upgrade

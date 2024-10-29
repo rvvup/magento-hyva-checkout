@@ -11,9 +11,14 @@ composer config repositories.hyva-themes/magento2-email-module git git@gitlab.hy
 composer config repositories.hyva-themes/magento2-default-theme git git@gitlab.hyva.io:hyva-themes/magento2-default-theme.git
 composer config repositories.hyva-themes/magento2-compat-module-fallback git git@gitlab.hyva.io:hyva-themes/magento2-compat-module-fallback.git
 composer config repositories.hyva-themes/magento2-order-cancellation-webapi git git@gitlab.hyva.io:hyva-themes/magento2-order-cancellation-webapi.git
+composer config repositories.hyva-themes/magento2-order-cancellation-webapi git git@gitlab.hyva.io:hyva-themes/magento2-order-cancellation-webapi.git
 composer config repositories.hyva-themes/hyva-checkout git git@gitlab.hyva.io:hyva-checkout/checkout.git
+composer config repositories.hyva-themes/hyva-checkout-stripe git git@gitlab.hyva.io:hyva-checkout/checkout-integrations/magento2-hyva-checkout-stripe.git
 composer require --prefer-source hyva-themes/magento2-default-theme
 composer require --prefer-source hyva-themes/magento2-hyva-checkout:^1.1
+
+composer require --prefer-source hyva-themes/magento2-hyva-checkout-stripe
+
 bin/magento setup:upgrade
 bin/magento config:set dev/template/minify_html 0
 vendor/bin/n98-magerun2 config:store:set design/theme/theme_id 5 --scope=stores --scope-id=1

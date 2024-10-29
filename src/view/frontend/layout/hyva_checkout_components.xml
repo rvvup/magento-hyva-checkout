@@ -24,5 +24,17 @@
                 </arguments>
             </block>
         </referenceBlock>
+        <referenceContainer name="checkout.payment.section">
+            <block name="checkout.payment.method.rvvup-express"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/method/rvvup-express.phtml"
+                   before="checkout.payment.methods"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\RvvupExpress
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>
