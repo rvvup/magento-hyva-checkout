@@ -31,25 +31,6 @@ $methods = $viewModel->getList();
             }, { once: true })
         </script>
 
-        <script>
-            window.addEventListener('checkout:payment:method-activate', () => {
-                disableApplePayForIncompatibleBrowsers();
-            }, { once: false })
-            window.addEventListener('checkout:shipping:method-activate', () => {
-                disableApplePayForIncompatibleBrowsers();
-            }, { once: false })
-            window.addEventListener('checkout:step:loaded', () => {
-                disableApplePayForIncompatibleBrowsers();
-            }, { once: false})
-
-            function disableApplePayForIncompatibleBrowsers() {
-                let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
-                if (applePay && !window.ApplePaySession) {
-                    applePay.remove();
-                }
-            }
-        </script>
-
         <ol id="payment-method-list" class="space-y-4">
             <?php foreach ($methods as $method): ?>
                 <?php $methodCodeAttr = $escaper->escapeHtmlAttr($method->getCode()) ?>
