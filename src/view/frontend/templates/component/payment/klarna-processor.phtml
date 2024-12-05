@@ -1,0 +1,32 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ClearpayProcessor $magewire */
+?>
+<div wire:ignore>
+<script>
+    (() => {
+        window.addEventListener('checkout:payment:method-activate', event => {
+            if (event.detail.method !== 'rvvup_KLARNA') {
+                return;
+            }
+
+            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+            hyvaCheckout.payment.activate('rvvup_KLARNA', {
+                placeOrderViaJs() {
+                    return document.querySelector('[wire\\:key="rvvup_KLARNA"].active') !== null;
+                },
+
+                placeOrder() {
+                    return component.placeOrder();
+                }
+            }, document.querySelector('[wire\\:key="rvvup_KLARNA"].active'));
+        });
+    })();
+</script>
+</div>
