@@ -9,8 +9,7 @@ bin/magento config:set currency/options/default GBP
 bin/magento config:set general/locale/timezone Europe/London
 bin/magento config:set general/locale/code en_GB
 bin/magento config:set carriers/freeshipping/active 1
-
-bin/magento sampledata:deploy
+bin/magento deploy:mode:set developer
 
 echo "Configuring SMTP settings to point to $MAGENTO_SMTP_HOST:$MAGENTO_SMTP_PORT"
 bin/magento config:set system/smtp/disable 0
