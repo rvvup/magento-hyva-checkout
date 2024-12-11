@@ -34,6 +34,9 @@ abstract class AbstractProcessor extends Component
     /** @var array */
     public $parameters = [];
 
+    /** @var string */
+    public $quoteAmount = '0';
+
     /**
      * @param SerializerInterface $serializer
      * @param Assets $assetsModel
@@ -55,9 +58,11 @@ abstract class AbstractProcessor extends Component
         $this->sdkProxy = $sdkProxy;
     }
 
-    public function mount(): void
+
+    public function boot(): void
     {
         $this->parameters = $this->serializer->unserialize($this->assetsModel->getRvvupParametersJsObject());
+        $this->quoteAmount = $this->checkoutSession->getQuote()->getGrandTotal();
     }
 
     abstract function getMethodCode(): string;

@@ -4,4 +4,5 @@ playwright-report/
 hyva/
 .idea/
 
+vendor/
 .env
