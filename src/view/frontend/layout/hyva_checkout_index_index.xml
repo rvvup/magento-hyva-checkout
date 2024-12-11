@@ -47,7 +47,7 @@
 
             <block name="checkout.payment.method.rvvup.apple-pay-processor"
                    as="rvvup.apple-pay-processor"
-                   template="Rvvup_PaymentsHyvaCheckout::component/payment/apple-pay-processor.phtml"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/apple-pay-hosted-processor.phtml"
                    after="hyva.checkout.main">
                 <arguments>
                     <argument name="magewire" xsi:type="object">

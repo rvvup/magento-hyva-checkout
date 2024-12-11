@@ -3,13 +3,18 @@
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
 <div wire:ignore>
+    <style>
+        .rvvup_PAYPAL_place_order_button {
+            display: none;
+        }
+    </style>
     <script>
         window.addEventListener('checkout:payment:method-activate', (event) => {
             const divId = 'rvvup-paypal-button-container';
             if (event.detail.method !== 'rvvup_PAYPAL') {
                 if (document.getElementById(divId)) {
                     document.getElementById(divId).remove();
-                    document.querySelector('.nav-main .btn-primary').removeAttribute('style');
+                    document.querySelector('.nav-main .btn-primary').classList.remove('rvvup_PAYPAL_place_order_button');
                 }
 
                 return;
@@ -50,7 +55,7 @@
                     if (placeOrderButton.className && placeOrderButton.className.indexOf("w-full") > -1) {
                         paypalDiv.className += ' w-full';
                     }
-                    placeOrderButton.style.display = 'none';
+                    placeOrderButton.classList.add('rvvup_PAYPAL_place_order_button');
                     placeOrderButton.appendChild(paypalDiv);
                     placeOrderButton.parentNode.insertBefore(paypalDiv, placeOrderButton);
 
@@ -58,7 +63,7 @@
                         style: this.getButtonStyle(),
 
                         createOrder: () => {
-                            /** Show loader */
+                            /** Hide loader */
                             let magewire = document.getElementById('magewire-loader');
                             magewire.children[0].style.display = 'none';
                             return component.paymentActions.authorization.value;

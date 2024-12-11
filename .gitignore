@@ -3,6 +3,7 @@ test-results/
 playwright-report/
 hyva/
 .idea/
+nohup.out
 
 vendor/
 .env
