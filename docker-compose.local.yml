@@ -34,8 +34,8 @@ services:
       - MAGENTO_SMTP_HOST=mailpit
       - MAGENTO_SMTP_PORT=1025
     volumes:
-      - "./src/:/bitnami/magento/app/code/Rvvup/PaymentsHyvaCheckout/"
-      - "./composer.json:/bitnami/magento/app/code/Rvvup/composer.json"
+      - "./src/:/bitnami/magento/app/code/Rvvup/PaymentsHyvaCheckout/src/"
+      - "./composer.json:/bitnami/magento/app/code/Rvvup/PaymentsHyvaCheckout/composer.json"
     image: magento-hyva-store:latest
     depends_on:
       - mariadb

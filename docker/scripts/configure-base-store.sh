@@ -23,4 +23,5 @@ bin/magento sampledata:deploy
 sed -i 's/^opcache\.enable *= *1/opcache.enable = 0/' /opt/bitnami/php/etc/php.ini
 sed -i 's/^opcache\.enable_cli *= *1/opcache.enable_cli = 0/' /opt/bitnami/php/etc/php.ini
 
-composer require n98/magerun2-dist
+composer config allow-plugins.wikimedia/composer-merge-plugin true
+composer require n98/magerun2-dist wikimedia/composer-merge-plugin
