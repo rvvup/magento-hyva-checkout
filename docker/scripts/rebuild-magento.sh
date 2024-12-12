@@ -1,4 +1,4 @@
-echo "Running run on local"
+echo "Running Rebuild Magento"
 cd /bitnami/magento/
 bin/magento setup:upgrade
 bin/magento setup:di:compile
