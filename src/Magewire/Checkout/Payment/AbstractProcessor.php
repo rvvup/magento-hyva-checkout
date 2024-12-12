@@ -35,6 +35,9 @@ abstract class AbstractProcessor extends Component
     public $parameters = [];
 
     /** @var string */
+    public $quoteCurrency = 'GBP';
+
+    /** @var string */
     public $quoteAmount = '0';
 
     /**
@@ -63,6 +66,7 @@ abstract class AbstractProcessor extends Component
     {
         $this->parameters = $this->serializer->unserialize($this->assetsModel->getRvvupParametersJsObject());
         $this->quoteAmount = $this->checkoutSession->getQuote()->getGrandTotal();
+        $this->quoteCurrency = $this->checkoutSession->getQuote()->getQuoteCurrencyCode();
     }
 
     abstract function getMethodCode(): string;

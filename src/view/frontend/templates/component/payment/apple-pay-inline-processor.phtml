@@ -8,7 +8,7 @@ use Magento\Framework\View\Element\Template;
 /** @var Escaper $escaper */
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ApplePayProcessor $magewire */
 ?>
-<div data-amount="<?php echo $magewire->quoteAmount; ?>">
+<div id="rvvup-apple-pay-inline" data-quoteamount="<?php echo $magewire->quoteAmount; ?>" data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
     <style>
         #payment-method-option-rvvup_APPLE_PAY {
             display: block;
@@ -17,6 +17,8 @@ use Magento\Framework\View\Element\Template;
     <script>
         (() => {
             window.addEventListener('checkout:payment:method-activate', event => {
+                const quoteCurrency = document.querySelector('#rvvup-apple-pay-inline').dataset.quotecurrency;
+                const quoteAmount = document.querySelector('#rvvup-apple-pay-inline').dataset.quoteamount;
                 let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 const divId = "rvvup-apple-pay-button";
 
@@ -51,7 +53,7 @@ use Magento\Framework\View\Element\Template;
 
                         window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
                             checkoutSessionKey: rvvup_parameters.checkout.token,
-                            total: {amount: "<?php echo $magewire->quoteAmount; ?>", currency: "GBP"},
+                            total: {amount: quoteAmount, currency: quoteCurrency},
                         }).catch(e => {
                             console.error("Error creating Apple Pay payment method", e);
                         }).then(async function (applePay) {
@@ -61,27 +63,23 @@ use Magento\Framework\View\Element\Template;
                                 });
                             })
                             applePay.on("click", () => {
-                                alert(<?php echo $magewire->quoteAmount; ?>);
-                                applePay.update({total: {amount: "<?php echo $magewire->quoteAmount; ?>", currency: "GBP"}})
-                            });
-                            applePay.on("validate", () => {
-                                // maybe not needed here?
-                                return true;
+                                applePay.update({total: {amount: quoteAmount, currency: quoteCurrency}});
                             });
                             applePay.on("beforePaymentAuth", async () => {
-                                return await self.beforePayment(self)
+                                await component.createPaymentSession(rvvup_parameters.checkout.id)
+                                return {
+                                    paymentSessionId: component.paymentSessionResult.paymentSessionId
+                                };
                             });
-                            applePay.on("paymentAuthorized", (data) => {
-                                self.paymentAuthorized(data);
+                            applePay.on("paymentAuthorized", () => {
+                                window.location.href = component.paymentSessionResult.redirectUrl;
                             });
                             applePay.on("paymentFailed", (data) => {
-                                errorProcessor.process({
-                                        responseText:
-                                            JSON.stringify({message: 'Payment ' + data.reason})
-                                    },
-                                    self.messageContainer);
+                                window.dispatchMessages && window.dispatchMessages([{
+                                    type: 'error',
+                                    text: 'Payment ' + data.reason
+                                }], 5000);
                             });
-
                         });
 
                     },
