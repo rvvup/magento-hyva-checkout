@@ -40,7 +40,7 @@ npx playwright install
 This will spin up a docker container with magento with hyva + rvvup plugin installed and run the test against this
 container.
 ```bash
-./run-e2e-tests.sh
+./scripts/run-e2e-tests.sh
 ```
 
 ### If you have an existing store, to run the tests, use the following command:

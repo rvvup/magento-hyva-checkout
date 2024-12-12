@@ -19,4 +19,8 @@ bin/magento config:set system/smtp/port $MAGENTO_SMTP_PORT
 
 bin/magento sampledata:deploy
 
+# Disable opcache
+sed -i 's/^opcache\.enable *= *1/opcache.enable = 0/' /opt/bitnami/php/etc/php.ini
+sed -i 's/^opcache\.enable_cli *= *1/opcache.enable_cli = 0/' /opt/bitnami/php/etc/php.ini
+
 composer require n98/magerun2-dist
