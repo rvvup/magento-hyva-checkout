@@ -53,8 +53,6 @@ class ApplePayProcessor extends AbstractProcessor
         $this->urlFactory = $urlFactory;
     }
 
-    public $hydrated = false;
-
     public function getMethodCode(): string
     {
         return 'rvvup_APPLE_PAY';

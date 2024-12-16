@@ -1,0 +1,123 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor $magewire */
+
+?>
+<div>
+    <style>
+        .rvvup_express_container {
+            width: 100%;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centers child elements horizontally */
+            justify-content: center; /* Centers child elements vertically if needed */
+        }
+
+        .rvvup_express_wrapper {
+            display: flex;
+            justify-content: center; /* Centers the element horizontally within the wrapper */
+            width: 100%;
+        }
+
+        .rvvup_express_element {
+            width: 100%;
+            max-width: 600px;
+            min-width: 200px;
+        }
+
+        .rvvup_express_divider_text {
+            width: 100%;
+            display: flex;
+            text-align: center;
+            flex-direction: row;
+            margin: 20px 0;
+            color: #bbb;
+            border-color: #bbb;
+        }
+
+        .rvvup_express_divider_text:after,
+        .rvvup_express_divider_text:before {
+            content: "";
+            flex: 1 1;
+            border-bottom: 1px solid;
+            margin: auto;
+        }
+
+        .rvvup_express_divider_text:after {
+            margin-left: 10px;
+        }
+
+        .rvvup_express_divider_text:before {
+            margin-right: 10px;
+        }
+    </style>
+    <div x-data="rvvupExpressButtons()"
+         x-init="initRvvup()"
+         class="rvvup_express_container" data-quoteamount="<?php echo $magewire->quoteAmount; ?>"
+         data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
+        <div class="rvvup_express_wrapper">
+            <div id="rvvup-express-element" class="rvvup_express_element"></div>
+        </div>
+        <div class="rvvup_express_divider_text">OR</div>
+    </div>
+    <script>
+        function rvvupExpressButtons() {
+            const getQuoteTotal = () => {
+                const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
+                return {
+                    amount: dataSet.quoteamount,
+                    currency: dataSet.quotecurrency
+                };
+            };
+
+            return {
+                initRvvup() {
+                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+
+                    window.rvvup_sdk.createExpressCheckout({
+                        checkoutSessionKey: rvvup_parameters.checkout.token,
+                    }).then(expressCheckout => {
+
+                        expressCheckout.on("click", () => {
+                            expressCheckout.update({total: getQuoteTotal()});
+                        });
+                        expressCheckout.on("beforePaymentAuth", async () => {
+                            await component.createPaymentSession(rvvup_parameters.checkout.id)
+                            return {
+                                paymentSessionId: component.paymentSessionResult.paymentSessionId
+                            };
+                        });
+                        expressCheckout.on("paymentAuthorized", () => {
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'block';
+                            window.location.href = component.paymentSessionResult.redirectUrl;
+                        });
+                        expressCheckout.on("paymentFailed", (data) => {
+                            window.dispatchMessages && window.dispatchMessages([{
+                                type: 'error',
+                                text: 'Payment ' + data.reason
+                            }], 5000);
+                        });
+                        expressCheckout.mount({
+                            selector: "#rvvup-express-element",
+                        });
+                    }).catch(e => {
+                        console.error("Error creating express checkout", e);
+                    });
+                },
+            }
+        }
+        (async () => {
+
+
+        })();
+    </script>
+
+</div>
