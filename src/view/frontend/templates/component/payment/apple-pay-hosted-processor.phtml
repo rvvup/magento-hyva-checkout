@@ -7,12 +7,12 @@ use Magento\Framework\View\Element\Template;
 /** @var Template $block */
 /** @var Escaper $escaper */
 ?>
-<style>
-    #payment-method-option-rvvup_APPLE_PAY {
-        display: none;
-    }
-</style>
 <div wire:ignore>
+    <style>
+        #payment-method-option-rvvup_APPLE_PAY {
+            display: none;
+        }
+    </style>
     <script>
         (() => {
             window.addEventListener('checkout:payment:method-activate', event => {
