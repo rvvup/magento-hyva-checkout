@@ -19,9 +19,43 @@ use Magento\Framework\View\Element\Template;
     </style>
     <script>
         (() => {
+            const getQuoteTotal = () => {
+                const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
+                return {
+                    amount: dataSet.quoteamount,
+                    currency: dataSet.quotecurrency
+                };
+            };
+            const triggerApplePayDisplayEvent = () => {
+                if (!$showApplePay) {
+                    window.dispatchEvent(new CustomEvent('rvvup:methods:apple-pay:hide'));
+                }
+            };
+            let applePayPromise = window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
+                checkoutSessionKey: rvvup_parameters.checkout.token,
+                total: getQuoteTotal(),
+            }).catch(e => {
+                console.error("Error creating Apple Pay payment method", e);
+            });
+            let $showApplePay = true;
+
+            applePayPromise.then(applePay => {
+                applePay.on("ready", async () => {
+                    $showApplePay = await applePay.canMakePayment();
+                    triggerApplePayDisplayEvent();
+                });
+            });
+            window.addEventListener('checkout:payment:method-activate', triggerApplePayDisplayEvent);
+            window.addEventListener('checkout:step:loaded', triggerApplePayDisplayEvent);
+
+            window.addEventListener('rvvup:methods:apple-pay:hide', () => {
+                let element = document.getElementById("payment-method-option-rvvup_APPLE_PAY");
+                if (element) {
+                    element.parentElement.removeChild(element);
+                }
+            });
+
             window.addEventListener('checkout:payment:method-activate', event => {
-                const quoteCurrency = document.querySelector('#rvvup-apple-pay-inline').dataset.quotecurrency;
-                const quoteAmount = document.querySelector('#rvvup-apple-pay-inline').dataset.quoteamount;
                 let placeOrderButton = document.querySelector('.nav-main .btn-primary');
                 const divId = "rvvup-apple-pay-button";
 
@@ -54,19 +88,14 @@ use Magento\Framework\View\Element\Template;
                         placeOrderButton.parentNode.insertBefore(applePayButtonDiv, placeOrderButton);
 
 
-                        window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
-                            checkoutSessionKey: rvvup_parameters.checkout.token,
-                            total: {amount: quoteAmount, currency: quoteCurrency},
-                        }).catch(e => {
-                            console.error("Error creating Apple Pay payment method", e);
-                        }).then(async function (applePay) {
-                            applePay.on("ready", async () => {
+                        applePayPromise.then(async function (applePay) {
+                            if($showApplePay){
                                 await applePay.mount({
                                     selector: "#rvvup-apple-pay-button",
                                 });
-                            })
+                            }
                             applePay.on("click", () => {
-                                applePay.update({total: {amount: quoteAmount, currency: quoteCurrency}});
+                                applePay.update({total: getQuoteTotal()});
                             });
                             applePay.on("beforePaymentAuth", async () => {
                                 await component.createPaymentSession(rvvup_parameters.checkout.id)
@@ -96,6 +125,7 @@ use Magento\Framework\View\Element\Template;
                         return component.placeOrder();
                     }
                 }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
+
             });
         })();
     </script>
