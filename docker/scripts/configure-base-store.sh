@@ -9,8 +9,15 @@ bin/magento config:set currency/options/default GBP
 bin/magento config:set general/locale/timezone Europe/London
 bin/magento config:set general/locale/code en_GB
 bin/magento config:set carriers/freeshipping/active 1
-bin/magento deploy:mode:set developer
+if [ "$RVVUP_HYVA_CHECKOUT_VERSION" == "local" ]; then
+  bin/magento deploy:mode:set developer
+  # Disable opcache
+  sed -i 's/^opcache\.enable *= *1/opcache.enable = 0/' /opt/bitnami/php/etc/php.ini
+  sed -i 's/^opcache\.enable_cli *= *1/opcache.enable_cli = 0/' /opt/bitnami/php/etc/php.ini
 
+  composer config allow-plugins.wikimedia/composer-merge-plugin true
+  composer require wikimedia/composer-merge-plugin
+fi
 echo "Configuring SMTP settings to point to $MAGENTO_SMTP_HOST:$MAGENTO_SMTP_PORT"
 bin/magento config:set system/smtp/disable 0
 bin/magento config:set system/smtp/transport smtp
@@ -19,9 +26,4 @@ bin/magento config:set system/smtp/port $MAGENTO_SMTP_PORT
 
 bin/magento sampledata:deploy
 
-# Disable opcache
-sed -i 's/^opcache\.enable *= *1/opcache.enable = 0/' /opt/bitnami/php/etc/php.ini
-sed -i 's/^opcache\.enable_cli *= *1/opcache.enable_cli = 0/' /opt/bitnami/php/etc/php.ini
-
-composer config allow-plugins.wikimedia/composer-merge-plugin true
-composer require n98/magerun2-dist wikimedia/composer-merge-plugin
+composer require n98/magerun2-dist
