@@ -1,0 +1,132 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ApplePayProcessor $magewire */
+?>
+<div id="rvvup-apple-pay-inline" data-quoteamount="<?php echo $magewire->quoteAmount; ?>" data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
+    <style>
+        #payment-method-option-rvvup_APPLE_PAY {
+            display: block;
+        }
+        .rvvup_APPLE_PAY_place_order_button {
+            display: none;
+        }
+    </style>
+    <script>
+        (() => {
+            const getQuoteTotal = () => {
+                const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
+                return {
+                    amount: dataSet.quoteamount,
+                    currency: dataSet.quotecurrency
+                };
+            };
+            const triggerApplePayDisplayEvent = () => {
+                if (!$showApplePay) {
+                    window.dispatchEvent(new CustomEvent('rvvup:methods:apple-pay:hide'));
+                }
+            };
+            let applePayPromise = window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
+                checkoutSessionKey: rvvup_parameters.checkout.token,
+                total: getQuoteTotal(),
+            }).catch(e => {
+                console.error("Error creating Apple Pay payment method", e);
+            });
+            let $showApplePay = true;
+
+            applePayPromise.then(applePay => {
+                applePay.on("ready", async () => {
+                    $showApplePay = await applePay.canMakePayment();
+                    triggerApplePayDisplayEvent();
+                });
+            });
+            window.addEventListener('checkout:payment:method-activate', triggerApplePayDisplayEvent);
+            window.addEventListener('checkout:step:loaded', triggerApplePayDisplayEvent);
+
+            window.addEventListener('rvvup:methods:apple-pay:hide', () => {
+                let element = document.getElementById("payment-method-option-rvvup_APPLE_PAY");
+                if (element) {
+                    element.parentElement.removeChild(element);
+                }
+            });
+
+            window.addEventListener('checkout:payment:method-activate', event => {
+                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                const divId = "rvvup-apple-pay-button";
+
+                if (event.detail.method !== 'rvvup_APPLE_PAY') {
+                    if (document.getElementById(divId)) {
+                        document.getElementById(divId).style.display = 'none';
+                        document.querySelector('.nav-main .btn-primary').classList.remove('rvvup_APPLE_PAY_place_order_button');
+                    }
+                    return;
+                }
+
+
+                const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                hyvaCheckout.payment.activate('rvvup_APPLE_PAY', {
+                    initialize() {
+                        if(document.getElementById(divId)){
+                            document.getElementById(divId).style.display = 'block';
+                            placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
+
+                            return;
+                        }
+                        const applePayButtonDiv = document.createElement('div');
+                        applePayButtonDiv.id = divId;
+                        applePayButtonDiv.className = 'rvvup-applepay-button z-0';
+                        if (placeOrderButton.className && placeOrderButton.className.indexOf("w-full") > -1) {
+                            applePayButtonDiv.className += ' w-full';
+                        }
+                        placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
+                        placeOrderButton.appendChild(applePayButtonDiv);
+                        placeOrderButton.parentNode.insertBefore(applePayButtonDiv, placeOrderButton);
+
+
+                        applePayPromise.then(async function (applePay) {
+                            if($showApplePay){
+                                await applePay.mount({
+                                    selector: "#rvvup-apple-pay-button",
+                                });
+                            }
+                            applePay.on("click", () => {
+                                applePay.update({total: getQuoteTotal()});
+                            });
+                            applePay.on("beforePaymentAuth", async () => {
+                                await component.createPaymentSession(rvvup_parameters.checkout.id)
+                                return {
+                                    paymentSessionId: component.paymentSessionResult.paymentSessionId
+                                };
+                            });
+                            applePay.on("paymentAuthorized", () => {
+                                let magewire = document.getElementById('magewire-loader');
+                                magewire.children[0].style.display = 'block';
+                                window.location.href = component.paymentSessionResult.redirectUrl;
+                            });
+                            applePay.on("paymentFailed", (data) => {
+                                window.dispatchMessages && window.dispatchMessages([{
+                                    type: 'error',
+                                    text: 'Payment ' + data.reason
+                                }], 5000);
+                            });
+                        });
+
+                    },
+                    placeOrderViaJs() {
+                        return document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active') !== null;
+                    },
+
+                    placeOrder() {
+                        return component.placeOrder();
+                    }
+                }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
+
+            });
+        })();
+    </script>
+</div>
