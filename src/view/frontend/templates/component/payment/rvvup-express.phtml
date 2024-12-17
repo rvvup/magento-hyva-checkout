@@ -9,7 +9,7 @@ use Magento\Framework\View\Element\Template;
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor $magewire */
 
 ?>
-<div>
+<div wire:ignore>
     <style>
         .rvvup_express_container {
             width: 100%;
@@ -60,8 +60,7 @@ use Magento\Framework\View\Element\Template;
     </style>
     <div x-data="rvvupExpressButtons()"
          x-init="initRvvup()"
-         class="rvvup_express_container" data-quoteamount="<?php echo $magewire->quoteAmount; ?>"
-         data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
+         class="rvvup_express_container">
         <div class="rvvup_express_wrapper">
             <div id="rvvup-express-element" class="rvvup_express_element"></div>
         </div>
@@ -69,14 +68,6 @@ use Magento\Framework\View\Element\Template;
     </div>
     <script>
         function rvvupExpressButtons() {
-            const getQuoteTotal = () => {
-                const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
-                return {
-                    amount: dataSet.quoteamount,
-                    currency: dataSet.quotecurrency
-                };
-            };
-
             return {
                 initRvvup() {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
@@ -86,7 +77,10 @@ use Magento\Framework\View\Element\Template;
                     }).then(expressCheckout => {
 
                         expressCheckout.on("click", () => {
-                            expressCheckout.update({total: getQuoteTotal()});
+                            expressCheckout.update({total: {
+                                    amount: component.quoteAmount,
+                                    currency: component.quoteCurrency
+                                }});
                         });
                         expressCheckout.on("beforePaymentAuth", async () => {
                             await component.createPaymentSession(rvvup_parameters.checkout.id)
