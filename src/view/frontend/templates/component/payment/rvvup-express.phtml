@@ -33,38 +33,48 @@ use Magento\Framework\View\Element\Template;
         }
 
         .rvvup_express_divider_text {
+            margin: 20px 0;
+            color: #bbb;
+        }
+
+        .rvvup_express_title {
+            margin: 20px 0;
+            color: #2b2b2b;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .rvvup_express_text_with_line {
             width: 100%;
             display: flex;
             text-align: center;
             flex-direction: row;
-            margin: 20px 0;
-            color: #bbb;
-            border-color: #bbb;
         }
 
-        .rvvup_express_divider_text:after,
-        .rvvup_express_divider_text:before {
+        .rvvup_express_text_with_line:after,
+        .rvvup_express_text_with_line:before {
             content: "";
             flex: 1 1;
-            border-bottom: 1px solid;
+            border-bottom: 1px solid #c5c5c5;
             margin: auto;
         }
 
-        .rvvup_express_divider_text:after {
-            margin-left: 10px;
+        .rvvup_express_text_with_line:after {
+            margin-left: 20px;
         }
 
-        .rvvup_express_divider_text:before {
-            margin-right: 10px;
+        .rvvup_express_text_with_line:before {
+            margin-right: 20px;
         }
     </style>
     <div x-data="rvvupExpressButtons()"
          x-init="initRvvup()"
          class="rvvup_express_container">
+        <div class="rvvup_express_title rvvup_express_text_with_line">Express Checkout</div>
         <div class="rvvup_express_wrapper">
             <div id="rvvup-express-element" class="rvvup_express_element"></div>
         </div>
-        <div class="rvvup_express_divider_text">OR</div>
+        <div class="rvvup_express_divider_text rvvup_express_text_with_line">OR</div>
     </div>
     <script>
         function rvvupExpressButtons() {
