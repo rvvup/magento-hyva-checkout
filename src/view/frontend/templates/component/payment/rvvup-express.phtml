@@ -81,7 +81,6 @@ use Magento\Framework\View\Element\Template;
             return {
                 initRvvup() {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-
                     window.rvvup_sdk.createExpressCheckout({
                         checkoutSessionKey: rvvup_parameters.checkout.token,
                     }).then(expressCheckout => {
@@ -91,6 +90,11 @@ use Magento\Framework\View\Element\Template;
                                     amount: component.quoteAmount,
                                     currency: component.quoteCurrency
                                 }});
+                        });
+                        expressCheckout.on("shippingAddressChange", async (data) => {
+                            await component.shippingAddressChanged(data.address);
+
+                            return component.shippingAddressChangeResult;
                         });
                         expressCheckout.on("beforePaymentAuth", async () => {
                             await component.createPaymentSession(rvvup_parameters.checkout.id)
@@ -118,10 +122,6 @@ use Magento\Framework\View\Element\Template;
                 },
             }
         }
-        (async () => {
-
-
-        })();
     </script>
 
 </div>

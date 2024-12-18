@@ -13,6 +13,7 @@ use Magewirephp\Magewire\Component;
 use Rvvup\ApiException;
 use Rvvup\Payments\Controller\Redirect\In;
 use Rvvup\Payments\Service\PaymentSessionService;
+use Rvvup\PaymentsHyvaCheckout\Service\ExpressPaymentManager;
 
 class RvvupExpressProcessor extends Component
 {
@@ -30,6 +31,9 @@ class RvvupExpressProcessor extends Component
     /** @var Session */
     private $checkoutSession;
 
+    /** @var ExpressPaymentManager */
+    private $expressPaymentManager;
+
     /** @var array */
     public $paymentSessionResult;
 
@@ -39,20 +43,26 @@ class RvvupExpressProcessor extends Component
     /** @var string */
     public $quoteAmount = '0';
 
+    /** @var array */
+    public $shippingAddressChangeResult = [];
+
     /**
      * @param Session $checkoutSession
      * @param PaymentSessionService $paymentSessionService
      * @param UrlFactory $urlFactory
+     * @param ExpressPaymentManager $expressPaymentManager
      */
     public function __construct(
         Session               $checkoutSession,
         PaymentSessionService $paymentSessionService,
-        UrlFactory            $urlFactory
+        UrlFactory            $urlFactory,
+        ExpressPaymentManager $expressPaymentManager
     )
     {
         $this->paymentSessionService = $paymentSessionService;
         $this->urlFactory = $urlFactory;
         $this->checkoutSession = $checkoutSession;
+        $this->expressPaymentManager = $expressPaymentManager;
     }
 
     /**
@@ -63,6 +73,37 @@ class RvvupExpressProcessor extends Component
         $quote = $this->checkoutSession->getQuote();
         $this->quoteAmount = $quote->getGrandTotal();
         $this->quoteCurrency = $quote->getQuoteCurrencyCode();
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     * @throws AlreadyExistsException
+     * @throws LocalizedException
+     */
+    public function shippingAddressChanged(array $address): void
+    {
+        if (empty($address['country'])) {
+            $detail = [
+                'text' => "Invalid shipping country",
+            ];
+            $this->dispatchBrowserEvent('order:place:error', $detail);
+            $this->dispatchErrorMessage($detail['text']);
+        }
+
+        $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
+
+        $this->shippingAddressChangeResult = [
+            'total' => ['amount' => $result['quote']->getGrandTotal(), 'currency' => $result['quote']->getQuoteCurrencyCode()],
+            'shippingMethods' => array_reduce($result['shippingMethods'], function ($carry, $method) {
+                $carry[] = [
+                    'id' => $method->getId(),
+                    'label' => $method->getLabel(),
+                    'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
+                ];
+                return $carry;
+            }, []),
+            'errorMessage' => null,
+        ];
     }
 
     /**
