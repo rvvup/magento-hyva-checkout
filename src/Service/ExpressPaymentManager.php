@@ -37,11 +37,11 @@ class ExpressPaymentManager
     {
         $shippingAddress = $quote->getShippingAddress();
         $shippingAddress
-            ->setCountryId($address['country'])
+            ->setCountryId($address['countryCode'])
             ->setCity($address['city'] ?? null)
             ->setRegion($address['state'] ?? null)
 //            ->setRegionId() Set it by looking up state and getting the id
-            ->setPostcode($address['postal_code'] ?? null)
+            ->setPostcode($address['postcode'] ?? null)
             ->setCollectShippingRates(true);
 
         $shippingMethods = $this->getAvailableShippingMethods($quote);

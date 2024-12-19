@@ -71,8 +71,7 @@ class RvvupExpressProcessor extends Component
      */
     public function boot(){
         $quote = $this->checkoutSession->getQuote();
-        $this->quoteAmount = number_format($quote->getGrandTotal(), 2, '.', '');
-        $this->quoteCurrency = $quote->getQuoteCurrencyCode();
+        $this->setQuoteTotal($quote);
     }
 
     /**
@@ -82,7 +81,7 @@ class RvvupExpressProcessor extends Component
      */
     public function shippingAddressChanged(array $address): void
     {
-        if (empty($address['country'])) {
+        if (empty($address['countryCode'])) {
             $detail = [
                 'text' => "Invalid shipping country",
             ];
@@ -92,8 +91,9 @@ class RvvupExpressProcessor extends Component
 
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
 
+        $this->setQuoteTotal($result['quote']);
         $this->shippingAddressChangeResult = [
-            'total' => ['amount' => $result['quote']->getGrandTotal(), 'currency' => $result['quote']->getQuoteCurrencyCode()],
+            'total' => ['amount' => $this->quoteAmount, 'currency' => $this->quoteCurrency],
             'shippingMethods' => array_reduce($result['shippingMethods'], function ($carry, $method) {
                 $carry[] = [
                     'id' => $method->getId(),
@@ -121,5 +121,12 @@ class RvvupExpressProcessor extends Component
         $url = $this->urlFactory->create();
         $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
         $this->paymentSessionResult = ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
+    }
+
+    private function setQuoteTotal($quote)
+    {
+        $total = $quote->getGrandTotal();
+        $this->quoteAmount = is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total;
+        $this->quoteCurrency = $quote->getQuoteCurrencyCode();
     }
 }

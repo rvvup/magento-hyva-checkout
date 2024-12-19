@@ -92,6 +92,10 @@ use Magento\Framework\View\Element\Template;
                                 }});
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
+                            console.log("Address Changed", data);
+                            if (!data.address || !data.address.countryCode) {
+                                return;
+                            }
                             await component.shippingAddressChanged(data.address);
 
                             return component.shippingAddressChangeResult;
