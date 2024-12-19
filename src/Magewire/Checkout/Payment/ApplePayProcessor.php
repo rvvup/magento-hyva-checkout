@@ -6,12 +6,10 @@ namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\UrlFactory;
-use Rvvup\Payments\Controller\Redirect\In;
 use Rvvup\Payments\Model\SdkProxy;
-use Rvvup\Payments\Service\PaymentSessionService;
 use Rvvup\Payments\ViewModel\Assets;
 use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
+use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
 
 class ApplePayProcessor extends AbstractProcessor
 {
@@ -21,11 +19,8 @@ class ApplePayProcessor extends AbstractProcessor
         'coupon_code_revoked' => 'refresh'
     ];
 
-    /** @var PaymentSessionService */
-    private $paymentSessionService;
-
-    /** @var UrlFactory */
-    private $urlFactory;
+    /** @var PaymentSessionManager */
+    private $paymentSessionManager;
 
     /** @var array */
     public $paymentSessionResult;
@@ -36,8 +31,7 @@ class ApplePayProcessor extends AbstractProcessor
      * @param GetPaymentActions $getPaymentActions
      * @param Session $checkoutSession
      * @param SdkProxy $sdkProxy
-     * @param PaymentSessionService $paymentSessionService
-     * @param UrlFactory $urlFactory
+     * @param PaymentSessionManager $paymentSessionManager
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -45,12 +39,10 @@ class ApplePayProcessor extends AbstractProcessor
         GetPaymentActions $getPaymentActions,
         Session $checkoutSession,
         SdkProxy $sdkProxy,
-        PaymentSessionService $paymentSessionService,
-        UrlFactory $urlFactory
+        PaymentSessionManager $paymentSessionManager,
     ) {
         parent::__construct($serializer, $assetsModel, $getPaymentActions, $checkoutSession, $sdkProxy);
-        $this->paymentSessionService = $paymentSessionService;
-        $this->urlFactory = $urlFactory;
+        $this->paymentSessionManager = $paymentSessionManager;
     }
 
     public function getMethodCode(): string
@@ -86,12 +78,6 @@ class ApplePayProcessor extends AbstractProcessor
 
     public function createPaymentSession(string $checkoutId): void
     {
-        $quote = $this->checkoutSession->getQuote();
-
-        $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
-
-        $url = $this->urlFactory->create();
-        $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
-        $this->paymentSessionResult = ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
+        $this->paymentSessionResult = $this->paymentSessionManager->create($this->checkoutSession->getQuote(), $checkoutId, $this);
     }
 }

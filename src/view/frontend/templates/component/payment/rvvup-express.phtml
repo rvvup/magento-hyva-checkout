@@ -133,6 +133,7 @@ use Magento\Framework\View\Element\Template;
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
                             await component.createPaymentSession(rvvup_parameters.checkout.id, data)
+
                             return {
                                 paymentSessionId: component.paymentSessionResult.paymentSessionId
                             };

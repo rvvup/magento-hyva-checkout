@@ -8,12 +8,9 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\UrlFactory;
 use Magewirephp\Magewire\Component;
-use Rvvup\ApiException;
-use Rvvup\Payments\Controller\Redirect\In;
-use Rvvup\Payments\Service\PaymentSessionService;
 use Rvvup\PaymentsHyvaCheckout\Service\ExpressPaymentManager;
+use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
 
 class RvvupExpressProcessor extends Component
 {
@@ -23,16 +20,14 @@ class RvvupExpressProcessor extends Component
         'coupon_code_revoked' => 'refresh'
     ];
 
-    /** @var PaymentSessionService */
-    private $paymentSessionService;
-
-    /** @var UrlFactory */
-    private $urlFactory;
     /** @var Session */
     private $checkoutSession;
 
     /** @var ExpressPaymentManager */
     private $expressPaymentManager;
+
+    /** @var PaymentSessionManager */
+    private $paymentSessionManager;
 
     /** @var array */
     public $paymentSessionResult;
@@ -48,19 +43,16 @@ class RvvupExpressProcessor extends Component
 
     /**
      * @param Session $checkoutSession
-     * @param PaymentSessionService $paymentSessionService
-     * @param UrlFactory $urlFactory
+     * @param PaymentSessionManager $paymentSessionManager
      * @param ExpressPaymentManager $expressPaymentManager
      */
     public function __construct(
         Session               $checkoutSession,
-        PaymentSessionService $paymentSessionService,
-        UrlFactory            $urlFactory,
+        PaymentSessionManager $paymentSessionManager,
         ExpressPaymentManager $expressPaymentManager
     )
     {
-        $this->paymentSessionService = $paymentSessionService;
-        $this->urlFactory = $urlFactory;
+        $this->paymentSessionManager = $paymentSessionManager;
         $this->checkoutSession = $checkoutSession;
         $this->expressPaymentManager = $expressPaymentManager;
     }
@@ -130,24 +122,8 @@ class RvvupExpressProcessor extends Component
     public function createPaymentSession(string $checkoutId, array $data): void
     {
         $quote = $this->expressPaymentManager->updateQuoteBeforeAuth($this->checkoutSession->getQuote(), $data);
-
-        try {
-            $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
-
-            $url = $this->urlFactory->create();
-            $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
-            $this->paymentSessionResult = ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
-        } catch (\Exception $exception) {
-            $detail = [
-                'text' => $exception->getMessage(),
-                'method' => $quote->getPayment()->getMethod(),
-            ];
-
-            $this->dispatchBrowserEvent('order:place:error', $detail);
-            $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
-            $this->dispatchErrorMessage($detail['text']);
-        }
-
+        $this->setQuoteTotal($quote);
+        $this->paymentSessionResult = $this->paymentSessionManager->create($quote, $checkoutId, $this);
     }
 
     private function setQuoteTotal($quote)
