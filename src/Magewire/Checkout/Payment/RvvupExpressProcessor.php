@@ -107,6 +107,18 @@ class RvvupExpressProcessor extends Component
     }
 
     /**
+     * @param string $methodId
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function shippingMethodChanged(string $methodId): void
+    {
+        $quote = $this->expressPaymentManager->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
+        $this->setQuoteTotal($quote);
+    }
+
+    /**
      * @throws NoSuchEntityException
      * @throws ApiException
      * @throws AlreadyExistsException

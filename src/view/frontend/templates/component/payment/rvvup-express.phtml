@@ -92,13 +92,24 @@ use Magento\Framework\View\Element\Template;
                                 }});
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
-                            console.log("Address Changed", data);
                             if (!data.address || !data.address.countryCode) {
                                 return;
                             }
                             await component.shippingAddressChanged(data.address);
 
                             return component.shippingAddressChangeResult;
+                        });
+                        expressCheckout.on("shippingMethodChange", async (data) => {
+                            if (!data.selected || !data.selected.id) {
+                                return;
+                            }
+                            await component.shippingMethodChanged(data.selected.id);
+                            return {
+                                total: {
+                                    amount: component.quoteAmount,
+                                    currency: component.quoteCurrency
+                                }
+                            };
                         });
                         expressCheckout.on("beforePaymentAuth", async () => {
                             await component.createPaymentSession(rvvup_parameters.checkout.id)

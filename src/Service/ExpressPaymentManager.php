@@ -6,6 +6,8 @@ namespace Rvvup\PaymentsHyvaCheckout\Service;
 
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\ShipmentEstimationInterface;
+use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
+use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Quote\Model\Quote;
 use Rvvup\PaymentsHyvaCheckout\Model\ExpressShippingMethod;
 
@@ -19,13 +21,23 @@ class ExpressPaymentManager
     /** @var CartRepositoryInterface */
     private $quoteRepository;
 
+    /** @var ShippingInformationInterfaceFactory */
+    private $shippingInformationFactory;
+
+    /** @var ShippingInformationManagementInterface */
+    private $shippingInformationManagement;
+
     public function __construct(
         ShipmentEstimationInterface $shipmentEstimation,
-        CartRepositoryInterface     $quoteRepository
+        CartRepositoryInterface     $quoteRepository,
+        ShippingInformationInterfaceFactory $shippingInformationFactory,
+        ShippingInformationManagementInterface $shippingInformationManagement
     )
     {
         $this->shipmentEstimation = $shipmentEstimation;
         $this->quoteRepository = $quoteRepository;
+        $this->shippingInformationFactory = $shippingInformationFactory;
+        $this->shippingInformationManagement = $shippingInformationManagement;
     }
 
     /**
@@ -55,6 +67,35 @@ class ExpressPaymentManager
 
         $this->quoteRepository->save($quote);
         return ['quote' => $quote, 'shippingMethods' => $shippingMethods];
+    }
+
+    /**
+     * @param Quote $quote
+     * @param string $methodId
+     * @return Quote
+     */
+    public function updateShippingMethod(Quote $quote, string $methodId): Quote
+    {
+        $codes = explode('_', $methodId);
+        if (count($codes) !== 2) {
+            return $quote;
+        }
+        $shippingAddress = $quote->getShippingAddress();
+        $shippingAddress->setShippingMethod($methodId)->setCollectShippingRates(true)->collectShippingRates();
+
+        $this->shippingInformationManagement->saveAddressInformation(
+            $quote->getId(),
+            $this->shippingInformationFactory->create()
+                ->setShippingAddress($shippingAddress)
+                ->setShippingCarrierCode($codes[0])
+                ->setShippingMethodCode($codes[1])
+        );
+
+        $quote->setTotalsCollectedFlag(false);
+        $quote->collectTotals();
+
+        $this->quoteRepository->save($quote);
+        return $quote;
     }
 
     /**
