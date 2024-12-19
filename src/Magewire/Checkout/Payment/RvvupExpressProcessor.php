@@ -92,16 +92,20 @@ class RvvupExpressProcessor extends Component
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
 
         $this->setQuoteTotal($result['quote']);
+        $shippingMethods = array_reduce($result['shippingMethods'], function ($carry, $method) {
+            $carry[] = [
+                'id' => $method->getId(),
+                'label' => $method->getLabel(),
+                'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
+            ];
+            return $carry;
+        }, []);
+        if (!empty($shippingMethods)) {
+            $shippingMethods[0]['selected'] = true;
+        }
         $this->shippingAddressChangeResult = [
             'total' => ['amount' => $this->quoteAmount, 'currency' => $this->quoteCurrency],
-            'shippingMethods' => array_reduce($result['shippingMethods'], function ($carry, $method) {
-                $carry[] = [
-                    'id' => $method->getId(),
-                    'label' => $method->getLabel(),
-                    'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
-                ];
-                return $carry;
-            }, []),
+            'shippingMethods' => $shippingMethods,
             'errorMessage' => null,
         ];
     }
