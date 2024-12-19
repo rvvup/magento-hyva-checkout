@@ -132,11 +132,23 @@ class RvvupExpressProcessor extends Component
     {
         $quote = $this->expressPaymentManager->updateQuoteBeforeAuth($this->checkoutSession->getQuote(), $data);
 
-        $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
+        try {
+            $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
 
-        $url = $this->urlFactory->create();
-        $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
-        $this->paymentSessionResult = ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
+            $url = $this->urlFactory->create();
+            $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
+            $this->paymentSessionResult = ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
+        } catch (\Exception $exception) {
+            $detail = [
+                'text' => $exception->getMessage(),
+                'method' => $quote->getPayment()->getMethod(),
+            ];
+
+            $this->dispatchBrowserEvent('order:place:error', $detail);
+            $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
+            $this->dispatchErrorMessage($detail['text']);
+        }
+
     }
 
     private function setQuoteTotal($quote)
