@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Rvvup\PaymentsHyvaCheckout\Service;
 
+use Magento\Checkout\Model\Type\Onepage;
+use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\ShipmentEstimationInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Customer\Model\Session;
 use Rvvup\PaymentsHyvaCheckout\Model\ExpressShippingMethod;
 
 class ExpressPaymentManager
@@ -27,17 +30,22 @@ class ExpressPaymentManager
     /** @var ShippingInformationManagementInterface */
     private $shippingInformationManagement;
 
+    /** @var Session */
+    private $customerSession;
+
     public function __construct(
         ShipmentEstimationInterface $shipmentEstimation,
         CartRepositoryInterface     $quoteRepository,
         ShippingInformationInterfaceFactory $shippingInformationFactory,
-        ShippingInformationManagementInterface $shippingInformationManagement
+        ShippingInformationManagementInterface $shippingInformationManagement,
+        Session $customerSession
     )
     {
         $this->shipmentEstimation = $shipmentEstimation;
         $this->quoteRepository = $quoteRepository;
         $this->shippingInformationFactory = $shippingInformationFactory;
         $this->shippingInformationManagement = $shippingInformationManagement;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -98,6 +106,46 @@ class ExpressPaymentManager
         return $quote;
     }
 
+    public function updateQuoteBeforeAuth(Quote $quote, array $data): Quote
+    {
+        if (!$quote->isVirtual() && isset($data['shipping']['address']) && isset($data['shipping']['contact'])) {
+            $this->setUpdatedAddressDetails(
+                $quote->getShippingAddress(),
+                $data['shipping']['contact'],
+                $data['shipping']['address']
+            );
+        }
+
+        if (isset($data['billing']['address']) && isset($data['billing']['contact'])) {
+            $contact = $data['billing']['contact'];
+            $this->setUpdatedAddressDetails($quote->getbillingAddress(), $contact, $data['billing']['address']);
+
+            $quote->setCustomerFirstname($contact['givenName'] ?? null)
+                ->setCustomerLastname($contact['surname'] ?? null);
+
+            if ($this->customerSession->isLoggedIn()) {
+                $quote->setCheckoutMethod(Onepage::METHOD_CUSTOMER)
+                    ->setCustomerId($this->customerSession->getCustomerId());
+            } else {
+                $quote->setCheckoutMethod(Onepage::METHOD_GUEST)
+                    ->setCustomerId(0)
+                    ->setCustomerGroupId(GroupInterface::NOT_LOGGED_IN_ID)
+                    ->setCustomerEmail($contact['email'])
+                    ->setCustomerIsGuest(true);
+            }
+        }
+
+        if (isset($data['paymentMethod'])) {
+            $quote->getPayment()->setMethod('rvvup_' . $data['paymentMethod']);
+        }
+
+        $quote->setTotalsCollectedFlag(false);
+        $quote->collectTotals();
+
+        $this->quoteRepository->save($quote);
+        return $quote;
+    }
+
     /**
      * @param Quote $quote
      * @return ExpressShippingMethod[] $shippingMethods
@@ -117,6 +165,26 @@ class ExpressPaymentManager
             $returnedShippingMethods[] = new ExpressShippingMethod($shippingMethod, $quote->getQuoteCurrencyCode());
         }
         return $returnedShippingMethods;
+    }
+
+    /**
+     * @param Quote\Address $shippingAddress
+     * @param $contact
+     * @param $address
+     * @return void
+     */
+    public function setUpdatedAddressDetails(Quote\Address $shippingAddress, $contact, $address): void
+    {
+        $shippingAddress
+            ->setFirstname($contact['givenName'] ?? null)
+            ->setLastname($contact['surname'] ?? null)
+            ->setEmail($contact['email'] ?? null)
+            ->setStreet($address['addressLines'] ?? null)
+            ->setCountryId($address['countryCode'] ?? null)
+            ->setRegion($address['state'] ?? null)
+//            ->setRegionId() Set it by looking up state and getting the id
+            ->setPostcode($address['postcode'] ?? null)
+            ->setCity($address['city'] ?? null);
     }
 
 }

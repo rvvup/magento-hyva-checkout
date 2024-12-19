@@ -128,9 +128,9 @@ class RvvupExpressProcessor extends Component
      * @throws AlreadyExistsException
      * @throws LocalizedException
      */
-    public function createPaymentSession(string $checkoutId): void
+    public function createPaymentSession(string $checkoutId, array $data): void
     {
-        $quote = $this->checkoutSession->getQuote();
+        $quote = $this->expressPaymentManager->updateQuoteBeforeAuth($this->checkoutSession->getQuote(), $data);
 
         $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
 

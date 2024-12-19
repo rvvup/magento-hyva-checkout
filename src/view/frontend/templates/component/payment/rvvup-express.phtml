@@ -87,12 +87,22 @@ use Magento\Framework\View\Element\Template;
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                     window.rvvup_sdk.createExpressCheckout({
                         checkoutSessionKey: rvvup_parameters.checkout.token,
+                        // enabledPaymentMethods: ['APPLE_PAY'],
+                        methodOptions: {
+                            APPLE_PAY: {
+                                paymentRequest: {
+                                    requiredBillingContactFields: ["postalAddress", "name"],
+                                    shippingType: "shipping",
+                                    shippingContactEditingMode: "available",
+                                    requiredShippingContactFields: ["postalAddress", "email"],
+                                },
+                            },
+                        },
                     }).then(expressCheckout => {
-                        // TODO remove when ready event is implemented
-                        document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
-
-                        expressCheckout.on("ready", () => {
-                            document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+                        expressCheckout.on("ready", (data) => {
+                            if (data.paymentMethods.length > 0) {
+                                document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+                            }
                         });
 
                         expressCheckout.on("click", () => {
@@ -121,8 +131,8 @@ use Magento\Framework\View\Element\Template;
                                 }
                             };
                         });
-                        expressCheckout.on("beforePaymentAuth", async () => {
-                            await component.createPaymentSession(rvvup_parameters.checkout.id)
+                        expressCheckout.on("beforePaymentAuth", async (data) => {
+                            await component.createPaymentSession(rvvup_parameters.checkout.id, data)
                             return {
                                 paymentSessionId: component.paymentSessionResult.paymentSessionId
                             };
