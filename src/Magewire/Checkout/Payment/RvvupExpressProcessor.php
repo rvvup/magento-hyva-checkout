@@ -71,7 +71,7 @@ class RvvupExpressProcessor extends Component
      */
     public function boot(){
         $quote = $this->checkoutSession->getQuote();
-        $this->quoteAmount = $quote->getGrandTotal();
+        $this->quoteAmount = number_format($quote->getGrandTotal(), 2, '.', '');
         $this->quoteCurrency = $quote->getQuoteCurrencyCode();
     }
 
