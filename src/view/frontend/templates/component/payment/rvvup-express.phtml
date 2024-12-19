@@ -14,10 +14,14 @@ use Magento\Framework\View\Element\Template;
         .rvvup_express_container {
             width: 100%;
             margin-bottom: 10px;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center; /* Centers child elements horizontally */
             justify-content: center; /* Centers child elements vertically if needed */
+        }
+
+        .rvvup_express_container.show {
+            display: flex;
         }
 
         .rvvup_express_wrapper {
@@ -84,6 +88,12 @@ use Magento\Framework\View\Element\Template;
                     window.rvvup_sdk.createExpressCheckout({
                         checkoutSessionKey: rvvup_parameters.checkout.token,
                     }).then(expressCheckout => {
+                        // TODO remove when ready event is implemented
+                        document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+
+                        expressCheckout.on("ready", () => {
+                            document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+                        });
 
                         expressCheckout.on("click", () => {
                             expressCheckout.update({total: {
