@@ -124,7 +124,6 @@ class RvvupExpressProcessor extends Component
 
     /**
      * @throws NoSuchEntityException
-     * @throws ApiException
      * @throws AlreadyExistsException
      * @throws LocalizedException
      */

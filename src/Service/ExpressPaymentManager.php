@@ -168,17 +168,18 @@ class ExpressPaymentManager
     }
 
     /**
-     * @param Quote\Address $shippingAddress
+     * @param Quote\Address $quoteAddress
      * @param $contact
      * @param $address
      * @return void
      */
-    public function setUpdatedAddressDetails(Quote\Address $shippingAddress, $contact, $address): void
+    public function setUpdatedAddressDetails(Quote\Address $quoteAddress, $contact, $address): void
     {
-        $shippingAddress
+        $quoteAddress
             ->setFirstname($contact['givenName'] ?? null)
             ->setLastname($contact['surname'] ?? null)
             ->setEmail($contact['email'] ?? null)
+            ->setTelephone($contact['phoneNumber'] ?? null)
             ->setStreet($address['addressLines'] ?? null)
             ->setCountryId($address['countryCode'] ?? null)
             ->setRegion($address['state'] ?? null)
