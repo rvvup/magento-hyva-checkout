@@ -91,10 +91,10 @@ use Magento\Framework\View\Element\Template;
                         methodOptions: {
                             APPLE_PAY: {
                                 paymentRequest: {
-                                    requiredBillingContactFields: ["postalAddress", "name"],
+                                    requiredBillingContactFields: ["postalAddress", "name", "email", "phone"],
                                     shippingType: "shipping",
                                     shippingContactEditingMode: "available",
-                                    requiredShippingContactFields: ["postalAddress", "email"],
+                                    requiredShippingContactFields: ["postalAddress", "name", "email", "phone"],
                                 },
                             },
                         },
