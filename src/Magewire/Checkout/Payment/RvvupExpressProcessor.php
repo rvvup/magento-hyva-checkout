@@ -121,7 +121,7 @@ class RvvupExpressProcessor extends Component
      */
     public function createPaymentSession(string $checkoutId, array $data): void
     {
-        $quote = $this->expressPaymentManager->updateQuoteBeforeAuth($this->checkoutSession->getQuote(), $data);
+        $quote = $this->expressPaymentManager->updateQuoteBeforePaymentAuth($this->checkoutSession->getQuote(), $data);
         $this->setQuoteTotal($quote);
         $this->paymentSessionResult = $this->paymentSessionManager->create($quote, $checkoutId, $this);
     }

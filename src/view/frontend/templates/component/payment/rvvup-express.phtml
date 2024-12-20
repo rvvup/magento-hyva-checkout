@@ -85,9 +85,13 @@ use Magento\Framework\View\Element\Template;
             return {
                 initRvvup() {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                    let enabledPaymentMethods = [];
+                    if (rvvup_parameters.settings.apple_pay.checkout.express.enabled) {
+                        enabledPaymentMethods.push('APPLE_PAY');
+                    }
                     window.rvvup_sdk.createExpressCheckout({
                         checkoutSessionKey: rvvup_parameters.checkout.token,
-                        // enabledPaymentMethods: ['APPLE_PAY'],
+                        enabledPaymentMethods: enabledPaymentMethods,
                         methodOptions: {
                             APPLE_PAY: {
                                 paymentRequest: {
@@ -106,10 +110,12 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         expressCheckout.on("click", () => {
-                            expressCheckout.update({total: {
+                            expressCheckout.update({
+                                total: {
                                     amount: component.quoteAmount,
                                     currency: component.quoteCurrency
-                                }});
+                                }
+                            });
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
                             if (!data.address || !data.address.countryCode) {

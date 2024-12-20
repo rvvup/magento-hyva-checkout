@@ -106,7 +106,7 @@ class ExpressPaymentManager
         return $quote;
     }
 
-    public function updateQuoteBeforeAuth(Quote $quote, array $data): Quote
+    public function updateQuoteBeforePaymentAuth(Quote $quote, array $data): Quote
     {
         if (!$quote->isVirtual() && isset($data['shipping']['address']) && isset($data['shipping']['contact'])) {
             $this->setUpdatedAddressDetails(
