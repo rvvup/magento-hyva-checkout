@@ -41,6 +41,9 @@ class RvvupExpressProcessor extends Component
     /** @var array */
     public $shippingAddressChangeResult = [];
 
+    /** @var array */
+    public $onClickUpdateResult = [];
+
     /**
      * @param Session $checkoutSession
      * @param PaymentSessionManager $paymentSessionManager
@@ -61,9 +64,25 @@ class RvvupExpressProcessor extends Component
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    public function boot(){
+    public function boot()
+    {
         $quote = $this->checkoutSession->getQuote();
         $this->setQuoteTotal($quote);
+        $this->prepareOnClickResult();
+    }
+
+    /**
+     * @return void
+     */
+    private function prepareOnClickResult(): void
+    {
+        // TODO send in shipping / billing / etc
+        $this->onClickUpdateResult = [
+            'total' => [
+                'amount' => $this->quoteAmount,
+                'currency' => $this->quoteCurrency
+            ],
+        ];
     }
 
     /**
@@ -74,9 +93,7 @@ class RvvupExpressProcessor extends Component
     public function shippingAddressChanged(array $address): void
     {
         if (empty($address['countryCode'])) {
-            $detail = [
-                'text' => "Invalid shipping country",
-            ];
+            $detail = ['text' => "Invalid shipping country"];
             $this->dispatchBrowserEvent('order:place:error', $detail);
             $this->dispatchErrorMessage($detail['text']);
         }

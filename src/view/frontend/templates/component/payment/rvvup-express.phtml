@@ -110,12 +110,7 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         expressCheckout.on("click", () => {
-                            expressCheckout.update({
-                                total: {
-                                    amount: component.quoteAmount,
-                                    currency: component.quoteCurrency
-                                }
-                            });
+                            expressCheckout.update(component.onClickUpdateResult);
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
                             if (!data.address || !data.address.countryCode) {

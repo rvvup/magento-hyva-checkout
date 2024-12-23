@@ -130,7 +130,7 @@ class ExpressPaymentManager
                 $quote->setCheckoutMethod(Onepage::METHOD_GUEST)
                     ->setCustomerId(0)
                     ->setCustomerGroupId(GroupInterface::NOT_LOGGED_IN_ID)
-                    ->setCustomerEmail($contact['email'])
+                    ->setCustomerEmail($quote->getBillingAddress()->getEmail())
                     ->setCustomerIsGuest(true);
             }
         }
