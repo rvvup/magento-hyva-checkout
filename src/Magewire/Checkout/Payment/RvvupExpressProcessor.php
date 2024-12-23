@@ -129,14 +129,50 @@ class RvvupExpressProcessor extends Component
      */
     private function setQuoteData(Quote $quote): void
     {
-        // TODO send in shipping / billing / etc
         $result = [];
+
+        // Total
         $total = $quote->getGrandTotal();
         $amount = is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total;
-
         $result['total'] = [
             'amount' => $amount,
             'currency' => $quote->getQuoteCurrencyCode()
+        ];
+
+        // Billing
+        $billingAddress = $quote->getBillingAddress();
+        $result['billing'] = [
+            'address' => [
+                'addressLines' => $billingAddress->getStreet(),
+                'city' => $billingAddress->getCity(),
+                'countryCode' => $billingAddress->getCountryId(),
+                'postcode' => $billingAddress->getPostcode(),
+                'state' => $billingAddress->getRegion()
+            ],
+            'contact' => [
+                'givenName' => $billingAddress->getFirstname(),
+                'surname' => $billingAddress->getLastname(),
+                'email' => $billingAddress->getEmail(),
+                'phoneNumber' => $billingAddress->getTelephone()
+            ]
+        ];
+
+        // Shipping
+        $shippingAddress = $quote->getShippingAddress();
+        $result['shipping'] = [
+            'address' => [
+                'addressLines' => $shippingAddress->getStreet(),
+                'city' => $shippingAddress->getCity(),
+                'countryCode' => $shippingAddress->getCountryId(),
+                'postcode' => $shippingAddress->getPostcode(),
+                'state' => $shippingAddress->getRegion()
+            ],
+            'contact' => [
+                'givenName' => $shippingAddress->getFirstname(),
+                'surname' => $shippingAddress->getLastname(),
+                'email' => $shippingAddress->getEmail(),
+                'phoneNumber' => $shippingAddress->getTelephone()
+            ]
         ];
 
         $this->quoteData = $result;
