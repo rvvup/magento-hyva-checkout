@@ -8,6 +8,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Rvvup\PaymentsHyvaCheckout\Service\ExpressPaymentManager;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
@@ -32,17 +33,11 @@ class RvvupExpressProcessor extends Component
     /** @var array */
     public $paymentSessionResult;
 
-    /** @var string */
-    public $quoteCurrency = 'GBP';
-
-    /** @var string */
-    public $quoteAmount = '0';
-
     /** @var array */
     public $shippingAddressChangeResult = [];
 
     /** @var array */
-    public $onClickUpdateResult = [];
+    public $quoteData = [];
 
     /**
      * @param Session $checkoutSession
@@ -67,22 +62,7 @@ class RvvupExpressProcessor extends Component
     public function boot()
     {
         $quote = $this->checkoutSession->getQuote();
-        $this->setQuoteTotal($quote);
-        $this->prepareOnClickResult();
-    }
-
-    /**
-     * @return void
-     */
-    private function prepareOnClickResult(): void
-    {
-        // TODO send in shipping / billing / etc
-        $this->onClickUpdateResult = [
-            'total' => [
-                'amount' => $this->quoteAmount,
-                'currency' => $this->quoteCurrency
-            ],
-        ];
+        $this->setQuoteData($quote);
     }
 
     /**
@@ -100,7 +80,7 @@ class RvvupExpressProcessor extends Component
 
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
 
-        $this->setQuoteTotal($result['quote']);
+        $this->setQuoteData($result['quote']);
         $shippingMethods = array_reduce($result['shippingMethods'], function ($carry, $method) {
             $carry[] = [
                 'id' => $method->getId(),
@@ -113,7 +93,7 @@ class RvvupExpressProcessor extends Component
             $shippingMethods[0]['selected'] = true;
         }
         $this->shippingAddressChangeResult = [
-            'total' => ['amount' => $this->quoteAmount, 'currency' => $this->quoteCurrency],
+            'total' => $this->quoteData['total'],
             'shippingMethods' => $shippingMethods,
             'errorMessage' => null,
         ];
@@ -128,7 +108,7 @@ class RvvupExpressProcessor extends Component
     public function shippingMethodChanged(string $methodId): void
     {
         $quote = $this->expressPaymentManager->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
-        $this->setQuoteTotal($quote);
+        $this->setQuoteData($quote);
     }
 
     /**
@@ -139,14 +119,26 @@ class RvvupExpressProcessor extends Component
     public function createPaymentSession(string $checkoutId, array $data): void
     {
         $quote = $this->expressPaymentManager->updateQuoteBeforePaymentAuth($this->checkoutSession->getQuote(), $data);
-        $this->setQuoteTotal($quote);
+        $this->setQuoteData($quote);
         $this->paymentSessionResult = $this->paymentSessionManager->create($quote, $checkoutId, $this);
     }
 
-    private function setQuoteTotal($quote)
+    /**
+     * @param Quote $quote
+     * @return void
+     */
+    private function setQuoteData(Quote $quote): void
     {
+        // TODO send in shipping / billing / etc
+        $result = [];
         $total = $quote->getGrandTotal();
-        $this->quoteAmount = is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total;
-        $this->quoteCurrency = $quote->getQuoteCurrencyCode();
+        $amount = is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total;
+
+        $result['total'] = [
+            'amount' => $amount,
+            'currency' => $quote->getQuoteCurrencyCode()
+        ];
+
+        $this->quoteData = $result;
     }
 }

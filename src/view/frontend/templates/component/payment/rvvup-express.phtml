@@ -110,7 +110,7 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         expressCheckout.on("click", () => {
-                            expressCheckout.update(component.onClickUpdateResult);
+                            expressCheckout.update(component.quoteData);
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
                             if (!data.address || !data.address.countryCode) {
@@ -126,10 +126,7 @@ use Magento\Framework\View\Element\Template;
                             }
                             await component.shippingMethodChanged(data.selected.id);
                             return {
-                                total: {
-                                    amount: component.quoteAmount,
-                                    currency: component.quoteCurrency
-                                }
+                                total: component.quoteData.total
                             };
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
