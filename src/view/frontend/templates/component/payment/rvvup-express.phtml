@@ -92,16 +92,6 @@ use Magento\Framework\View\Element\Template;
                     window.rvvup_sdk.createExpressCheckout({
                         checkoutSessionKey: rvvup_parameters.checkout.token,
                         enabledPaymentMethods: enabledPaymentMethods,
-                        methodOptions: {
-                            APPLE_PAY: {
-                                paymentRequest: {
-                                    requiredBillingContactFields: ["postalAddress", "name", "email", "phone"],
-                                    shippingType: "shipping",
-                                    shippingContactEditingMode: "available",
-                                    requiredShippingContactFields: ["postalAddress", "name", "email", "phone"],
-                                },
-                            },
-                        },
                     }).then(expressCheckout => {
                         expressCheckout.on("ready", (data) => {
                             if (data.paymentMethods.length > 0) {
@@ -110,6 +100,8 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         expressCheckout.on("click", () => {
+                            console.log('On click data: ');
+                            console.log(JSON.stringify(component.quoteData));
                             expressCheckout.update(component.quoteData);
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
@@ -130,6 +122,8 @@ use Magento\Framework\View\Element\Template;
                             };
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
+                            console.log('Before auth data: ');
+                            console.log(JSON.stringify(data));
                             await component.createPaymentSession(rvvup_parameters.checkout.id, data)
 
                             return {

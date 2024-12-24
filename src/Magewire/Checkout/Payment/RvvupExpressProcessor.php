@@ -9,6 +9,7 @@ use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Address;
 use Magewirephp\Magewire\Component;
 use Rvvup\PaymentsHyvaCheckout\Service\ExpressPaymentManager;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
@@ -18,7 +19,35 @@ class RvvupExpressProcessor extends Component
     protected $listeners = [
         'shipping_method_selected' => 'refresh',
         'coupon_code_applied' => 'refresh',
-        'coupon_code_revoked' => 'refresh'
+        'coupon_code_revoked' => 'refresh',
+
+        'shipping_address_added' => 'refresh',
+        'guest_shipping_address_added' => 'refresh',
+        'customer_shipping_address_added' => 'refresh',
+
+        'shipping_address_submitted' => 'refresh',
+        'guest_shipping_address_submitted' => 'refresh',
+        'customer_shipping_address_submitted' => 'refresh',
+
+        'shipping_address_saved' => 'refresh',
+        'guest_shipping_address_saved' => 'refresh',
+        'customer_shipping_address_saved' => 'refresh',
+
+        'shipping_address_activated' => 'refresh',
+
+        'billing_address_added' => 'refresh',
+        'guest_billing_address_added' => 'refresh',
+        'customer_billing_address_added' => 'refresh',
+
+        'billing_address_submitted' => 'refresh',
+        'guest_billing_address_submitted' => 'refresh',
+        'customer_billing_address_submitted' => 'refresh',
+
+        'billing_address_saved' => 'refresh',
+        'guest_billing_address_saved' => 'refresh',
+        'customer_billing_address_saved' => 'refresh',
+
+        'billing_address_activated' => 'refresh',
     ];
 
     /** @var Session */
@@ -73,7 +102,7 @@ class RvvupExpressProcessor extends Component
     public function shippingAddressChanged(array $address): void
     {
         if (empty($address['countryCode'])) {
-            $detail = ['text' => "Invalid shipping country"];
+            $detail = ['text' => 'Invalid shipping country'];
             $this->dispatchBrowserEvent('order:place:error', $detail);
             $this->dispatchErrorMessage($detail['text']);
         }
@@ -129,52 +158,74 @@ class RvvupExpressProcessor extends Component
      */
     private function setQuoteData(Quote $quote): void
     {
-        $result = [];
+        $result = [
+            'methodOptions' => [
+                'APPLE_PAY' => [
+                    'paymentRequest' => [
+                        'requiredBillingContactFields' => ['postalAddress', 'name', 'email', 'phone'],
+                        // Apple quirk - We need these "shipping" fields to fill the billing email and phone
+                        'requiredShippingContactFields' => ['email', 'phone']
+                    ],
+                ]
+            ]
+        ];
 
-        // Total
         $total = $quote->getGrandTotal();
-        $amount = is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total;
         $result['total'] = [
-            'amount' => $amount,
+            'amount' => is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total,
             'currency' => $quote->getQuoteCurrencyCode()
         ];
 
-        // Billing
-        $billingAddress = $quote->getBillingAddress();
-        $result['billing'] = [
-            'address' => [
-                'addressLines' => $billingAddress->getStreet(),
-                'city' => $billingAddress->getCity(),
-                'countryCode' => $billingAddress->getCountryId(),
-                'postcode' => $billingAddress->getPostcode(),
-                'state' => $billingAddress->getRegion()
-            ],
-            'contact' => [
-                'givenName' => $billingAddress->getFirstname(),
-                'surname' => $billingAddress->getLastname(),
-                'email' => $billingAddress->getEmail(),
-                'phoneNumber' => $billingAddress->getTelephone()
-            ]
-        ];
+        $result['billing'] = $this->mapAddress($quote->getBillingAddress());
 
-        // Shipping
-        $shippingAddress = $quote->getShippingAddress();
-        $result['shipping'] = [
-            'address' => [
-                'addressLines' => $shippingAddress->getStreet(),
-                'city' => $shippingAddress->getCity(),
-                'countryCode' => $shippingAddress->getCountryId(),
-                'postcode' => $shippingAddress->getPostcode(),
-                'state' => $shippingAddress->getRegion()
-            ],
-            'contact' => [
-                'givenName' => $shippingAddress->getFirstname(),
-                'surname' => $shippingAddress->getLastname(),
-                'email' => $shippingAddress->getEmail(),
-                'phoneNumber' => $shippingAddress->getTelephone()
-            ]
-        ];
+        if (!$quote->isVirtual()) {
+            $result['shipping'] = $this->mapAddress($quote->getShippingAddress());
+            if ($this->isCompleteAddress($result['shipping'])) {
+                $result['shipping'] = null; // We already have a complete address so don't need to ask for it in the express sheet
+            } else {
+                $result['methodOptions']['APPLE_PAY']['paymentRequest']['requiredShippingContactFields'] = ['postalAddress', 'name', 'email', 'phone'];
+                $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingType'] = 'shipping';
+                $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingContactEditingMode'] = 'available';
+            }
+        }
 
         $this->quoteData = $result;
+    }
+
+    /**
+     * @param Address $quoteAddress
+     * @return array[]
+     */
+    private function mapAddress(Quote\Address $quoteAddress): array
+    {
+        return [
+            'address' => [
+                'addressLines' => $quoteAddress->getStreet(),
+                'city' => $quoteAddress->getCity(),
+                'countryCode' => $quoteAddress->getCountryId(),
+                'postcode' => $quoteAddress->getPostcode(),
+                'state' => $quoteAddress->getRegion()
+            ],
+            'contact' => [
+                'givenName' => $quoteAddress->getFirstname(),
+                'surname' => $quoteAddress->getLastname(),
+                'email' => $quoteAddress->getEmail(),
+                'phoneNumber' => $quoteAddress->getTelephone()
+            ]
+        ];
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    private function isCompleteAddress(array $data): bool
+    {
+        return !empty($data['address']['addressLines'])
+            && !empty($data['address']['city'])
+            && !empty($data['address']['countryCode'])
+            && !empty($data['address']['postcode'])
+            && !empty($data['contact']['email'])
+            && !empty($data['contact']['phoneNumber']);
     }
 }

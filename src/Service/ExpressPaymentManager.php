@@ -108,7 +108,11 @@ class ExpressPaymentManager
 
     public function updateQuoteBeforePaymentAuth(Quote $quote, array $data): Quote
     {
-        if (!$quote->isVirtual() && isset($data['shipping']['address']) && isset($data['shipping']['contact'])) {
+        if (!$quote->isVirtual() &&
+            isset($data['shipping']['address']) &&
+            isset($data['shipping']['address']['postcode']) && // Only missing if shipping was not used in express sheet
+            isset($data['shipping']['contact'])
+        ) {
             $this->setUpdatedAddressDetails(
                 $quote->getShippingAddress(),
                 $data['shipping']['contact'],
