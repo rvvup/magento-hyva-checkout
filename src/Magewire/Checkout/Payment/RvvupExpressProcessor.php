@@ -11,6 +11,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magewirephp\Magewire\Component;
+use Rvvup\PaymentsHyvaCheckout\Model\ExpressShippingMethod;
 use Rvvup\PaymentsHyvaCheckout\Service\ExpressPaymentManager;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
 
@@ -101,6 +102,7 @@ class RvvupExpressProcessor extends Component
      */
     public function shippingAddressChanged(array $address): void
     {
+        $errorMessage = null;
         if (empty($address['countryCode'])) {
             $detail = ['text' => 'Invalid shipping country'];
             $this->dispatchBrowserEvent('order:place:error', $detail);
@@ -110,21 +112,18 @@ class RvvupExpressProcessor extends Component
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
 
         $this->setQuoteData($result['quote']);
-        $shippingMethods = array_reduce($result['shippingMethods'], function ($carry, $method) {
-            $carry[] = [
-                'id' => $method->getId(),
-                'label' => $method->getLabel(),
-                'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
-            ];
-            return $carry;
-        }, []);
+        $shippingMethods = $this->mapShippingMethods($result['shippingMethods']);
+
         if (!empty($shippingMethods)) {
             $shippingMethods[0]['selected'] = true;
+        } else {
+            $errorMessage = 'No shipping methods available';
         }
+
         $this->shippingAddressChangeResult = [
             'total' => $this->quoteData['total'],
             'shippingMethods' => $shippingMethods,
-            'errorMessage' => null,
+            'errorMessage' => $errorMessage,
         ];
     }
 
@@ -179,17 +178,41 @@ class RvvupExpressProcessor extends Component
         $result['billing'] = $this->mapAddress($quote->getBillingAddress());
 
         if (!$quote->isVirtual()) {
-            $result['shipping'] = $this->mapAddress($quote->getShippingAddress());
-            if ($this->isCompleteAddress($result['shipping'])) {
-                $result['shipping'] = null; // We already have a complete address so don't need to ask for it in the express sheet
-            } else {
-                $result['methodOptions']['APPLE_PAY']['paymentRequest']['requiredShippingContactFields'] = ['postalAddress', 'name', 'email', 'phone'];
-                $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingType'] = 'shipping';
-                $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingContactEditingMode'] = 'available';
+            $result['methodOptions']['APPLE_PAY']['paymentRequest']['requiredShippingContactFields'] = ['postalAddress', 'name', 'email', 'phone'];
+            $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingType'] = 'shipping';
+            $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingContactEditingMode'] = 'available';
+
+            $quoteShippingAddress = $quote->getShippingAddress();
+            $result['shipping'] = $this->mapAddress($quoteShippingAddress);
+
+            // If there is not already a selected method then we need to send the methods in
+            $selectedMethod = $quoteShippingAddress->getShippingMethod();
+            if (empty($selectedMethod)) {
+                $shippingMethods = $this->mapShippingMethods($this->expressPaymentManager->getAvailableShippingMethods($quote));
+                if (!empty($shippingMethods)) {
+                    $result['shippingMethods'] = $shippingMethods;
+                }
             }
         }
 
         $this->quoteData = $result;
+    }
+
+
+    /**
+     * @param ExpressShippingMethod[] $shippingMethods
+     * @return array
+     */
+    private function mapShippingMethods(array $shippingMethods): array
+    {
+        return array_reduce($shippingMethods, function ($carry, $method) {
+            $carry[] = [
+                'id' => $method->getId(),
+                'label' => $method->getLabel(),
+                'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
+            ];
+            return $carry;
+        }, []);
     }
 
     /**
@@ -213,19 +236,5 @@ class RvvupExpressProcessor extends Component
                 'phoneNumber' => $quoteAddress->getTelephone()
             ]
         ];
-    }
-
-    /**
-     * @param array $data
-     * @return bool
-     */
-    private function isCompleteAddress(array $data): bool
-    {
-        return !empty($data['address']['addressLines'])
-            && !empty($data['address']['city'])
-            && !empty($data['address']['countryCode'])
-            && !empty($data['address']['postcode'])
-            && !empty($data['contact']['email'])
-            && !empty($data['contact']['phoneNumber']);
     }
 }

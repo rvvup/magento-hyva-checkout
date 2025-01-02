@@ -154,7 +154,7 @@ class ExpressPaymentManager
      * @param Quote $quote
      * @return ExpressShippingMethod[] $shippingMethods
      */
-    private function getAvailableShippingMethods(Quote $quote): array
+    public function getAvailableShippingMethods(Quote $quote): array
     {
         $shippingMethods = $this->shipmentEstimation->estimateByExtendedAddress($quote->getId(), $quote->getShippingAddress());
         if (empty($shippingMethods)) {

@@ -110,6 +110,8 @@ use Magento\Framework\View\Element\Template;
                             }
                             await component.shippingAddressChanged(data.address);
 
+                            console.log('Shipping Address Change data: ');
+                            console.log(JSON.stringify(component.shippingAddressChangeResult));
                             return component.shippingAddressChangeResult;
                         });
                         expressCheckout.on("shippingMethodChange", async (data) => {
