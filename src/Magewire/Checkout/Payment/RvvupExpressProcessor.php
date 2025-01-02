@@ -157,6 +157,7 @@ class RvvupExpressProcessor extends Component
      */
     private function setQuoteData(Quote $quote): void
     {
+        $total = $quote->getGrandTotal();
         $result = [
             'methodOptions' => [
                 'APPLE_PAY' => [
@@ -166,16 +167,13 @@ class RvvupExpressProcessor extends Component
                         'requiredShippingContactFields' => ['email', 'phone']
                     ],
                 ]
-            ]
+            ],
+            'total' => [
+                'amount' => is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total,
+                'currency' => $quote->getQuoteCurrencyCode()
+            ],
+            'billing' => $this->mapAddress($quote->getBillingAddress())
         ];
-
-        $total = $quote->getGrandTotal();
-        $result['total'] = [
-            'amount' => is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total,
-            'currency' => $quote->getQuoteCurrencyCode()
-        ];
-
-        $result['billing'] = $this->mapAddress($quote->getBillingAddress());
 
         if (!$quote->isVirtual()) {
             $result['methodOptions']['APPLE_PAY']['paymentRequest']['requiredShippingContactFields'] = ['postalAddress', 'name', 'email', 'phone'];
@@ -219,22 +217,34 @@ class RvvupExpressProcessor extends Component
      * @param Address $quoteAddress
      * @return array[]
      */
-    private function mapAddress(Quote\Address $quoteAddress): array
+    private function mapAddress(Quote\Address $quoteAddress): ?array
     {
-        return [
-            'address' => [
-                'addressLines' => $quoteAddress->getStreet(),
-                'city' => $quoteAddress->getCity(),
-                'countryCode' => $quoteAddress->getCountryId(),
-                'postcode' => $quoteAddress->getPostcode(),
-                'state' => $quoteAddress->getRegion()
-            ],
-            'contact' => [
-                'givenName' => $quoteAddress->getFirstname(),
-                'surname' => $quoteAddress->getLastname(),
-                'email' => $quoteAddress->getEmail(),
-                'phoneNumber' => $quoteAddress->getTelephone()
-            ]
-        ];
+        // We ignore country code because it's always pre-selected by magento/hyva.
+        // We also ignore region, city, postcode because apple partially sets this, if you cancel the sheet after a
+        // address change. We only pre-fill the apple sheet when the user has actively entered the other fields.
+        if ((!empty($quoteAddress->getStreet()) && !empty($quoteAddress->getStreet()[0])) ||
+            !empty($quoteAddress->getFirstname()) ||
+            !empty($quoteAddress->getLastname()) ||
+            !empty($quoteAddress->getEmail()) ||
+            !empty($quoteAddress->getTelephone())
+        ) {
+            return [
+                'address' => [
+                    'addressLines' => $quoteAddress->getStreet(),
+                    'city' => $quoteAddress->getCity(),
+                    'countryCode' => $quoteAddress->getCountryId(),
+                    'postcode' => $quoteAddress->getPostcode(),
+                    'state' => $quoteAddress->getRegion()
+                ],
+                'contact' => [
+                    'givenName' => $quoteAddress->getFirstname(),
+                    'surname' => $quoteAddress->getLastname(),
+                    'email' => $quoteAddress->getEmail(),
+                    'phoneNumber' => $quoteAddress->getTelephone()
+                ]
+            ];
+        }
+
+        return null;
     }
 }
