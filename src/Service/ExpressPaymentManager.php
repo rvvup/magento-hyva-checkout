@@ -12,6 +12,7 @@ use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Session;
+use Magento\Quote\Model\Quote\Address;
 use Rvvup\PaymentsHyvaCheckout\Model\ExpressShippingMethod;
 
 class ExpressPaymentManager
@@ -65,11 +66,9 @@ class ExpressPaymentManager
             ->setCollectShippingRates(true);
 
         $shippingMethods = $this->getAvailableShippingMethods($quote);
-        if (empty($shippingMethods)) {
-            $shippingAddress->setShippingMethod('');
-        } else {
-            $shippingAddress->setShippingMethod($shippingMethods[0]->getId());
-        }
+        $methodId = empty($shippingMethods) ? null : $shippingMethods[0]->getId();
+        $this->setShippingMethodInQuote($quote, $methodId, $shippingAddress);
+
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
 
@@ -79,30 +78,51 @@ class ExpressPaymentManager
 
     /**
      * @param Quote $quote
-     * @param string $methodId
+     * @param string|null $methodId
      * @return Quote
      */
-    public function updateShippingMethod(Quote $quote, string $methodId): Quote
+    public function updateShippingMethod(
+        Quote $quote,
+        ?string $methodId
+    ): Quote
     {
-        $codes = explode('_', $methodId);
-        if (count($codes) !== 2) {
-            return $quote;
-        }
         $shippingAddress = $quote->getShippingAddress();
-        $shippingAddress->setShippingMethod($methodId)->setCollectShippingRates(true)->collectShippingRates();
-
-        $this->shippingInformationManagement->saveAddressInformation(
-            $quote->getId(),
-            $this->shippingInformationFactory->create()
-                ->setShippingAddress($shippingAddress)
-                ->setShippingCarrierCode($codes[0])
-                ->setShippingMethodCode($codes[1])
-        );
+        $quote = $this->setShippingMethodInQuote($quote, $methodId, $shippingAddress);
 
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
 
         $this->quoteRepository->save($quote);
+
+        return $quote;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param string|null $methodId
+     * @param Address $shippingAddress
+     * @return Quote
+     */
+    public function setShippingMethodInQuote(
+        Quote $quote,
+        ?string $methodId,
+        Quote\Address $shippingAddress
+    ): Quote
+    {
+        $codes = empty($methodId) ? [] : explode('_', $methodId);
+        if (count($codes) !== 2) {
+            $shippingAddress->setShippingMethod('');
+        } else {
+            $shippingAddress->setShippingMethod($methodId)->setCollectShippingRates(true)->collectShippingRates();
+
+            $this->shippingInformationManagement->saveAddressInformation(
+                $quote->getId(),
+                $this->shippingInformationFactory->create()
+                    ->setShippingAddress($shippingAddress)
+                    ->setShippingCarrierCode($codes[0])
+                    ->setShippingMethodCode($codes[1])
+            );
+        }
         return $quote;
     }
 
@@ -141,6 +161,15 @@ class ExpressPaymentManager
 
         if (isset($data['paymentMethod'])) {
             $quote->getPayment()->setMethod('rvvup_' . $data['paymentMethod']);
+        }
+
+        $shippingAddress = $quote->getShippingAddress();
+        $selectedMethod = $shippingAddress->getShippingMethod();
+        // If the shipping method is not set then the first method was displayed in the sheet and was not changed
+        if (empty($selectedMethod)) {
+            $shippingMethods = $this->getAvailableShippingMethods($quote);
+            $methodId = empty($shippingMethods) ? null : $shippingMethods[0]->getId();
+            $this->setShippingMethodInQuote($quote, $methodId, $shippingAddress);
         }
 
         $quote->setTotalsCollectedFlag(false);

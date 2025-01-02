@@ -183,12 +183,25 @@ class RvvupExpressProcessor extends Component
             $quoteShippingAddress = $quote->getShippingAddress();
             $result['shipping'] = $this->mapAddress($quoteShippingAddress);
 
-            // If there is not already a selected method then we need to send the methods in
-            $selectedMethod = $quoteShippingAddress->getShippingMethod();
-            if (empty($selectedMethod)) {
+            // If address is null then shipping methods will appear after the address update
+            if ($result['shipping'] !== null) {
                 $shippingMethods = $this->mapShippingMethods($this->expressPaymentManager->getAvailableShippingMethods($quote));
-                if (!empty($shippingMethods)) {
+                // If methods are empty then this address is undeliverable so set the address to null
+                if (empty($shippingMethods)) {
+                    $result['shipping'] = null;
+                } else {
                     $result['shippingMethods'] = $shippingMethods;
+                    $selectedMethod = $quoteShippingAddress->getShippingMethod();
+                    if (empty($selectedMethod)) {
+                        $result['shippingMethods'][0]['selected'] = true;
+                    } else {
+                        for ($i = 0; $i < count($result['shippingMethods']); $i++) {
+                            if ($result['shippingMethods'][$i]['id'] === $selectedMethod) {
+                                $result['shippingMethods'][$i]['selected'] = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
