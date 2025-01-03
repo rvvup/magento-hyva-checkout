@@ -97,16 +97,27 @@ class RvvupExpressProcessor extends Component
 
     /**
      * @throws NoSuchEntityException
+     * @throws LocalizedException
+     */
+    public function booted()
+    {
+        $quote = $this->checkoutSession->getQuote();
+        $this->setQuoteData($quote);
+    }
+
+    /**
+     * @throws NoSuchEntityException
      * @throws AlreadyExistsException
      * @throws LocalizedException
      */
     public function shippingAddressChanged(array $address): void
     {
-        $errorMessage = null;
+        $error = null;
         if (empty($address['countryCode'])) {
-            $detail = ['text' => 'Invalid shipping country'];
-            $this->dispatchBrowserEvent('order:place:error', $detail);
-            $this->dispatchErrorMessage($detail['text']);
+            $error = [
+                'code' => 'addressUnserviceable',
+                'message' => 'Invalid shipping country'
+            ];
         }
 
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
@@ -117,13 +128,16 @@ class RvvupExpressProcessor extends Component
         if (!empty($shippingMethods)) {
             $shippingMethods[0]['selected'] = true;
         } else {
-            $errorMessage = 'No shipping methods available';
+            $error = [
+                'code' => 'addressUnserviceable',
+                'message' => 'No shipping methods available'
+            ];
         }
 
         $this->shippingAddressChangeResult = [
             'total' => $this->quoteData['total'],
             'shippingMethods' => $shippingMethods,
-            'errorMessage' => $errorMessage,
+            'error' => $error
         ];
     }
 
@@ -186,7 +200,7 @@ class RvvupExpressProcessor extends Component
             // If address is null then shipping methods will appear after the address update
             if ($result['shipping'] !== null) {
                 $shippingMethods = $this->mapShippingMethods($this->expressPaymentManager->getAvailableShippingMethods($quote));
-                // If methods are empty then this address is undeliverable so set the address to null
+                // If methods are empty, need to choose a new address in the express sheet
                 if (empty($shippingMethods)) {
                     $result['shipping'] = null;
                 } else {

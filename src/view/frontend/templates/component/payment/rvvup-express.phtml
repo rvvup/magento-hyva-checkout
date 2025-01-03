@@ -140,8 +140,19 @@ use Magento\Framework\View\Element\Template;
                         expressCheckout.on("paymentFailed", (data) => {
                             window.dispatchMessages && window.dispatchMessages([{
                                 type: 'error',
-                                text: 'Payment ' + data.reason
+                                text: 'Payment ' + data.code
                             }], 5000);
+                        });
+                        expressCheckout.on("error", (data) => {
+                            if (data.name === 'RvvupValidationError') {
+                                let mappedReason = {
+                                    'addressUnserviceable': 'Address is not serviceable',
+                                }
+                                window.dispatchMessages && window.dispatchMessages([{
+                                    type: 'error',
+                                    text: mappedReason[data.code] ?? 'Payment Processing Error'
+                                }], 5000);
+                            }
                         });
                         expressCheckout.mount({
                             selector: "#rvvup-express-element",
