@@ -109,8 +109,14 @@ class ExpressPaymentManager
         Quote\Address $shippingAddress
     ): Quote
     {
-        $codes = empty($methodId) ? [] : explode('_', $methodId);
-        if (count($codes) !== 2) {
+        $availableMethods = $this->getAvailableShippingMethods($quote);
+        $isMethodAvailable = count(array_filter($availableMethods, function ($method) use ($methodId) {
+                return $method->getId() === $methodId;
+            })) > 0;
+
+        $carrierCodeToMethodCode = empty($methodId) ? [] : explode('_', $methodId);
+
+        if (!$isMethodAvailable || count($carrierCodeToMethodCode) !== 2) {
             $shippingAddress->setShippingMethod('');
         } else {
             $shippingAddress->setShippingMethod($methodId)->setCollectShippingRates(true)->collectShippingRates();
@@ -119,8 +125,8 @@ class ExpressPaymentManager
                 $quote->getId(),
                 $this->shippingInformationFactory->create()
                     ->setShippingAddress($shippingAddress)
-                    ->setShippingCarrierCode($codes[0])
-                    ->setShippingMethodCode($codes[1])
+                    ->setShippingCarrierCode($carrierCodeToMethodCode[0])
+                    ->setShippingMethodCode($carrierCodeToMethodCode[1])
             );
         }
         return $quote;
