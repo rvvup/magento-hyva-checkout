@@ -3,6 +3,7 @@ echo "Running configure-base-store.sh"
 cd /bitnami/magento
 composer config repositories.magento composer https://repo.magento.com/
 composer config http-basic.repo.magento.com $MAGENTO_REPO_PUBLIC_KEY $MAGENTO_REPO_PRIVATE_KEY
+composer config minimum-stability dev
 bin/magento config:set currency/options/allow GBP,USD
 bin/magento config:set currency/options/base GBP
 bin/magento config:set currency/options/default GBP
