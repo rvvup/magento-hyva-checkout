@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Rvvup\PaymentsHyvaCheckout\Service;
 
-use Magento\Framework\UrlFactory;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
-use Rvvup\Payments\Controller\Redirect\In;
 use Rvvup\Payments\Service\PaymentSessionService;
 
 class PaymentSessionManager
@@ -15,21 +13,14 @@ class PaymentSessionManager
     /** @var PaymentSessionService */
     private $paymentSessionService;
 
-    /** @var UrlFactory */
-    private $urlFactory;
-
-
     /**
      * @param PaymentSessionService $paymentSessionService
-     * @param UrlFactory $urlFactory
      */
     public function __construct(
-        PaymentSessionService $paymentSessionService,
-        UrlFactory            $urlFactory
+        PaymentSessionService $paymentSessionService
     )
     {
         $this->paymentSessionService = $paymentSessionService;
-        $this->urlFactory = $urlFactory;
     }
 
 
@@ -45,10 +36,10 @@ class PaymentSessionManager
     {
         try {
             $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
-
-            $url = $this->urlFactory->create();
-            $url->setQueryParam(In::PARAM_RVVUP_ORDER_ID, $paymentSession["id"]);
-            return ["paymentSessionId" => $paymentSession["id"], "redirectUrl" => $url->getUrl('rvvup/redirect/in')];
+            return [
+                "paymentSessionId" => $paymentSession->getPaymentSessionId(),
+                "redirectUrl" => $paymentSession->getRedirectUrl()
+            ];
         } catch (\Exception $exception) {
             $detail = [
                 'text' => $exception->getMessage(),

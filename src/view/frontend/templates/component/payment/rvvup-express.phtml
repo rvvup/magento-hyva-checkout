@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Element\Template;
+use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
 
 /** @var Template $block */
 /** @var Escaper $escaper */
-/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor $magewire */
+/** @var RvvupExpressProcessor $magewire */
 
 ?>
 <div wire:ignore>
@@ -100,8 +101,6 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         expressCheckout.on("click", () => {
-                            console.log('On click data: ');
-                            console.log(JSON.stringify(component.quoteData));
                             expressCheckout.update(component.quoteData);
                         });
                         expressCheckout.on("shippingAddressChange", async (data) => {
@@ -109,9 +108,6 @@ use Magento\Framework\View\Element\Template;
                                 return;
                             }
                             await component.shippingAddressChanged(data.address);
-
-                            console.log('Shipping Address Change data: ');
-                            console.log(JSON.stringify(component.shippingAddressChangeResult));
                             return component.shippingAddressChangeResult;
                         });
                         expressCheckout.on("shippingMethodChange", async (data) => {
@@ -124,10 +120,7 @@ use Magento\Framework\View\Element\Template;
                             };
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
-                            console.log('Before auth data: ');
-                            console.log(JSON.stringify(data));
                             await component.createPaymentSession(rvvup_parameters.checkout.id, data)
-
                             return {
                                 paymentSessionId: component.paymentSessionResult.paymentSessionId
                             };
