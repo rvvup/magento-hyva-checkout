@@ -89,7 +89,7 @@ class RvvupExpressProcessor extends Component
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    public function boot()
+    public function mount()
     {
         $quote = $this->checkoutSession->getQuote();
         $this->setQuoteData($quote);
