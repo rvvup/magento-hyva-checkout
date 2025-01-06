@@ -118,5 +118,18 @@
                    class="Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets"
             />
         </referenceContainer>
+        <referenceContainer name="hyva.checkout.container">
+            <block name="checkout.payment.method.rvvup.express-button"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/rvvup-express.phtml"
+                   before="hyva.checkout.columns"
+            >
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
     </body>
 </page>

@@ -1,0 +1,166 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var RvvupExpressProcessor $magewire */
+
+?>
+<div wire:ignore>
+    <style>
+        .rvvup_express_container {
+            width: 100%;
+            margin-bottom: 10px;
+            display: none;
+            flex-direction: column;
+            align-items: center; /* Centers child elements horizontally */
+            justify-content: center; /* Centers child elements vertically if needed */
+        }
+
+        .rvvup_express_container.show {
+            display: flex;
+        }
+
+        .rvvup_express_wrapper {
+            display: flex;
+            justify-content: center; /* Centers the element horizontally within the wrapper */
+            width: 100%;
+        }
+
+        .rvvup_express_element {
+            width: 100%;
+            max-width: 600px;
+            min-width: 200px;
+        }
+
+        .rvvup_express_divider_text {
+            margin: 20px 0;
+            color: #bbb;
+        }
+
+        .rvvup_express_title {
+            margin: 20px 0;
+            color: #2b2b2b;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .rvvup_express_text_with_line {
+            width: 100%;
+            display: flex;
+            text-align: center;
+            flex-direction: row;
+        }
+
+        .rvvup_express_text_with_line:after,
+        .rvvup_express_text_with_line:before {
+            content: "";
+            flex: 1 1;
+            border-bottom: 1px solid #c5c5c5;
+            margin: auto;
+        }
+
+        .rvvup_express_text_with_line:after {
+            margin-left: 20px;
+        }
+
+        .rvvup_express_text_with_line:before {
+            margin-right: 20px;
+        }
+    </style>
+    <div x-data="rvvupExpressButtons()"
+         x-init="initRvvup()"
+         class="rvvup_express_container">
+        <div class="rvvup_express_title rvvup_express_text_with_line">Express Checkout</div>
+        <div class="rvvup_express_wrapper">
+            <div id="rvvup-express-element" class="rvvup_express_element"></div>
+        </div>
+        <div class="rvvup_express_divider_text rvvup_express_text_with_line">OR</div>
+    </div>
+    <script>
+        function rvvupExpressButtons() {
+            return {
+                initRvvup() {
+                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                    let enabledPaymentMethods = [];
+                    const applePayExpressEnabled = rvvup_parameters?.settings?.apple_pay?.checkout?.express?.enabled || false;
+                    const rvvupCheckout = rvvup_parameters?.checkout;
+                    if (applePayExpressEnabled) {
+                        enabledPaymentMethods.push('APPLE_PAY');
+                    }
+                    if (enabledPaymentMethods.length === 0 || !rvvupCheckout) {
+                        return;
+                    }
+                    window.rvvup_sdk.createExpressCheckout({
+                        checkoutSessionKey: rvvupCheckout.token,
+                        enabledPaymentMethods: enabledPaymentMethods,
+                    }).then(expressCheckout => {
+                        expressCheckout.on("ready", (data) => {
+                            if (data.paymentMethods.length > 0) {
+                                document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+                            }
+                        });
+
+                        expressCheckout.on("click", () => {
+                            expressCheckout.update(component.quoteData);
+                        });
+                        expressCheckout.on("shippingAddressChange", async (data) => {
+                            if (!data.address || !data.address.countryCode) {
+                                return;
+                            }
+                            await component.shippingAddressChanged(data.address);
+                            return component.shippingAddressChangeResult;
+                        });
+                        expressCheckout.on("shippingMethodChange", async (data) => {
+                            if (!data.selected || !data.selected.id) {
+                                return;
+                            }
+                            await component.shippingMethodChanged(data.selected.id);
+                            return {
+                                total: component.quoteData.total
+                            };
+                        });
+                        expressCheckout.on("beforePaymentAuth", async (data) => {
+                            await component.createPaymentSession(rvvupCheckout.id, data)
+                            return {
+                                paymentSessionId: component.paymentSessionResult.paymentSessionId
+                            };
+                        });
+                        expressCheckout.on("paymentAuthorized", () => {
+                            let magewire = document.getElementById('magewire-loader');
+                            magewire.children[0].style.display = 'block';
+                            window.location.href = component.paymentSessionResult.redirectUrl;
+                        });
+                        expressCheckout.on("paymentFailed", (data) => {
+                            window.dispatchMessages && window.dispatchMessages([{
+                                type: 'error',
+                                text: 'Payment ' + data.code
+                            }], 5000);
+                        });
+                        expressCheckout.on("error", (data) => {
+                            if (data.name === 'RvvupValidationError') {
+                                let mappedReason = {
+                                    'addressUnserviceable': 'Address is not serviceable',
+                                }
+                                window.dispatchMessages && window.dispatchMessages([{
+                                    type: 'error',
+                                    text: mappedReason[data.code] ?? 'Payment Processing Error'
+                                }], 5000);
+                            }
+                        });
+                        expressCheckout.mount({
+                            selector: "#rvvup-express-element",
+                        });
+                    }).catch(e => {
+                        console.error("Error creating express checkout", e);
+                    });
+                },
+            }
+        }
+    </script>
+
+</div>
