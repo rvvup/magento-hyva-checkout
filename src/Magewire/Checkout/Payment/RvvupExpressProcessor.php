@@ -19,35 +19,14 @@ class RvvupExpressProcessor extends Component
 {
     protected $listeners = [
         'shipping_method_selected' => 'refresh',
+
         'coupon_code_applied' => 'refresh',
         'coupon_code_revoked' => 'refresh',
 
-        'shipping_address_added' => 'refresh',
-        'guest_shipping_address_added' => 'refresh',
-        'customer_shipping_address_added' => 'refresh',
-
         'shipping_address_submitted' => 'refresh',
-        'guest_shipping_address_submitted' => 'refresh',
-        'customer_shipping_address_submitted' => 'refresh',
-
-        'shipping_address_saved' => 'refresh',
-        'guest_shipping_address_saved' => 'refresh',
-        'customer_shipping_address_saved' => 'refresh',
-
         'shipping_address_activated' => 'refresh',
 
-        'billing_address_added' => 'refresh',
-        'guest_billing_address_added' => 'refresh',
-        'customer_billing_address_added' => 'refresh',
-
         'billing_address_submitted' => 'refresh',
-        'guest_billing_address_submitted' => 'refresh',
-        'customer_billing_address_submitted' => 'refresh',
-
-        'billing_address_saved' => 'refresh',
-        'guest_billing_address_saved' => 'refresh',
-        'customer_billing_address_saved' => 'refresh',
-
         'billing_address_activated' => 'refresh',
     ];
 
