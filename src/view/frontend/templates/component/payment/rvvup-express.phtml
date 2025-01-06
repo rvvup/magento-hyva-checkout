@@ -87,11 +87,16 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                 initRvvup() {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                     let enabledPaymentMethods = [];
-                    if (rvvup_parameters.settings.apple_pay.checkout.express.enabled) {
+                    const applePayExpressEnabled = rvvup_parameters?.settings?.apple_pay?.checkout?.express?.enabled || false;
+                    const rvvupCheckout = rvvup_parameters?.checkout;
+                    if (applePayExpressEnabled) {
                         enabledPaymentMethods.push('APPLE_PAY');
                     }
+                    if (enabledPaymentMethods.length === 0 || !rvvupCheckout) {
+                        return;
+                    }
                     window.rvvup_sdk.createExpressCheckout({
-                        checkoutSessionKey: rvvup_parameters.checkout.token,
+                        checkoutSessionKey: rvvupCheckout.token,
                         enabledPaymentMethods: enabledPaymentMethods,
                     }).then(expressCheckout => {
                         expressCheckout.on("ready", (data) => {
@@ -120,7 +125,7 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                             };
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
-                            await component.createPaymentSession(rvvup_parameters.checkout.id, data)
+                            await component.createPaymentSession(rvvupCheckout.id, data)
                             return {
                                 paymentSessionId: component.paymentSessionResult.paymentSessionId
                             };
