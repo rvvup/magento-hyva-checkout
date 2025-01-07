@@ -13,6 +13,7 @@ use Magento\Quote\Model\Quote\Address;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Model\Express\ExpressShippingMethod;
 use Rvvup\Payments\Service\Express\ExpressPaymentManager;
+use Rvvup\Payments\Service\Shipping\ShippingMethodService;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
 
 class RvvupExpressProcessor extends Component
@@ -36,6 +37,10 @@ class RvvupExpressProcessor extends Component
     /** @var ExpressPaymentManager */
     private $expressPaymentManager;
 
+
+    /** @var ShippingMethodService */
+    private $shippingMethodService;
+
     /** @var PaymentSessionManager */
     private $paymentSessionManager;
 
@@ -52,16 +57,19 @@ class RvvupExpressProcessor extends Component
      * @param Session $checkoutSession
      * @param PaymentSessionManager $paymentSessionManager
      * @param ExpressPaymentManager $expressPaymentManager
+     * @param ShippingMethodService $shippingMethodService
      */
     public function __construct(
         Session               $checkoutSession,
         PaymentSessionManager $paymentSessionManager,
-        ExpressPaymentManager $expressPaymentManager
+        ExpressPaymentManager $expressPaymentManager,
+        ShippingMethodService $shippingMethodService
     )
     {
         $this->paymentSessionManager = $paymentSessionManager;
         $this->checkoutSession = $checkoutSession;
         $this->expressPaymentManager = $expressPaymentManager;
+        $this->shippingMethodService = $shippingMethodService;
     }
 
     /**
@@ -128,7 +136,7 @@ class RvvupExpressProcessor extends Component
      */
     public function shippingMethodChanged(string $methodId): void
     {
-        $quote = $this->expressPaymentManager->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
+        $quote = $this->shippingMethodService->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
         $this->setQuoteData($quote);
     }
 
@@ -178,7 +186,7 @@ class RvvupExpressProcessor extends Component
 
             // If address is null then shipping methods will appear after the address update
             if ($result['shipping'] !== null) {
-                $shippingMethods = $this->mapShippingMethods($this->expressPaymentManager->getAvailableShippingMethods($quote));
+                $shippingMethods = $this->mapShippingMethods($this->shippingMethodService->getAvailableShippingMethods($quote));
                 // If methods are empty, need to choose a new address in the express sheet
                 if (empty($shippingMethods)) {
                     $result['shipping'] = null;
