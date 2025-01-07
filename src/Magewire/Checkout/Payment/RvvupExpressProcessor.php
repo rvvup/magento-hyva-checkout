@@ -11,7 +11,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magewirephp\Magewire\Component;
-use Rvvup\Payments\Model\Express\ExpressShippingMethod;
+use Rvvup\Payments\Model\Shipping\ShippingMethod;
 use Rvvup\Payments\Service\Express\ExpressPaymentManager;
 use Rvvup\Payments\Service\Shipping\ShippingMethodService;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
@@ -212,7 +212,7 @@ class RvvupExpressProcessor extends Component
 
 
     /**
-     * @param ExpressShippingMethod[] $shippingMethods
+     * @param ShippingMethod[] $shippingMethods
      * @return array
      */
     private function mapShippingMethods(array $shippingMethods): array
