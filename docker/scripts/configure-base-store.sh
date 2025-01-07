@@ -7,6 +7,8 @@ composer config minimum-stability dev
 bin/magento config:set currency/options/allow GBP,USD
 bin/magento config:set currency/options/base GBP
 bin/magento config:set currency/options/default GBP
+bin/magento config:set general/country/default GB
+bin/magento config:set shipping/origin/country_id GB
 bin/magento config:set general/locale/timezone Europe/London
 bin/magento config:set general/locale/code en_GB
 bin/magento config:set carriers/freeshipping/active 1
