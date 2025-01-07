@@ -25,11 +25,7 @@ export default class VisitCheckoutPayment {
 
     await this.page.getByLabel("Fixed").click();
 
-    await this.page.waitForFunction(() =>
-      Array.from(
-        document.querySelectorAll(".magewire\\.notification\\.message"),
-      ).every((element) => element.offsetParent === null),
-    );
+    await this.loadersShouldBeHidden();
 
     await this.page
       .getByRole("button", { name: "Proceed to review & payments" })
@@ -41,12 +37,6 @@ export default class VisitCheckoutPayment {
   }
 
   async loadersShouldBeHidden() {
-    await this.page.waitForFunction(() =>
-      Array.from(
-        document.querySelectorAll(".magewire\\.notification\\.message"),
-      ).every((element) => element.offsetParent === null),
-    );
-
     await expect(this.page.locator("#magewire-loader")).toBeHidden();
   }
 }

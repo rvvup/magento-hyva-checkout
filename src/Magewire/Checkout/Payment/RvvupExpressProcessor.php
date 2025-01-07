@@ -9,45 +9,24 @@ use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Address;
 use Magewirephp\Magewire\Component;
-use Rvvup\Payments\Model\Express\ExpressShippingMethod;
 use Rvvup\Payments\Service\Express\ExpressPaymentManager;
+use Rvvup\Payments\Service\Express\ExpressPaymentRequestMapper;
+use Rvvup\Payments\Service\Shipping\ShippingMethodService;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
 
 class RvvupExpressProcessor extends Component
 {
     protected $listeners = [
         'shipping_method_selected' => 'refresh',
+
         'coupon_code_applied' => 'refresh',
         'coupon_code_revoked' => 'refresh',
 
-        'shipping_address_added' => 'refresh',
-        'guest_shipping_address_added' => 'refresh',
-        'customer_shipping_address_added' => 'refresh',
-
-        'shipping_address_submitted' => 'refresh',
-        'guest_shipping_address_submitted' => 'refresh',
-        'customer_shipping_address_submitted' => 'refresh',
-
         'shipping_address_saved' => 'refresh',
-        'guest_shipping_address_saved' => 'refresh',
-        'customer_shipping_address_saved' => 'refresh',
-
         'shipping_address_activated' => 'refresh',
 
-        'billing_address_added' => 'refresh',
-        'guest_billing_address_added' => 'refresh',
-        'customer_billing_address_added' => 'refresh',
-
-        'billing_address_submitted' => 'refresh',
-        'guest_billing_address_submitted' => 'refresh',
-        'customer_billing_address_submitted' => 'refresh',
-
         'billing_address_saved' => 'refresh',
-        'guest_billing_address_saved' => 'refresh',
-        'customer_billing_address_saved' => 'refresh',
-
         'billing_address_activated' => 'refresh',
     ];
 
@@ -57,8 +36,15 @@ class RvvupExpressProcessor extends Component
     /** @var ExpressPaymentManager */
     private $expressPaymentManager;
 
+
+    /** @var ShippingMethodService */
+    private $shippingMethodService;
+
     /** @var PaymentSessionManager */
     private $paymentSessionManager;
+
+    /** @var ExpressPaymentRequestMapper */
+    private $expressPaymentRequestMapper;
 
     /** @var array */
     public $paymentSessionResult;
@@ -73,16 +59,22 @@ class RvvupExpressProcessor extends Component
      * @param Session $checkoutSession
      * @param PaymentSessionManager $paymentSessionManager
      * @param ExpressPaymentManager $expressPaymentManager
+     * @param ShippingMethodService $shippingMethodService
+     * @param ExpressPaymentRequestMapper $expressPaymentRequestMapper
      */
     public function __construct(
         Session               $checkoutSession,
         PaymentSessionManager $paymentSessionManager,
-        ExpressPaymentManager $expressPaymentManager
+        ExpressPaymentManager $expressPaymentManager,
+        ShippingMethodService       $shippingMethodService,
+        ExpressPaymentRequestMapper $expressPaymentRequestMapper
     )
     {
         $this->paymentSessionManager = $paymentSessionManager;
         $this->checkoutSession = $checkoutSession;
         $this->expressPaymentManager = $expressPaymentManager;
+        $this->shippingMethodService = $shippingMethodService;
+        $this->expressPaymentRequestMapper = $expressPaymentRequestMapper;
     }
 
     /**
@@ -123,7 +115,7 @@ class RvvupExpressProcessor extends Component
         $result = $this->expressPaymentManager->updateShippingAddress($this->checkoutSession->getQuote(), $address);
 
         $this->setQuoteData($result['quote']);
-        $shippingMethods = $this->mapShippingMethods($result['shippingMethods']);
+        $shippingMethods = $this->expressPaymentRequestMapper->mapShippingMethods($result['shippingMethods']);
 
         if (!empty($shippingMethods)) {
             $shippingMethods[0]['selected'] = true;
@@ -149,7 +141,7 @@ class RvvupExpressProcessor extends Component
      */
     public function shippingMethodChanged(string $methodId): void
     {
-        $quote = $this->expressPaymentManager->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
+        $quote = $this->shippingMethodService->updateShippingMethod($this->checkoutSession->getQuote(), $methodId);
         $this->setQuoteData($quote);
     }
 
@@ -171,107 +163,6 @@ class RvvupExpressProcessor extends Component
      */
     private function setQuoteData(Quote $quote): void
     {
-        $total = $quote->getGrandTotal();
-        $result = [
-            'methodOptions' => [
-                'APPLE_PAY' => [
-                    'paymentRequest' => [
-                        'requiredBillingContactFields' => ['postalAddress', 'name', 'email', 'phone'],
-                        // Apple quirk - We need these "shipping" fields to fill the billing email and phone
-                        'requiredShippingContactFields' => ['email', 'phone']
-                    ],
-                ]
-            ],
-            'total' => [
-                'amount' => is_numeric($total) ? number_format((float)$total, 2, '.', '') : $total,
-                'currency' => $quote->getQuoteCurrencyCode()
-            ],
-            'billing' => $this->mapAddress($quote->getBillingAddress())
-        ];
-
-        if (!$quote->isVirtual()) {
-            $result['methodOptions']['APPLE_PAY']['paymentRequest']['requiredShippingContactFields'] = ['postalAddress', 'name', 'email', 'phone'];
-            $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingType'] = 'shipping';
-            $result['methodOptions']['APPLE_PAY']['paymentRequest']['shippingContactEditingMode'] = 'available';
-
-            $quoteShippingAddress = $quote->getShippingAddress();
-            $result['shipping'] = $this->mapAddress($quoteShippingAddress);
-
-            // If address is null then shipping methods will appear after the address update
-            if ($result['shipping'] !== null) {
-                $shippingMethods = $this->mapShippingMethods($this->expressPaymentManager->getAvailableShippingMethods($quote));
-                // If methods are empty, need to choose a new address in the express sheet
-                if (empty($shippingMethods)) {
-                    $result['shipping'] = null;
-                } else {
-                    $result['shippingMethods'] = $shippingMethods;
-                    $selectedMethod = $quoteShippingAddress->getShippingMethod();
-                    if (empty($selectedMethod)) {
-                        $result['shippingMethods'][0]['selected'] = true;
-                    } else {
-                        for ($i = 0; $i < count($result['shippingMethods']); $i++) {
-                            if ($result['shippingMethods'][$i]['id'] === $selectedMethod) {
-                                $result['shippingMethods'][$i]['selected'] = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        $this->quoteData = $result;
-    }
-
-
-    /**
-     * @param ExpressShippingMethod[] $shippingMethods
-     * @return array
-     */
-    private function mapShippingMethods(array $shippingMethods): array
-    {
-        return array_reduce($shippingMethods, function ($carry, $method) {
-            $carry[] = [
-                'id' => $method->getId(),
-                'label' => $method->getLabel(),
-                'amount' => ['amount' => $method->getAmount(), 'currency' => $method->getCurrency()],
-            ];
-            return $carry;
-        }, []);
-    }
-
-    /**
-     * @param Address $quoteAddress
-     * @return array[]
-     */
-    private function mapAddress(Quote\Address $quoteAddress): ?array
-    {
-        // We ignore country code because it's always pre-selected by magento/hyva.
-        // We also ignore region, city, postcode because apple partially sets this, if you cancel the sheet after a
-        // address change. We only pre-fill the apple sheet when the user has actively entered the other fields.
-        if ((!empty($quoteAddress->getStreet()) && !empty($quoteAddress->getStreet()[0])) ||
-            !empty($quoteAddress->getFirstname()) ||
-            !empty($quoteAddress->getLastname()) ||
-            !empty($quoteAddress->getEmail()) ||
-            !empty($quoteAddress->getTelephone())
-        ) {
-            return [
-                'address' => [
-                    'addressLines' => $quoteAddress->getStreet(),
-                    'city' => $quoteAddress->getCity(),
-                    'countryCode' => $quoteAddress->getCountryId(),
-                    'postcode' => $quoteAddress->getPostcode(),
-                    'state' => $quoteAddress->getRegion()
-                ],
-                'contact' => [
-                    'givenName' => $quoteAddress->getFirstname(),
-                    'surname' => $quoteAddress->getLastname(),
-                    'email' => $quoteAddress->getEmail(),
-                    'phoneNumber' => $quoteAddress->getTelephone()
-                ]
-            ];
-        }
-
-        return null;
+        $this->quoteData = $this->expressPaymentRequestMapper->map($quote);
     }
 }
