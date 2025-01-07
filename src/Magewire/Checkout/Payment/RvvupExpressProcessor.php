@@ -24,10 +24,10 @@ class RvvupExpressProcessor extends Component
         'coupon_code_applied' => 'refresh',
         'coupon_code_revoked' => 'refresh',
 
-        'shipping_address_submitted' => 'refresh',
+        'shipping_address_saved' => 'refresh',
         'shipping_address_activated' => 'refresh',
 
-        'billing_address_submitted' => 'refresh',
+        'billing_address_saved' => 'refresh',
         'billing_address_activated' => 'refresh',
     ];
 
