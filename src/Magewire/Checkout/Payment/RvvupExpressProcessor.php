@@ -10,6 +10,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
+use Rvvup\Api\Model\PaymentType;
 use Rvvup\Payments\Service\Express\ExpressPaymentManager;
 use Rvvup\Payments\Service\Express\ExpressPaymentRequestMapper;
 use Rvvup\Payments\Service\Shipping\ShippingMethodService;
@@ -154,7 +155,7 @@ class RvvupExpressProcessor extends Component
     {
         $quote = $this->expressPaymentManager->updateQuoteBeforePaymentAuth($this->checkoutSession->getQuote(), $data);
         $this->setQuoteData($quote);
-        $this->paymentSessionResult = $this->paymentSessionManager->create($quote, $checkoutId, $this);
+        $this->paymentSessionResult = $this->paymentSessionManager->create($quote, $checkoutId, $this, PaymentType::EXPRESS);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Rvvup\PaymentsHyvaCheckout\Service;
 
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
+use Rvvup\Api\Model\PaymentType;
 use Rvvup\Payments\Service\PaymentSessionService;
 
 class PaymentSessionManager
@@ -30,12 +31,13 @@ class PaymentSessionManager
      * @param Quote $quote
      * @param string $checkoutId
      * @param Component $component
+     * @param string $paymentType
      * @return array
      */
-    public function create(Quote $quote, string $checkoutId, Component $component): array
+    public function create(Quote $quote, string $checkoutId, Component $component, string $paymentType): array
     {
         try {
-            $paymentSession = $this->paymentSessionService->create($quote, $checkoutId);
+            $paymentSession = $this->paymentSessionService->create($quote, $checkoutId, $paymentType);
             return [
                 "paymentSessionId" => $paymentSession->getPaymentSessionId(),
                 "redirectUrl" => $paymentSession->getRedirectUrl()
