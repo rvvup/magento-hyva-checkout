@@ -40,6 +40,8 @@ use Magento\Framework\Escaper;
                                 component.handleCallback(authorization, threeD).then(() => validationPromise.resolve(true));
                             },
                             errorCallback: function () {
+                                /** Hide loader */
+                                document.getElementById('magewire-loader').children[0].style.display = 'none';
                                 validationPromise.resolve(false);
                                 var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                                 fetch(
