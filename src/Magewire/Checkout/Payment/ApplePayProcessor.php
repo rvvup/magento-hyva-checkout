@@ -6,6 +6,7 @@ namespace Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment;
 
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Serialize\SerializerInterface;
+use Rvvup\Api\Model\PaymentType;
 use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
 use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
@@ -78,6 +79,6 @@ class ApplePayProcessor extends AbstractProcessor
 
     public function createPaymentSession(string $checkoutId): void
     {
-        $this->paymentSessionResult = $this->paymentSessionManager->create($this->checkoutSession->getQuote(), $checkoutId, $this);
+        $this->paymentSessionResult = $this->paymentSessionManager->create($this->checkoutSession->getQuote(), $checkoutId, $this, PaymentType::STANDARD);
     }
 }
