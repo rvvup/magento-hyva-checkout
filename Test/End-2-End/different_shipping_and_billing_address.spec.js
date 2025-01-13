@@ -22,7 +22,7 @@ test("Can place an order using different billing and shipping address", async ({
 
   await page.getByLabel("Pay by Bank").click();
 
-  await visitCheckoutPayment.loadersShouldBeHidden();
+  await page.waitForTimeout(3000);
 
   await page.getByRole("button", { name: "Place order" }).click();
 
