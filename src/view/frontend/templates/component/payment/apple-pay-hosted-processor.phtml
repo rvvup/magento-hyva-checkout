@@ -31,13 +31,8 @@ use Magento\Framework\View\Element\Template;
                     }
                 }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
             });
-            window.addEventListener('checkout:payment:method-activate', () => {
-                enableApplePay();
-            }, {once: false});
-            window.addEventListener('checkout:shipping:method-activate', () => {
-                enableApplePay();
-            }, {once: false});
-            window.addEventListener('checkout:step:loaded', () => {
+            enableApplePay();
+            window.addEventListener('magewire:update', () => {
                 enableApplePay();
             }, {once: false});
 

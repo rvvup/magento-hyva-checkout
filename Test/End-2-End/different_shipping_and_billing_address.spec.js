@@ -22,9 +22,11 @@ test("Can place an order using different billing and shipping address", async ({
 
   await page.getByLabel("Pay by Bank").click();
 
+  await page.waitForTimeout(3000);
+
   await page.getByRole("button", { name: "Place order" }).click();
 
-  // Credit card form
+  // Bank Selector
   const frame = page.frameLocator("iframe.rvvup-modal");
   await frame.getByLabel("Mock Bank").click();
   await frame.getByRole("button", { name: "Continue on desktop" }).click();
