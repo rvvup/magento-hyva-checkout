@@ -8,12 +8,12 @@ test("Can place an order using PayPal", async ({ page, browser }) => {
 
   await page.getByLabel("PayPal", { exact: true }).click();
 
-  await expect(page.locator("#rvvup-paypal-button-container")).toBeVisible();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeVisible();
   await page.waitForTimeout(2000);
 
   const popupPromise = page.waitForEvent("popup");
   const paypalFrame = page
-    .frameLocator("#rvvup-paypal-button-container iframe")
+    .frameLocator("#rvvup-paypal-button-container-0 iframe")
     .first();
   await paypalFrame.getByRole("link", { name: "PayPal" }).click();
 

@@ -8,17 +8,17 @@ test("Can switch between payment methods", async ({ page }) => {
   // Switch to card
   await page.getByLabel("Pay by Card").click();
   await visitCheckoutPayment.loadersShouldBeHidden();
-  await expect(page.locator("#rvvup-paypal-button-container")).toBeHidden();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeHidden();
   await expect(page.locator("#rvvup-card-form")).toBeVisible();
 
   await page.getByLabel("PayPal", { exact: true }).click();
   await visitCheckoutPayment.loadersShouldBeHidden();
   await expect(page.locator("#rvvup-card-form")).toBeHidden();
-  await expect(page.locator("#rvvup-paypal-button-container")).toBeVisible();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeVisible();
 
   // Switch back to card
   await page.getByLabel("Pay by Card").click();
   await visitCheckoutPayment.loadersShouldBeHidden();
-  await expect(page.locator("#rvvup-paypal-button-container")).toBeHidden();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeHidden();
   await expect(page.locator("#rvvup-card-form")).toBeVisible();
 });
