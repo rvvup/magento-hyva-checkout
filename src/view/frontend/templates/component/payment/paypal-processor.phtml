@@ -141,7 +141,10 @@
                     paypalButtons.forEach((button) => {
                         button.remove();
                     });
-                    document.querySelector('.nav-main .btn-primary').classList.remove('rvvup_PAYPAL_place_order_button');
+                    let placeOrderButtons = document.querySelectorAll('.nav-main .btn-primary');
+                    placeOrderButtons.forEach((button) => {
+                        button.classList.remove('rvvup_PAYPAL_place_order_button');
+                    });
                 }
 
                 return;
