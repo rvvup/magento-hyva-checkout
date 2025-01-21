@@ -17,19 +17,25 @@ class GetPaymentsActionsResult
     /** @var PaymentActionInterface|null */
     private $capture;
 
+    /** @var PaymentActionInterface|null */
+    private $confirmAuthorization;
+
     /**
      * @param PaymentActionInterface|null $authorization
      * @param PaymentActionInterface|null $cancel
      * @param PaymentActionInterface|null $capture
+     * @param PaymentActionInterface|null $confirmAuthorization
      */
     public function __construct(
         PaymentActionInterface $authorization = null,
         PaymentActionInterface $cancel = null,
-        PaymentActionInterface $capture = null
+        PaymentActionInterface $capture = null,
+        PaymentActionInterface $confirmAuthorization = null
     ) {
         $this->authorization = $authorization;
         $this->cancel = $cancel;
         $this->capture = $capture;
+        $this->confirmAuthorization = $confirmAuthorization;
     }
 
     public function getAuthorization(): ?PaymentActionInterface
@@ -68,5 +74,10 @@ class GetPaymentsActionsResult
         }
 
         return $this->capture->getValue();
+    }
+
+    public function getConfirmAuthorization(): ?PaymentActionInterface
+    {
+        return $this->confirmAuthorization;
     }
 }

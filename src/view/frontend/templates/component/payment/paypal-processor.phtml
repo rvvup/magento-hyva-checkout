@@ -89,11 +89,38 @@
                             return component.paymentActions.authorization.value;
                         },
                         onApprove: () => {
-                            window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
-                                detail: {
-                                    redirectUrl: component.paymentActions.capture.value
+                            const confirmAuthorizationUrl = component.paymentActions.confirmAuthorization?.value;
+                            const showModal = () => {
+                                window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                                    detail: {
+                                        redirectUrl: component.paymentActions.capture.value
+                                    }
+                                }));
+                            };
+
+                            if (!confirmAuthorizationUrl) {
+                                showModal();
+                                return;
+                            }
+
+                            fetch(
+                                confirmAuthorizationUrl,
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                },
+                            ).then(res => {
+                                if (res.ok) {
+                                    showModal();
+                                } else {
+                                    window.dispatchMessages && window.dispatchMessages([{
+                                        type: 'error',
+                                        text: 'Something went wrong when authorizing the payment.',
+                                    }]);
                                 }
-                            }))
+                            });
                         },
                         onCancel: () => {
                             var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();

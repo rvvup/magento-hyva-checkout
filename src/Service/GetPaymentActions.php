@@ -40,11 +40,13 @@ class GetPaymentActions
         $authorizationAction = $this->findByType($paymentAction, 'authorization');
         $cancelAction = $this->findByType($paymentAction, 'cancel');
         $captureAction = $this->findByType($paymentAction, 'capture');
+        $confirmAuthorizationAction = $this->findByType($paymentAction, 'confirm_authorization');
 
         return $this->getPaymentsActionsResultFactory->create([
             'authorization' => $authorizationAction,
             'cancel' => $cancelAction,
             'capture' =>  $captureAction,
+            'confirmAuthorization' => $confirmAuthorizationAction,
         ]);
     }
 
