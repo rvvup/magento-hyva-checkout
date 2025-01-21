@@ -89,6 +89,16 @@
                             return component.paymentActions.authorization.value;
                         },
                         onApprove: () => {
+                            if (rvvup_parameters.settings.paypal.capture.type === "MANUAL") {
+                                let authorizationUrl = window.BASE_URL + 'rvvup/payment/authorize' + '?form_key=' + hyva.getFormKey();
+                                fetch(
+                                    authorizationUrl,
+                                    {
+                                        method: 'post',
+                                        headers: {contentType: 'application/json'}
+                                    }
+                                )
+                            }
                             window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
                                 detail: {
                                     redirectUrl: component.paymentActions.capture.value
@@ -180,7 +190,20 @@
                 },
 
                 placeOrder() {
-                    return component.placeOrder();
+                    return component.placeOrder().then(() => {
+                        // Authorize here instead of onApprove for express as the PayPal order is updated and updates
+                        // can only be made before the PayPal order is authorized.
+                        if (rvvup_parameters.settings.paypal.capture.type === "MANUAL") {
+                            let authorizationUrl = window.BASE_URL + 'rvvup/payment/authorize' + '?form_key=' + hyva.getFormKey();
+                            fetch(
+                                authorizationUrl,
+                                {
+                                    method: 'post',
+                                    headers: {contentType: 'application/json'}
+                                }
+                            )
+                        }
+                    });
                 },
             }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
         });
