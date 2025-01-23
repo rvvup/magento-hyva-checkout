@@ -115,6 +115,14 @@ abstract class AbstractProcessor extends Component
                 'value' => $capture->getValue(),
             ];
         }
+
+        if ($confirmAuthorization = $result->getConfirmAuthorization()) {
+            $this->paymentActions['confirmAuthorization'] = [
+                'method' => $confirmAuthorization->getMethod(),
+                'type' => $confirmAuthorization->getType(),
+                'value' => $confirmAuthorization->getValue(),
+            ];
+        }
     }
 
     public function placeOrder(): void
