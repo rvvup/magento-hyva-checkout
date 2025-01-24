@@ -15,6 +15,16 @@ use Magento\Framework\View\Element\Template;
     </style>
     <script>
         (() => {
+            function enableApplePay() {
+                let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
+                if (applePay && window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+                    applePay.style.display = 'block';
+                }
+            }
+            enableApplePay();
+            window.addEventListener('magewire:update', () => {
+                enableApplePay();
+            }, {once: false});
             window.addEventListener('checkout:payment:method-activate', event => {
                 if (event.detail.method !== 'rvvup_APPLE_PAY') {
                     return;
@@ -32,16 +42,6 @@ use Magento\Framework\View\Element\Template;
                 }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
             });
             enableApplePay();
-            window.addEventListener('magewire:update', () => {
-                enableApplePay();
-            }, {once: false});
-
-            function enableApplePay() {
-                let applePay = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
-                if (applePay && window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
-                    applePay.style.display = 'block';
-                }
-            }
         })();
     </script>
 </div>
