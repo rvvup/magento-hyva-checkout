@@ -13,7 +13,47 @@ use Magento\Framework\View\Element\Template;
         (() => {
             let ST = null;
             let validationPromise = null;
+            const confirmCardAuthorization = (confirmAuthorizationUrl, data) => {
+                let submitData = {
+                    auth: data.jwt,
+                };
+                if (data.threedresponse) {
+                    submitData["threeD"] = data.threedresponse;
+                }
+                return new Promise((resolve, reject) => {
+                    const attemptConfirmFetch = (remainingRetries) => {
+                        fetch(confirmAuthorizationUrl, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(submitData),
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    return response.json().then((errorData) => {
+                                        const code = errorData.errorCode || null;
+                                        const message = errorData.errorMessage || "Something went wrong when authorizing your payment.";
+                                        const canRetry = response.status === 404 && code === "card_authorization_not_found";
+                                        if (canRetry && remainingRetries > 0) {
+                                            setTimeout(function () {
+                                                attemptConfirmFetch(remainingRetries - 1);
+                                            }, 2000);
+                                            return;
+                                        }
+                                        reject(message);
+                                    });
+                                }
+                                resolve(response.json());
+                            })
+                            .catch((error) => {
+                                reject(error.messages ? error.messages : "Something went wrong, please try again.");
+                            });
+                    };
 
+                    attemptConfirmFetch(5);
+                });
+            };
             window.addEventListener('checkout:payment:method-activate', event => {
                 if (event.detail.method !== 'rvvup_CARD') {
                     return;
@@ -34,10 +74,19 @@ use Magento\Framework\View\Element\Template;
                             stopSubmitFormOnEnter: true,
                             formId: "st-form",
                             submitCallback: function (data) {
-                                let threeD = data.threedresponse || null;
-                                let authorization = data.jwt;
-
-                                component.handleCallback(authorization, threeD).then(() => validationPromise.resolve(true));
+                                confirmCardAuthorization(component.paymentActions.confirmAuthorization.value, data)
+                                    .then(() => {
+                                        window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
+                                            detail: {
+                                                redirectUrl: component.paymentActions.capture.value
+                                            }
+                                        }));
+                                    }).catch((error) => {
+                                    window.dispatchMessages && window.dispatchMessages([{
+                                        type: 'error',
+                                        text: error
+                                    }], 5000);
+                                });
                             },
                             errorCallback: function () {
                                 /** Hide loader */
