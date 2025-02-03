@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Magento\Framework\View\Element\Template;
 use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
 
 /** @var Template $block */
 /** @var Escaper $escaper */
@@ -92,6 +92,10 @@ use Magento\Framework\Escaper;
                             validationPromise = {resolve, reject};
 
                             component.loadPaymentActions().then(() => {
+                                if (!component.paymentActions || !component.paymentActions.authorization) {
+                                    document.getElementById('magewire-loader').children[0].style.display = 'none';
+                                    return;
+                                }
                                 ST.updateJWT(component.paymentActions.authorization.value);
                                 document.getElementById('tp_place_order').click();
                             });

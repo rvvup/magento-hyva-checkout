@@ -88,55 +88,42 @@ abstract class AbstractProcessor extends Component
 
     public function loadPaymentActions(): void
     {
-        $quote = $this->checkoutSession->getQuote();
-        if ($quote->getPayment()->getMethod() != $this->getMethodCode()) {
-            return;
-        }
-
-        $result = $this->getPaymentActions->execute((int)$quote->getId());
-
-        $this->paymentActions = [
-            'authorization' => [
-                'method' => $result->getAuthorization()->getMethod(),
-                'type' => $result->getAuthorization()->getType(),
-                'value' => $result->getAuthorization()->getValue(),
-            ],
-            'cancel' => [
-                'method' => $result->getCancel()->getMethod(),
-                'type' => $result->getCancel()->getType(),
-                'value' => $result->getCancel()->getValue(),
-            ],
-        ];
-
-        if ($capture = $result->getCapture()) {
-            $this->paymentActions['capture'] = [
-                'method' => $capture->getMethod(),
-                'type' => $capture->getType(),
-                'value' => $capture->getValue(),
-            ];
-        }
-
-        if ($confirmAuthorization = $result->getConfirmAuthorization()) {
-            $this->paymentActions['confirmAuthorization'] = [
-                'method' => $confirmAuthorization->getMethod(),
-                'type' => $confirmAuthorization->getType(),
-                'value' => $confirmAuthorization->getValue(),
-            ];
-        }
-    }
-
-    public function placeOrder(): void
-    {
         try {
-            $this->loadPaymentActions();
-            $redirectUrl = $this->getRedirectUrl();
+            $quote = $this->checkoutSession->getQuote();
+            if ($quote->getPayment()->getMethod() != $this->getMethodCode()) {
+                return;
+            }
 
-            $this->dispatchBrowserEvent(
-                'rvvup:update:showModal',
-                [
-                    'redirectUrl' => $redirectUrl,
-                ]
-            );
+            $result = $this->getPaymentActions->execute((int)$quote->getId());
+
+            $this->paymentActions = [
+                'authorization' => [
+                    'method' => $result->getAuthorization()->getMethod(),
+                    'type' => $result->getAuthorization()->getType(),
+                    'value' => $result->getAuthorization()->getValue(),
+                ],
+                'cancel' => [
+                    'method' => $result->getCancel()->getMethod(),
+                    'type' => $result->getCancel()->getType(),
+                    'value' => $result->getCancel()->getValue(),
+                ],
+            ];
+
+            if ($capture = $result->getCapture()) {
+                $this->paymentActions['capture'] = [
+                    'method' => $capture->getMethod(),
+                    'type' => $capture->getType(),
+                    'value' => $capture->getValue(),
+                ];
+            }
+
+            if ($confirmAuthorization = $result->getConfirmAuthorization()) {
+                $this->paymentActions['confirmAuthorization'] = [
+                    'method' => $confirmAuthorization->getMethod(),
+                    'type' => $confirmAuthorization->getType(),
+                    'value' => $confirmAuthorization->getValue(),
+                ];
+            }
         } catch (\Exception $exception) {
             $detail = [
                 'text' => $exception->getMessage(),
@@ -147,6 +134,19 @@ abstract class AbstractProcessor extends Component
             $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
             $this->dispatchErrorMessage($detail['text']);
         }
+    }
+
+    public function placeOrder(): void
+    {
+        $this->loadPaymentActions();
+        $redirectUrl = $this->getRedirectUrl();
+
+        $this->dispatchBrowserEvent(
+            'rvvup:update:showModal',
+            [
+                'redirectUrl' => $redirectUrl,
+            ]
+        );
     }
 
     /**

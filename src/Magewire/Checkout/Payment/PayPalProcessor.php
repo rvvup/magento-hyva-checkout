@@ -65,45 +65,35 @@ class PayPalProcessor extends AbstractProcessor
     /**
      * Called in the express payment flow.
      * @return void
+     * @throws \Exception
      */
     public function placeOrder(): void
     {
-        try {
-            $this->loadPaymentActions();
+        $this->loadPaymentActions();
 
-            if (array_key_exists('confirmAuthorization', $this->paymentActions) &&
-                $this->paymentActions['confirmAuthorization']['method'] == 'url'
-            ) {
-                // Authorize here instead of onApprove for express payments as the PayPal order is updated and updates
-                // can only be made before the PayPal order is authorized.
-                $options = [
-                    'headers' => ['Content-Type: application/json'],
-                    'json' => [],
-                    'user_agent' => $this->userAgentBuilder->get(),
-                ];
-                $confirmAuthorizationUrl = $this->paymentActions['confirmAuthorization']['value'];
-                $response = $this->curl->request(Request::METHOD_POST, $confirmAuthorizationUrl, $options);
-                if ($response->response_code !== 200) {
-                    throw new \Exception('Something went wrong when authorizing the payment.');
-                }
-            }
-
-            $redirectUrl = $this->getRedirectUrl();
-            $this->dispatchBrowserEvent(
-                'rvvup:update:showModal',
-                [
-                    'redirectUrl' => $redirectUrl,
-                ]
-            );
-        } catch (\Exception $exception) {
-            $detail = [
-                'text' => $exception->getMessage(),
-                'method' => $this->getMethodCode(),
+        if (array_key_exists('confirmAuthorization', $this->paymentActions) &&
+            $this->paymentActions['confirmAuthorization']['method'] == 'url'
+        ) {
+            // Authorize here instead of onApprove for express payments as the PayPal order is updated and updates
+            // can only be made before the PayPal order is authorized.
+            $options = [
+                'headers' => ['Content-Type: application/json'],
+                'json' => [],
+                'user_agent' => $this->userAgentBuilder->get(),
             ];
-
-            $this->dispatchBrowserEvent('order:place:error', $detail);
-            $this->dispatchBrowserEvent(sprintf('order:place:%s:error', $detail['method']), $detail);
-            $this->dispatchErrorMessage($detail['text']);
+            $confirmAuthorizationUrl = $this->paymentActions['confirmAuthorization']['value'];
+            $response = $this->curl->request(Request::METHOD_POST, $confirmAuthorizationUrl, $options);
+            if ($response->response_code !== 200) {
+                throw new \Exception('Something went wrong when authorizing the payment.');
+            }
         }
+
+        $redirectUrl = $this->getRedirectUrl();
+        $this->dispatchBrowserEvent(
+            'rvvup:update:showModal',
+            [
+                'redirectUrl' => $redirectUrl,
+            ]
+        );
     }
 }
