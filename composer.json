@@ -4,7 +4,7 @@
     "type": "magento2-module",
     "require": {
         "php": "^7.3 || ^8.1",
-        "rvvup/module-magento-payments": "1.9.3",
+        "rvvup/module-magento-payments": "1.9.4",
         "hyva-themes/magento2-compat-module-fallback": "^1.0",
         "hyva-themes/magento2-hyva-checkout": "^1.1",
         "magewirephp/magewire": "*"
