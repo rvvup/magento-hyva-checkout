@@ -70,97 +70,10 @@ class CardProcessor extends AbstractProcessor
         return 'rvvup_CARD';
     }
 
-    /**
-     * Handle cards callback
-     * @param string|null $authorizationResponse
-     * @param string|null $threeDSecureResponse
-     * @return void
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
-     */
-    public function handleCallback(?string $authorizationResponse, ?string $threeDSecureResponse): void
-    {
-        if ($authorizationResponse === null) {
-            $authorizationResponse = false;
-        }
-
-        $cart = $this->checkoutSession->getQuote();
-        $payment = $cart->getPayment();
-
-        $payment->setAdditionalInformation('authorization_response', $authorizationResponse);
-        $payment->setAdditionalInformation('three_d_secure_response', $threeDSecureResponse);
-
-        $this->cartRepository->save($cart);
-
-        if ($this->showForm()) {
-            $quote = $this->checkoutSession->getQuote();
-            $payment = $quote->getPayment();
-
-            $authorizationResponse = $payment->getAdditionalInformation('authorization_response');
-            $threeDSecureResponse = $payment->getAdditionalInformation('three_d_secure_response');
-
-            $rvvupOrderId = (string)$payment->getAdditionalInformation('transaction_id');
-            $rvvupPaymentId = $payment->getAdditionalInformation(Method::PAYMENT_ID);
-
-            $data = [$rvvupPaymentId, $rvvupOrderId, $authorizationResponse, $threeDSecureResponse];
-            $message = $this->confirmCardAuthorization($data);
-
-            $redirectUrl = $this->getRedirectUrl();
-            if (!$message) {
-                $this->dispatchBrowserEvent(
-                    'rvvup:update:showModal',
-                    ['redirectUrl' => $redirectUrl]
-                );
-            } else {
-                $this->sdkProxy->cancelPayment($rvvupPaymentId, $rvvupOrderId);
-                $this->checkoutSession->setRvvupErrorMessage($message);
-                $this->dispatchBrowserEvent(
-                    'rvvup:reload',
-                );
-            }
-        }
-    }
-
     public function placeOrder(): void
     {
         if (!$this->showForm()) {
             parent::placeOrder();
-        }
-    }
-
-    /**
-     * @param array $data
-     * @param int $retries
-     * @return string|null
-     */
-    private function confirmCardAuthorization(array $data, int $retries = 5): ?string
-    {
-        try {
-            list($rvvupPaymentId, $rvvupOrderId, $authorizationResponse, $threeDSecureResponse) = $data;
-            $this->sdkProxy->confirmCardAuthorization(
-                $rvvupPaymentId,
-                $rvvupOrderId,
-                $authorizationResponse,
-                $threeDSecureResponse
-            );
-            return null;
-        } catch (\Exception $exception) {
-            if ($exception instanceof ApiError) {
-                if ($exception->getErrorCode() == 'card_authorization_not_found') {
-                    if ($retries > 0) {
-                        $retries--;
-                        sleep(1);
-                        $this->confirmCardAuthorization($data, $retries);
-                    } else {
-                        $this->logger->error(
-                            'Rvvup hyva card inline processor failed, payment id: '.
-                            $rvvupPaymentId . ' order id :'. $rvvupOrderId .
-                            ' message:' . $exception->getMessage()
-                        );
-                    }
-                }
-            }
-            return $exception->getMessage();
         }
     }
 
