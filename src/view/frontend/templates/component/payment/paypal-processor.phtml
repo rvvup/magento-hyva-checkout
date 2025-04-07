@@ -151,9 +151,20 @@
                         onClick: (data, actions) => {
                             let magewire = document.getElementById('magewire-loader');
                             magewire.children[0].style.display = 'block';
-                            return component.loadPaymentActions()
-                                .then(function () {
-                                    return actions.resolve();
+                            if (typeof hyvaCheckout?.validation?.validate !== 'function') {
+                                return component.loadPaymentActions().then(() => actions.resolve());
+                            }
+
+                            return hyvaCheckout.validation.validate()
+                                .then(async isValid => {
+                                    return isValid;
+                                }).then(async isValid => {
+                                    if (!isValid) {
+                                        let magewire = document.getElementById('magewire-loader');
+                                        magewire.children[0].style.display = 'none';
+                                        return actions.reject();
+                                    }
+                                    return component.loadPaymentActions().then(() => actions.resolve());
                                 });
                         },
                     }).render('#' + paypalContainer.id);

@@ -12,7 +12,21 @@ use Magento\Framework\View\Element\Template;
     <script>
         (() => {
             let ST = null;
-            let validationPromise = null;
+
+            window.addEventListener('checkout:validation:success', () => {
+                const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                let magewire = document.getElementById('magewire-loader');
+                magewire.children[0].style.display = 'block';
+
+                component.loadPaymentActions().then(() => {
+                    if (!component.paymentActions || !component.paymentActions.authorization) {
+                        document.getElementById('magewire-loader').children[0].style.display = 'none';
+                        return;
+                    }
+                    ST.updateJWT(component.paymentActions.authorization.value);
+                    document.getElementById('tp_place_order').click();
+                });
+            });
 
             window.addEventListener('checkout:payment:method-activate', event => {
                 if (event.detail.method !== 'rvvup_CARD') {
@@ -37,12 +51,11 @@ use Magento\Framework\View\Element\Template;
                                 let threeD = data.threedresponse || null;
                                 let authorization = data.jwt;
 
-                                component.handleCallback(authorization, threeD).then(() => validationPromise.resolve(true));
+                                component.handleCallback(authorization, threeD);
                             },
                             errorCallback: function () {
                                 /** Hide loader */
                                 document.getElementById('magewire-loader').children[0].style.display = 'none';
-                                validationPromise.resolve(false);
                                 var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                                 fetch(
                                     url,
@@ -81,25 +94,6 @@ use Magento\Framework\View\Element\Template;
                         });
 
                         ST.Components();
-                    },
-
-                    validate() {
-                        return new Promise((resolve, reject) => {
-                            /** Show loader */
-                            let magewire = document.getElementById('magewire-loader');
-                            magewire.children[0].style.display = 'block';
-
-                            validationPromise = {resolve, reject};
-
-                            component.loadPaymentActions().then(() => {
-                                if (!component.paymentActions || !component.paymentActions.authorization) {
-                                    document.getElementById('magewire-loader').children[0].style.display = 'none';
-                                    return;
-                                }
-                                ST.updateJWT(component.paymentActions.authorization.value);
-                                document.getElementById('tp_place_order').click();
-                            });
-                        });
                     },
 
                     placeOrderViaJs() {
