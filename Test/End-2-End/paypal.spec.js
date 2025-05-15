@@ -71,7 +71,7 @@ test("Can place an order from the product page using PayPal", async ({
     "You are currently paying with PayPal. If you want to cancel this process",
   );
 
-  const children = await page.$$("#payment-methods ol > li, #payment-method-list div");
+  const children = await page.$$("#payment-methods ol > li, #payment-method-list > div");
   await expect(children.length).toBe(1);
 
   await page.getByRole("button", { name: "Place order" }).click();
