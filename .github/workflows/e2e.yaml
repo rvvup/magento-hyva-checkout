@@ -72,7 +72,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: results-${{ matrix.MAGENTO_VERSION }}-${{ github.run_number }}
+          name: results-${{ matrix.MAGENTO_VERSION }}-${{ matrix.HYVA_CHECKOUT_VERSION }}-${{ github.run_number }}
           path: |
             playwright-report/
             logs/
