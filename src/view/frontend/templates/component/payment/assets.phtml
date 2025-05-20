@@ -1,6 +1,7 @@
 <?php
 /** @var \Magento\Framework\Escaper $escaper */
 /** @var \Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets $block */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 
 <?php foreach ($block->getAssets() as $asset): ?>
@@ -16,6 +17,7 @@
             }
             ?>
     ></script>
+<?php $hyvaCsp->registerInlineScript() ?>
 <?php endforeach; ?>
 <script>
     function getPlaceOrderButtons() {
@@ -36,3 +38,4 @@
         return undefined;
     }
 </script>
+<?php $hyvaCsp->registerInlineScript() ?>

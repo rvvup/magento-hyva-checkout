@@ -7,6 +7,7 @@ use Rvvup\PaymentsHyvaCheckout\Block\Checkout\Messaging;
 
 /** @var Messaging $block */
 /** @var Escaper $escaper */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 
 $error = $block->getRvvupError();
 ?>
@@ -22,6 +23,7 @@ $error = $block->getRvvupError();
             ]);
         });
     </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 <?php endif; ?>
 
 <script>
@@ -38,3 +40,4 @@ $error = $block->getRvvupError();
         }
     });
 </script>
+<?php $hyvaCsp->registerInlineScript() ?>

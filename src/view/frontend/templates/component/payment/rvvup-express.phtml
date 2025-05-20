@@ -8,6 +8,7 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
 /** @var Template $block */
 /** @var Escaper $escaper */
 /** @var RvvupExpressProcessor $magewire */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 
 ?>
 <div wire:ignore>
@@ -72,8 +73,8 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
             margin-right: 20px;
         }
     </style>
-    <div x-data="rvvupExpressButtons()"
-         x-init="initRvvup()"
+    <div x-data="rvvupExpressButtons"
+         x-init="initRvvup"
          class="rvvup_express_container">
         <div class="rvvup_express_title rvvup_express_text_with_line">Express Checkout</div>
         <div class="rvvup_express_wrapper">
@@ -161,6 +162,8 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                 },
             }
         }
+        window.addEventListener('alpine:init', () => Alpine.data('rvvupExpressButtons', rvvupExpressButtons), {once: true});
     </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 
 </div>
