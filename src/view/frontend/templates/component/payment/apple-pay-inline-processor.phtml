@@ -101,9 +101,9 @@ use Magento\Framework\View\Element\Template;
                 const divId = "rvvup-apple-pay-button";
 
                 if (event.detail.method !== 'rvvup_APPLE_PAY') {
+                    placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
                     if (document.getElementById(divId)) {
                         document.getElementById(divId).style.display = 'none';
-                        placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
                     }
                     $applePaySelected = false;
                     return;
