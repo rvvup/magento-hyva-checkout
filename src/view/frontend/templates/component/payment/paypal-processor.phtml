@@ -66,11 +66,7 @@
                 placeOrderButton.parentNode.insertBefore(paypalContainer, placeOrderButton);
             };
 
-            let placeOrderButtons = document.querySelectorAll('.nav-main .btn-primary');
-            if (placeOrderButtons.length === 0) {
-                console.error('Error: Place order button not found')
-                return;
-            }
+            let placeOrderButtons = getPlaceOrderButtons();
             let btnIndex = 0;
             placeOrderButtons.forEach((placeOrderButton) => {
                 const paypalContainer = createPaypalContainer(btnIndex++, placeOrderButton);
@@ -173,13 +169,13 @@
 
         });
         window.addEventListener('checkout:payment:method-activate', (event) => {
-            let paypalButtons = document.querySelectorAll('.nav-main .rvvup-paypal-button');
+            let paypalButtons = document.querySelectorAll('.rvvup-paypal-button');
             if (event.detail.method !== 'rvvup_PAYPAL') {
                 if (paypalButtons.length > 0) {
                     paypalButtons.forEach((button) => {
                         button.remove();
                     });
-                    let placeOrderButtons = document.querySelectorAll('.nav-main .btn-primary');
+                    let placeOrderButtons = getPlaceOrderButtons();
                     placeOrderButtons.forEach((button) => {
                         button.classList.remove('rvvup_PAYPAL_place_order_button');
                     });
@@ -192,7 +188,7 @@
             hyvaCheckout.payment.activate('rvvup_PAYPAL', {
 
                 initialize() {
-                    let placeOrderButtons = document.querySelectorAll('.nav-main .btn-primary');
+                    let placeOrderButtons = getPlaceOrderButtons();
                     if (placeOrderButtons.length > 0) {
                         let magewire = document.getElementById('magewire-loader');
                         magewire.children[0].style.display = 'block';

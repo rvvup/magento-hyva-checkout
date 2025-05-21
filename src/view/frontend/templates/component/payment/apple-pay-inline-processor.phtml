@@ -42,7 +42,7 @@ use Magento\Framework\View\Element\Template;
 
             applePayPromise.then(applePay => {
                 applePay.on("ready", async () => {
-                    let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                    let placeOrderButton = getPlaceOrderButton();
                     const divId = "rvvup-apple-pay-button";
                     if(document.getElementById(divId)){
                         return;
@@ -97,13 +97,13 @@ use Magento\Framework\View\Element\Template;
             });
 
             window.addEventListener('checkout:payment:method-activate', event => {
-                let placeOrderButton = document.querySelector('.nav-main .btn-primary');
+                let placeOrderButton = getPlaceOrderButton();
                 const divId = "rvvup-apple-pay-button";
 
                 if (event.detail.method !== 'rvvup_APPLE_PAY') {
+                    placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
                     if (document.getElementById(divId)) {
                         document.getElementById(divId).style.display = 'none';
-                        document.querySelector('.nav-main .btn-primary').classList.remove('rvvup_APPLE_PAY_place_order_button');
                     }
                     $applePaySelected = false;
                     return;
