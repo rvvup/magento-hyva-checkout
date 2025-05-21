@@ -20,7 +20,7 @@
 <script>
     function getPlaceOrderButtons() {
         // Hyva Checkout Version 1.2.0 or later had a checkout UX/UI upgrade
-        let placeOrderButtons = document.querySelectorAll('.checkout-nav-main button');
+        let placeOrderButtons = document.querySelectorAll('.checkout-nav-main button.btn-primary');
         // Backwards compatibility for Hyva Checkout Version 1.1.29 or earlier
         if (placeOrderButtons.length === 0) {
             return document.querySelectorAll('.nav-main .btn-primary');
