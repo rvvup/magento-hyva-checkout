@@ -11,6 +11,7 @@ composer config repositories.hyva-themes/magento2-email-module git git@gitlab.hy
 composer config repositories.hyva-themes/magento2-default-theme git git@gitlab.hyva.io:hyva-themes/magento2-default-theme.git
 composer config repositories.hyva-themes/magento2-compat-module-fallback git git@gitlab.hyva.io:hyva-themes/magento2-compat-module-fallback.git
 composer config repositories.hyva-themes/magento2-order-cancellation-webapi git git@gitlab.hyva.io:hyva-themes/magento2-order-cancellation-webapi.git
+composer config repositories.hyva-themes/magento2-mollie-theme-bundle git git@gitlab.hyva.io:hyva-themes/hyva-compat/magento2-mollie-theme-bundle.git
 composer config repositories.hyva-themes/hyva-checkout git git@gitlab.hyva.io:hyva-checkout/checkout.git
 if [ "$HYVA_CHECKOUT_VERSION" == "latest" ] || [ -z "$HYVA_CHECKOUT_VERSION" ]; then
     composer require --prefer-source hyva-themes/magento2-default-theme hyva-themes/magento2-hyva-checkout

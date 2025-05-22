@@ -1,6 +1,6 @@
-import {expect} from "@playwright/test";
+import { expect } from "@playwright/test";
 import Cart from "../Components/Cart";
-import {v7 as uuidv7} from 'uuid';
+import { v7 as uuidv7 } from "uuid";
 
 export default class VisitCheckoutPayment {
   constructor(page) {
@@ -14,7 +14,7 @@ export default class VisitCheckoutPayment {
 
     await this.page
       .getByLabel("Email address", { exact: true })
-        .fill(uuidv7() + "@example.com");
+      .fill(uuidv7() + "@example.com");
     await this.page.getByLabel("First name").fill("John");
     await this.page.getByLabel("Last name").fill("Doe");
     await this.page.getByLabel("Street address").fill("123 Main St");

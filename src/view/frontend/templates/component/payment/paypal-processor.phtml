@@ -1,6 +1,7 @@
 <?php
 /** @var \Magento\Framework\View\Element\Template $block */
 /** @var \Magento\Framework\Escaper $escaper */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div wire:ignore>
     <style>
@@ -219,4 +220,5 @@
             }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
         });
     </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 </div>

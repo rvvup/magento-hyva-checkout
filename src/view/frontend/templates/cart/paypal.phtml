@@ -3,6 +3,7 @@
  * @var \Magento\Framework\Escaper $escaper
  * @var \Rvvup\PaymentsHyvaCheckout\Block\Paypal $block
  * @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel
+ * @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
  */
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
 
@@ -20,8 +21,8 @@ if ($paypalViewModel === null ||
 ?>
 
 <div class="rvvup-paypal-express grow z-0"
-     x-data="rvvupPayPalExpressButton()"
-     x-init="initRvvup()"
+     x-data="rvvupPayPalExpressButton"
+     x-init="initRvvup"
      wire:ignore>
     <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
@@ -181,4 +182,6 @@ if ($paypalViewModel === null ||
             },
         }
     }
+    window.addEventListener('alpine:init', () => Alpine.data('rvvupPayPalExpressButton', rvvupPayPalExpressButton), {once: true});
 </script>
+<?php $hyvaCsp->registerInlineScript() ?>

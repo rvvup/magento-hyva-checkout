@@ -7,6 +7,7 @@ use Magento\Framework\View\Element\Template;
 /** @var Template $block */
 /** @var Escaper $escaper */
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ApplePayProcessor $magewire */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div id="rvvup-apple-pay-inline" data-quoteamount="<?php echo $magewire->quoteAmount; ?>" data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
     <style>
@@ -129,4 +130,5 @@ use Magento\Framework\View\Element\Template;
             });
         })();
     </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 </div>

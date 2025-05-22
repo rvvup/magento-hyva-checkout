@@ -6,6 +6,7 @@ use Magento\Framework\Escaper;
 
 /** @var Template $block */
 /** @var Escaper $escaper */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div wire:ignore>
 <script>
@@ -28,4 +29,5 @@ use Magento\Framework\Escaper;
         });
     })();
 </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 </div>

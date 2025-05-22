@@ -10,6 +10,7 @@ use Magento\Framework\View\Element\Template;
 
 /** @var Escaper $escaper */
 /** @var Template $block */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 
 $modelViewModel = $viewModels->require(Modal::class);
 
@@ -19,7 +20,7 @@ $modal = $modelViewModel->createModal()
     ->addDialogClass('relative rounded-xl flex flex-col text-center mx-8 sm:mx-16')
     ->withAriaLabelledby('modal-title');
 ?>
-<div id="rvvup-modal" x-data="Object.assign({}, hyva.modal(), initRvvupModal())">
+<div id="rvvup-modal" x-data="rvvupPaymentsHyvaCheckoutComponentPaymentModal">
     <?= /** @noEscape */ $modal->withContent(
         <<<END_OF_CONTENT
             <template x-if="iframeUrl">
@@ -105,4 +106,12 @@ $modal = $modelViewModel->createModal()
             },
         }
     }
+    function rvvupPaymentsHyvaCheckoutComponentPaymentModal() {
+        return Object.assign(
+            Object.assign({}, hyva.modal(), initRvvupModal())
+        )
+    }
+    window.addEventListener('alpine:init', () => Alpine.data('rvvupPaymentsHyvaCheckoutComponentPaymentModal', rvvupPaymentsHyvaCheckoutComponentPaymentModal), {once: true});
+
 </script>
+<?php $hyvaCsp->registerInlineScript() ?>

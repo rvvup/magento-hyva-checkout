@@ -1,7 +1,7 @@
-import {expect, test} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import Cart from "./Components/Cart";
-import {v7 as uuidv7} from 'uuid';
+import { v7 as uuidv7 } from "uuid";
 // This test is quite far, but the Clearpay modal is quite a bit flakey. It sometimes works, sometimes doesn't.
 test.skip("Can place an order", async ({ page, browser }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
@@ -23,7 +23,7 @@ test.skip("Can place an order", async ({ page, browser }) => {
 
   await frame
     .getByLabel("Email or mobile number")
-      .fill(uuidv7() + "@example.com");
+    .fill(uuidv7() + "@example.com");
   await frame.getByRole("button", { name: "Continue" }).click();
 
   await frame

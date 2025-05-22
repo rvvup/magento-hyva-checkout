@@ -31,8 +31,9 @@ test("Can place an order using pay by bank", async ({ page, browser }) => {
   );
 });
 
-
-test("Prevent close is handled on bank selection screen and can only be closed by pressing 'x'", async ({page}) => {
+test("Prevent close is handled on bank selection screen and can only be closed by pressing 'x'", async ({
+  page,
+}) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
@@ -41,7 +42,7 @@ test("Prevent close is handled on bank selection screen and can only be closed b
    * failure to open popup modal
    */
   await page.waitForTimeout(3000);
-  await page.getByRole("button", {name: "Place order"}).click();
+  await page.getByRole("button", { name: "Place order" }).click();
 
   const frame = page.frameLocator("iframe.rvvup-modal");
   await expect(frame.getByLabel("Mock Bank")).toBeVisible();

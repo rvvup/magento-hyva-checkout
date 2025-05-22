@@ -6,6 +6,7 @@ use Magento\Framework\View\Element\Template;
 
 /** @var Template $block */
 /** @var Escaper $escaper */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div wire:ignore>
     <style>
@@ -44,4 +45,5 @@ use Magento\Framework\View\Element\Template;
             }
         })();
     </script>
+<?php $hyvaCsp->registerInlineScript() ?>
 </div>

@@ -18,14 +18,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - MAGENTO_VERSION: 2.4.5
-            HYVA_CHECKOUT_VERSION: 1.1.29
-          - MAGENTO_VERSION: 2.4.6
-            HYVA_CHECKOUT_VERSION: 1.1.29
           - MAGENTO_VERSION: 2.4.7
             HYVA_CHECKOUT_VERSION: 1.1.29
           - MAGENTO_VERSION: 2.4.7
             HYVA_CHECKOUT_VERSION: 1.2.0
+          - MAGENTO_VERSION: 2.4.7
+            HYVA_CHECKOUT_VERSION: ^1.3.0
 
     env:
       MAGENTO_VERSION: ${{ matrix.MAGENTO_VERSION }}
