@@ -106,15 +106,12 @@ $modal = $modelViewModel->createModal()
             },
         }
     }
-</script>
-<?php $hyvaCsp->registerInlineScript() ?>
-<script>
-<?php /** Generated with hyva-csp-helper.php */ ?>
-function rvvupPaymentsHyvaCheckoutComponentPaymentModal() {
-    return Object.assign(
-        Object.assign({}, hyva.modal(), initRvvupModal())
-    )
-}
-window.addEventListener('alpine:init', () => Alpine.data('rvvupPaymentsHyvaCheckoutComponentPaymentModal', rvvupPaymentsHyvaCheckoutComponentPaymentModal), {once: true});
+    function rvvupPaymentsHyvaCheckoutComponentPaymentModal() {
+        return Object.assign(
+            Object.assign({}, hyva.modal(), initRvvupModal())
+        )
+    }
+    window.addEventListener('alpine:init', () => Alpine.data('rvvupPaymentsHyvaCheckoutComponentPaymentModal', rvvupPaymentsHyvaCheckoutComponentPaymentModal), {once: true});
+
 </script>
 <?php $hyvaCsp->registerInlineScript() ?>
