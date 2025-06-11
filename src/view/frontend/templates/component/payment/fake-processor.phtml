@@ -16,13 +16,13 @@ use Magento\Framework\Escaper;
                 return;
             }
 
-            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_FAKE_PAYMENT_METHOD', {
                 placeOrderViaJs() {
                     return document.querySelector('[wire\\:key="rvvup_FAKE_PAYMENT_METHOD"].active') !== null;
                 },
 
                 placeOrder() {
+                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                     return component.placeOrder();
                 }
             }, document.querySelector('[wire\\:key="rvvup_FAKE_PAYMENT_METHOD"].active'));
