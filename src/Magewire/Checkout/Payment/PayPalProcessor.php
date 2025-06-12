@@ -52,6 +52,17 @@ class PayPalProcessor extends AbstractProcessor
         return 'rvvup_PAYPAL';
     }
 
+    public function boot(): void
+    {
+        parent::boot();
+        $quote = $this->checkoutSession->getQuote();
+
+        $this->isExpressPayment = $quote->getPayment() !== null &&
+            $quote->getPayment()->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY) === true;
+        if ($this->isExpressPayment) {
+            $this->switchTemplate('Rvvup_PaymentsHyvaCheckout::component/payment/paypal-post-express-processor.phtml');
+        }
+    }
     public function mount(): void
     {
         parent::mount();

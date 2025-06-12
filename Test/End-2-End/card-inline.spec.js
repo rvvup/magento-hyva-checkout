@@ -1,12 +1,14 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
-test("Can place an order using the inline credit card", async ({ page }) => {
+async function placeOrderTest(page, { reloadBeforePayment = false } = {}) {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
   await page.getByLabel("Pay by Card").click();
-
+  if (reloadBeforePayment) {
+    await page.reload();
+  }
   await visitCheckoutPayment.loadersShouldBeHidden();
 
   // Credit card form
@@ -42,6 +44,16 @@ test("Can place an order using the inline credit card", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Thank you for your purchase!" }),
   ).toBeVisible();
+}
+
+test("Can place an order using the inline credit card", async ({ page }) => {
+  await placeOrderTest(page);
+});
+
+test("Can place an order using the inline credit card (when checkout is reloaded)", async ({
+  page,
+}) => {
+  await placeOrderTest(page);
 });
 
 test("The validation prevents placing an order with invalid card details", async ({
