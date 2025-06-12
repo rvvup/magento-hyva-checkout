@@ -1,0 +1,28 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\PayPalProcessor $magewire */
+
+?>
+<div wire:ignore>
+    <script>
+        window.addEventListener('checkout:payment:method-activate', (event) => {
+            if (event.detail.method !== 'rvvup_PAYPAL') {
+                return;
+            }
+
+            hyvaCheckout.payment.activate('rvvup_PAYPAL', {
+                placeOrderViaJs() {
+                    return document.querySelector('[wire\\:key="rvvup_PAYPAL"].active') !== null;
+                },
+
+                placeOrder() {
+                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                    return component.placeOrder();
+                }
+            }, document.querySelector('[wire\\:key="rvvup_PAYPAL"].active'))
+        });
+    </script>
+    <?php $hyvaCsp->registerInlineScript() ?>
+</div>
