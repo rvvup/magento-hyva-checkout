@@ -12,26 +12,61 @@ use Magento\Framework\View\Element\Template;
 <div wire:ignore>
     <div x-data="cardInlineProcessor"
          x-init="initRvvup">
+        <?php if ($magewire->showForm()): ?>
+            <div id="rvvup-card-form">
+                <form id="st-form" method="POST">
+                    <div id="st-card-number" class="rvvup-card-field rvvup-card-number w-full"></div>
+
+                    <div class="flex w-full flex-row">
+                        <div id="st-expiration-date" class="rvvup-card-field rvvup-card-expiry mr-4 basis-1/2"></div>
+                        <div id="st-security-code" class="rvvup-card-field rvvup-card-security-code ml-4 basis-1/2"></div>
+                    </div>
+                    <input type="submit" id="tp_place_order" class="hidden">
+                </form>
+            </div>
+        <?php endif; ?>
+        <?php if (!$magewire->showForm()): ?>
+            <div wire:ignore>
+                <iframe class="rvvup-summary w-full"
+                        allowtransparency="true"
+                        src="<?= $escaper->escapeHtmlAttr($magewire->getIframeUrl()); ?>"></iframe>
+            </div>
+        <?php endif; ?>
+
     </div>
     <script>
         window.addEventListener('checkout:payment:method-activate', event => {
             if (event.detail.method !== 'rvvup_CARD') {
                 return;
             }
+            const activatePayment = function() {
+                console.log("initted card 3");
 
-            hyvaCheckout.payment.activate('rvvup_CARD', {
-                placeOrderViaJs() {
-                    return document.querySelector('[wire\\:key="rvvup_CARD"].active') !== null;
-                },
+                hyvaCheckout.payment.activate(event.detail.method, {
+                    placeOrderViaJs() {
+                        return document.querySelector('[wire\\:key="'+event.detail.method+'"].active') !== null;
+                    },
 
-                placeOrder() {
-                }
-            }, document.querySelector('[wire\\:key="rvvup_CARD"].active'));
+                    placeOrder() {
+                    }
+                }, document.querySelector('[wire\\:key="'+event.detail.method+'"].active'));            };
+
+            if (hyvaCheckout.main.isApiActive()) {
+                activatePayment();
+                return;
+            }
+
+            window.addEventListener('checkout:init:payment', activatePayment, {
+                once: true
+            });
+
+
         });
 
         function cardInlineProcessor() {
             return {
                 initRvvup() {
+                    console.log("initted card");
                     let ST = null;
 
                     window.addEventListener('checkout:validation:success', () => {
@@ -50,8 +85,8 @@ use Magento\Framework\View\Element\Template;
                     });
 
 
-                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-
+                    const component = this.$wire;
+                    console.log("initted card 2");
                     ST = SecureTrading({
                         jwt: '<?= $magewire->getInitializationToken() ?>',
                         animatedCard: true,

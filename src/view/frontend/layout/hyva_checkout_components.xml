@@ -6,10 +6,10 @@
         <referenceBlock name="checkout.payment.methods">
             <block name="checkout.payment.method.rvvup_CARD"
                    as="rvvup_CARD"
-                   template="Rvvup_PaymentsHyvaCheckout::component/payment/method/card.phtml">
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/card-inline-processor.phtml">
                 <arguments>
                     <argument name="magewire" xsi:type="object">
-                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\Card
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor
                     </argument>
                 </arguments>
             </block>
