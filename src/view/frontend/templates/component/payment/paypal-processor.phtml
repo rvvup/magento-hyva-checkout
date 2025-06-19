@@ -2,6 +2,8 @@
 /** @var \Magento\Framework\View\Element\Template $block */
 /** @var \Magento\Framework\Escaper $escaper */
 /** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
+/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\PayPalProcessor $magewire */
+
 ?>
 <div wire:ignore>
     <style>
@@ -10,40 +12,40 @@
         }
     </style>
     <script>
-        window.addEventListener('rvvup:methods:paypal:load-buttons', function(){
-            const getButtonStyle = () => {
-                if (typeof rvvup_parameters !== 'object') {
-                    return {
-                        layout: 'vertical',
-                        color: 'gold',
-                        shape: 'rect',
-                        label: 'paypal',
-                        tagline: false,
-                    };
-                }
-
-                const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
-                const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
-                const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
-                const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
-                const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
-                const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
-
-                let style = {
-                    layout: layout,
-                    color: color,
-                    shape: shape,
-                    label: label,
-                    tagline: tagline,
+        const getButtonStyle = () => {
+            if (typeof rvvup_parameters !== 'object') {
+                return {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal',
+                    tagline: false,
                 };
-
-                if (size !== null) {
-                    style.height = size;
-                }
-
-                return style;
             }
-            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+
+            const layout = rvvup_parameters?.settings?.paypal?.product?.button?.layout?.value || 'vertical';
+            const color = rvvup_parameters?.settings?.paypal?.product?.button?.color?.value || 'gold';
+            const shape = rvvup_parameters?.settings?.paypal?.product?.button?.shape?.value || 'rect';
+            const label = rvvup_parameters?.settings?.paypal?.product?.button?.label?.value || 'paypal';
+            const tagline = rvvup_parameters?.settings?.paypal?.product?.button?.tagline || false;
+            const size = rvvup_parameters?.settings?.paypal?.product?.button?.size || null;
+
+            let style = {
+                layout: layout,
+                color: color,
+                shape: shape,
+                label: label,
+                tagline: tagline,
+            };
+
+            if (size !== null) {
+                style.height = size;
+            }
+
+            return style;
+        }
+
+        window.addEventListener('rvvup:methods:paypal:load-buttons', function(){
 
             const createPaypalContainer = function (btnIndex, placeOrderButton) {
                 const divId = 'rvvup-paypal-button-container-' + btnIndex;
@@ -83,9 +85,11 @@
                             /** Hide loader */
                             let magewire = document.getElementById('magewire-loader');
                             magewire.children[0].style.display = 'none';
+                            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                             return component.paymentActions.authorization.value;
                         },
                         onApprove: () => {
+                            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                             const confirmAuthorizationUrl = component.paymentActions.confirmAuthorization?.value;
                             const showModal = () => {
                                 window.dispatchEvent(new CustomEvent('rvvup:update:showModal', {
@@ -146,6 +150,7 @@
                             window.location.reload();
                         },
                         onClick: (data, actions) => {
+                            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                             let magewire = document.getElementById('magewire-loader');
                             magewire.children[0].style.display = 'block';
                             if (typeof hyvaCheckout?.validation?.validate !== 'function') {
@@ -161,6 +166,7 @@
                                         magewire.children[0].style.display = 'none';
                                         return actions.reject();
                                     }
+                                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
                                     return component.loadPaymentActions().then(() => actions.resolve());
                                 });
                         },
@@ -185,7 +191,6 @@
                 return;
             }
 
-            const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
             hyvaCheckout.payment.activate('rvvup_PAYPAL', {
 
                 initialize() {
@@ -198,12 +203,6 @@
                 },
 
                 loadButtons() {
-                    if (component.isExpressPayment) {
-                        let magewire = document.getElementById('magewire-loader');
-                        magewire.children[0].style.display = 'none';
-                        return;
-                    }
-
                     window.dispatchEvent(new CustomEvent('rvvup:methods:paypal:load-buttons'));
 
                     let magewire = document.getElementById('magewire-loader');

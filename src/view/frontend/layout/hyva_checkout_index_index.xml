@@ -12,17 +12,6 @@
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/modal.phtml"
                    after="hyva.checkout.main"/>
 
-            <block name="checkout.payment.method.rvvup.card-processor"
-                   as="rvvup.card-processor"
-                   template="Rvvup_PaymentsHyvaCheckout::component/payment/card-inline-processor.phtml"
-                   after="hyva.checkout.main">
-                <arguments>
-                    <argument name="magewire" xsi:type="object">
-                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor
-                    </argument>
-                </arguments>
-            </block>
-
             <block name="checkout.payment.method.rvvup.clearpay-processor"
                    as="rvvup.clearpay-processor"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/clearpay-processor.phtml"
