@@ -19,16 +19,18 @@ if ($paypalViewModel === null ||
     return;
 }
 ?>
-<div wire:ignore>
+<div
+        wire:ignore>
 <div class="rvvup-paypal-express grow z-0"
-     x-data="rvvupPayPalExpressButton"
-     x-init="initRvvup">
+     x-data="rvvupPayPalExpressButtonMiniCart"
+     x-init="initRvvup"
+     wire:ignore>
     <div class="<?= $block->getNameInLayout() ?>-container"></div>
 </div>
 <script>
     'use strict';
-    function rvvupPayPalExpressButton() {
-        const scope = 'cart';
+    function rvvupPayPalExpressButtonMiniCart() {
+        const scope = 'miniCart';
 
         return {
             initRvvup() {
@@ -180,7 +182,7 @@ if ($paypalViewModel === null ||
             },
         }
     }
-    window.addEventListener('alpine:init', () => Alpine.data('rvvupPayPalExpressButton', rvvupPayPalExpressButton), {once: true});
+    window.addEventListener('alpine:init', () => Alpine.data('rvvupPayPalExpressButtonMiniCart', rvvupPayPalExpressButtonMiniCart), {once: true});
 </script>
 <?php $hyvaCsp->registerInlineScript() ?>
 </div>

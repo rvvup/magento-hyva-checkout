@@ -14,7 +14,7 @@
         </referenceBlock>
         <referenceBlock name="extra_actions">
             <block name="rvvup-paypal-minicart-block"
-                   template="Rvvup_PaymentsHyvaCheckout::cart/paypal.phtml"
+                   template="Rvvup_PaymentsHyvaCheckout::cart/mini-paypal.phtml"
                    class="Rvvup\PaymentsHyvaCheckout\Block\Paypal" ifconfig="payment/rvvup/active">
                 <arguments>
                     <argument name="magewire" xsi:type="object">
