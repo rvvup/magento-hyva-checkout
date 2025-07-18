@@ -2,11 +2,15 @@ import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import PaypalPopup from "./Components/PaypalPopup";
 
-test("Can place an order using PayPal", async ({ page, browser }) => {
+async function placeOrderTest(page, { reloadBeforePayment = false } = {}) {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
   await page.getByLabel("PayPal", { exact: true }).click();
+
+  if (reloadBeforePayment) {
+    await page.reload();
+  }
 
   await expect(page.locator("#rvvup-paypal-button-container-0")).toBeVisible();
   await page.waitForTimeout(2000);
@@ -35,6 +39,16 @@ test("Can place an order using PayPal", async ({ page, browser }) => {
   await expect(
     page.getByRole("heading", { name: "Thank you for your purchase!" }),
   ).toBeVisible();
+}
+
+test("Can place an order using PayPal", async ({ page, browser }) => {
+  await placeOrderTest(page);
+});
+test("Can place an order using PayPal after reloading checkout", async ({
+  page,
+  browser,
+}) => {
+  await placeOrderTest(page, { reloadBeforePayment: true });
 });
 
 test("Can place an order from the product page using PayPal", async ({
