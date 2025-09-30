@@ -44,6 +44,12 @@
         </arguments>
     </type>
 
+    <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ZopaRetailFinanceProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
     <type name="Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
