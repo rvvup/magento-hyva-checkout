@@ -111,6 +111,17 @@
                 </arguments>
             </block>
 
+            <block name="checkout.payment.method.rvvup.zopa-retail-finance-processor"
+                   as="rvvup.zopa-retail-finance-processor"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/zopa-retail-finance-processor.phtml"
+                   after="hyva.checkout.main">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\ZopaRetailFinanceProcessor
+                    </argument>
+                </arguments>
+            </block>
+
             <block name="checkout.payment.method.rvvup.assets"
                    as="rvvup.assets"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/assets.phtml"
