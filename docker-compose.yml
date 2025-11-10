@@ -43,7 +43,7 @@ services:
       - mariadb
       - elasticsearch
   elasticsearch:
-    image: docker.io/bitnamilegacy/elasticsearch:7
+    image: docker.io/bitnamilegacy/elasticsearch:9
     volumes:
       - 'rvvup_hyva_elasticsearch_data:/bitnami/elasticsearch/data'
   mailpit:
