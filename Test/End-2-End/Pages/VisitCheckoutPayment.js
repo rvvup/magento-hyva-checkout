@@ -27,6 +27,8 @@ export default class VisitCheckoutPayment {
 
     await this.loadersShouldBeHidden();
 
+    await this.page.waitForTimeout(2000);
+
     await this.page
       .getByRole("button", { name: "Proceed to review & payments" })
       .click();

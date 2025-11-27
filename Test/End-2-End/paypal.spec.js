@@ -56,6 +56,9 @@ test("Can place an order from the product page using PayPal", async ({
   await page.getByLabel("Phone number").fill("+447500000000");
 
   await page.getByLabel("Fixed").click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  await page.waitForTimeout(2000);
 
   await visitCheckoutPayment.loadersShouldBeHidden();
 
