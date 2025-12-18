@@ -27,10 +27,10 @@ class GetPaymentsActionsResult
      * @param PaymentActionInterface|null $confirmAuthorization
      */
     public function __construct(
-        PaymentActionInterface $authorization = null,
-        PaymentActionInterface $cancel = null,
-        PaymentActionInterface $capture = null,
-        PaymentActionInterface $confirmAuthorization = null
+        ?PaymentActionInterface $authorization = null,
+        ?PaymentActionInterface $cancel = null,
+        ?PaymentActionInterface $capture = null,
+        ?PaymentActionInterface $confirmAuthorization = null
     ) {
         $this->authorization = $authorization;
         $this->cancel = $cancel;
