@@ -87,7 +87,7 @@ class PayPal extends Component
         return $payment->getAdditionalInformation(Method::EXPRESS_PAYMENT_KEY) !== null;
     }
 
-    public function cancel(Payment $payment = null): void
+    public function cancel(?Payment $payment = null): void
     {
         $cart = $this->checkoutSession->getQuote();
         if (!$payment) {
