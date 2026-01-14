@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import PaypalPopup from "./Components/PaypalPopup";
+import GoTo from "./Components/GoTo";
 
 test("Can place an order using PayPal", async ({ page, browser }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
@@ -42,7 +43,7 @@ test("Can place an order from the product page using PayPal", async ({
 }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
 
-  await page.goto("./joust-duffle-bag.html");
+  await new GoTo(page).product.standard();
 
   const popupPromise = page.waitForEvent("popup");
   const paypalFrame = page

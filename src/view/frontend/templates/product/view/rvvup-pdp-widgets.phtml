@@ -1,0 +1,70 @@
+<?php
+/**
+ * @var \Magento\Catalog\Block\Product\View $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ */
+/** Magento 2.3.5 backward compatibility fix */
+if (!isset($escaper)) {
+    $escaper = $block;
+}
+
+$product = $block->getProduct();
+if ($product === null) {
+    return;
+}
+
+$initialPrice = number_format($product->getFinalPrice(), 2, '.', '');
+$currencyCode = $block->getProduct()->getStore()->getCurrentCurrencyCode();
+$isRestricted = (bool) $product->getRvvupRestricted();
+if ($isRestricted) {
+    return;
+}
+?>
+<div>
+    <div id="rvvup-zrf-widget-container"></div>
+    <script>
+        function initZrfWidget() {
+            if (!window.rvvup_sdk) return;
+
+            let showHideWidget = async function (el, rvvupWidgetInstance) {
+                if (!(await rvvupWidgetInstance.canDisplayWidget())) {
+                    el.style.display = "none";
+                    return;
+                }
+
+                el.style.display = "block";
+            }
+            window.rvvup_sdk.createWidget("ZOPA_RETAIL_FINANCE", {
+                settings: {
+                    context: "product",
+                },
+                total: {
+                    currency: "<?= $currencyCode ?>",
+                    amount: "<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
+                },
+            }).then((widget) => {
+                widget.on("ready", async () => {
+                    const el = document.getElementById("rvvup-zrf-widget-container");
+                    if (!el) return;
+                    await widget.mount({selector: el});
+                    await showHideWidget(el, widget);
+                    window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', async (e) => {
+                        widget.update({
+                            total: {
+                                amount: e.detail.finalPrice.amount.toString(),
+                                currency: "<?= $currencyCode ?>",
+                            }
+                        });
+                        await showHideWidget(el, widget);
+                    });
+                });
+            }).catch((error) => {
+                console.error("Error creating Rvvup widget:", error);
+            });
+        }
+
+        initZrfWidget();
+    </script>
+    <?php $hyvaCsp->registerInlineScript() ?>
+</div>

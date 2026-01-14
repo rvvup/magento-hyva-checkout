@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import Cart from "./Components/Cart";
 import { v7 as uuidv7 } from "uuid";
+import GoTo from "./Components/GoTo";
 // This test is quite far, but the Clearpay modal is quite a bit flakey. It sometimes works, sometimes doesn't.
 test.skip("Can place an order", async ({ page, browser }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
@@ -60,7 +61,7 @@ test.skip("Can place an order", async ({ page, browser }) => {
 });
 
 test("Renders the Clearpay on the product page", async ({ page }) => {
-  await page.goto("./joust-duffle-bag.html");
+  await new GoTo(page).product.standard();
 
   await expect(page.locator(".afterpay-modal-overlay")).toBeHidden();
 
@@ -73,7 +74,7 @@ test("Renders the Clearpay on the product page", async ({ page }) => {
 test("Renders the Clearpay widget in the checkout", async ({ page }) => {
   await new Cart(page).addStandardItemToCart();
 
-  await page.goto("/checkout/cart");
+  await new GoTo(page).cart();
 
   await expect(page.locator(".afterpay-modal-overlay")).toBeHidden();
 

@@ -2,23 +2,28 @@
 /**
  * @var \Magento\Catalog\Block\Product\View $block
  * @var \Magento\Framework\Escaper $escaper
+ * @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ * @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Addtocart $magewire
  */
+
+
+$product = $block->getProduct();
+if ($product == null) {
+    return;
+}
 
 /** @var \Rvvup\Payments\ViewModel\Clearpay $clearpay */
 $clearpay = $block->getData('clearpay');
-
-/** @var \Rvvup\Payments\ViewModel\Price $priceViewModel */
-$priceViewModel = $block->getData('price');
 
 /** @var \Rvvup\Payments\ViewModel\Restrictions $restrictions */
 $restrictions = $block->getData('restrictions');
 /** @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel */
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
 
-$product = $block->getProduct();
+$initialPrice = number_format($product->getFinalPrice(), 2, '.', '');
+$currencyCode = $block->getProduct()->getStore()->getCurrentCurrencyCode();
 $thresholds = $clearpay->getThresholds($product);
-
-/** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Addtocart $magewire */
+$isRestricted = (bool)$product->getRvvupRestricted();
 ?>
 <div class="rvvup">
     <?php if ($restrictions->showRestrictionMessage($product)): ?>
@@ -26,12 +31,13 @@ $thresholds = $clearpay->getThresholds($product);
             <?= $escaper->escapeHtml($restrictions->getMessages()->getPdpMessage()) ?>
         </p>
     <?php endif; ?>
+
     <?php if (is_array($thresholds) && $clearpay->isInThreshold($product, $thresholds) && $magewire->checkIfClearpayIsAvailable()): ?>
         <div class="clearpay">
             <afterpay-placement id="clearpay-summary"
                                 data-locale="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentLocale()) ?>"
-                                data-currency="<?= $escaper->escapeHtmlAttr($clearpay->getCurrentCurrencyCode()) ?>"
-                                data-amount="<?= $escaper->escapeHtmlAttr($priceViewModel->getPrice($product)) ?>"
+                                data-currency="<?= $currencyCode ?>"
+                                data-amount="<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
                                 data-logo-type="<?= $escaper->escapeHtmlAttr($clearpay->getLogoType('product')) ?>"
                                 data-badge-theme="<?= $escaper->escapeHtmlAttr($clearpay->getBadgeTheme('product')) ?>"
                                 data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('product')) ?>"
@@ -39,14 +45,14 @@ $thresholds = $clearpay->getThresholds($product);
         </div>
     <?php endif; ?>
     <?php if ($paypalViewModel->canUseForProductType($product)
-        && $paypalViewModel->isAvailable((string) $priceViewModel->getPrice($product))
+            && $paypalViewModel->isAvailable($initialPrice)
         && $paypalViewModel->getPayLaterMessagingValue('enabled') === true
     ): ?>
         <div>
             <div class="rvvup-paypal-paylater-messaging-container"
                  data-pp-message
                  data-pp-placement="product"
-                 data-pp-amount="<?= $escaper->escapeHtmlAttr($priceViewModel->getPrice($product)) ?>"
+                 data-pp-amount="<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
                  data-pp-style-layout="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('layout')) ?>"
                  data-pp-style-logo-type="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('logoType')) ?>"
                  data-pp-style-logo-position="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('logoPosition')) ?>"

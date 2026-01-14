@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import GoTo from "./GoTo";
 
 export default class Cart {
   constructor(page) {
@@ -6,7 +7,7 @@ export default class Cart {
   }
 
   async addStandardItemToCart() {
-    await this.page.goto("./affirm-water-bottle.html");
+    await new GoTo(this.page).product.standard("medium-priced");
     await this.page
       .getByRole("button", { name: "Add to Cart" })
       .first()
