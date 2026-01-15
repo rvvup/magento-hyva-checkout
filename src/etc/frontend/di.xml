@@ -31,8 +31,8 @@
                 sortOrder="1"/>
     </type>
     <type name="Magento\Framework\View\Model\Layout\Merge">
-        <plugin name="addClearpayToHyva"
-                type="Rvvup\PaymentsHyvaCheckout\Plugin\MergeClearpay"
+        <plugin name="addPdpWidgetToHyva"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\MergePdpWidget"
                 sortOrder="1"/>
     </type>
 </config>

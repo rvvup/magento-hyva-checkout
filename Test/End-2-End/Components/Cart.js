@@ -7,7 +7,7 @@ export default class Cart {
   }
 
   async addStandardItemToCart() {
-    await new GoTo(this.page).product.standard("medium-priced");
+    await new GoTo(this.page).product.standard();
     await this.page
       .getByRole("button", { name: "Add to Cart" })
       .first()

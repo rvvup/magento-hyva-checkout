@@ -6,7 +6,7 @@ namespace Rvvup\PaymentsHyvaCheckout\Plugin;
 use Hyva\Theme\Service\CurrentTheme;
 use Magento\Framework\View\Model\Layout\Merge;
 
-class MergeClearpay
+class MergePdpWidget
 {
 
     /** @var CurrentTheme */
@@ -32,8 +32,8 @@ class MergeClearpay
             $handles = [$handles];
         }
         if ($this->theme->isHyva()) {
-            /** Add clearpay to the page */
-            $handles[] = 'hyva_rvvup_clearpay';
+            /** Add pdp widgets to the page */
+            $handles[] = 'hyva_rvvup_pdp';
         }
 
         return [$handles];

@@ -43,7 +43,7 @@ test("Can place an order from the product page using PayPal", async ({
 }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
 
-  await new GoTo(page).product.standard();
+  await new GoTo(this.page).product.standard("medium-priced");
 
   const popupPromise = page.waitForEvent("popup");
   const paypalFrame = page
