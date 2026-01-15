@@ -43,7 +43,7 @@ test("Can place an order from the product page using PayPal", async ({
 }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
 
-  await new GoTo(this.page).product.standard("medium-priced");
+  await new GoTo(page).product.standard("medium-priced");
 
   const popupPromise = page.waitForEvent("popup");
   const paypalFrame = page
@@ -89,5 +89,51 @@ test("Can place an order from the product page using PayPal", async ({
   await page.waitForURL("**/checkout/onepage/success/");
   await expect(
     page.getByRole("heading", { name: "Thank you for your purchase!" }),
+  ).toBeVisible();
+});
+
+async function selectSwatch(page, label) {
+  await page
+    .locator(`.swatch-option:has(input[aria-label="` + label + `"])`)
+    .click();
+  await expect(page.locator(`input[aria-label="` + label + `"]`)).toBeChecked();
+}
+
+test("renders the paypal widget on the standard product page", async ({
+  page,
+}) => {
+  await new GoTo(page).product.standard("medium-priced");
+
+  await expect(
+    page
+      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .first()
+      .getByText("Pay in 3 interest-free payments of £50.00"),
+  ).toBeVisible();
+});
+
+test("renders the paypal widget on the configurable product page", async ({
+  page,
+}) => {
+  await new GoTo(page).product.configurable();
+
+  await selectSwatch(page, "XS");
+
+  await selectSwatch(page, "Black");
+
+  await expect(
+    page
+      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .first()
+      .getByText("Pay in 3 interest-free payments of £15.00"),
+  ).toBeVisible();
+
+  await selectSwatch(page, "S");
+
+  await expect(
+    page
+      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .first()
+      .getByText("Pay in 3 interest-free payments of £33.34"),
   ).toBeVisible();
 });

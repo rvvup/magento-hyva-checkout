@@ -42,6 +42,18 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                                 data-badge-theme="<?= $escaper->escapeHtmlAttr($clearpay->getBadgeTheme('product')) ?>"
                                 data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('product')) ?>"
             ></afterpay-placement>
+            <script>
+                window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', (e) => {
+                    const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
+                    if (newPrice) {
+                        const clearpayPlacement = document.getElementById('clearpay-summary');
+                        if (clearpayPlacement) {
+                            clearpayPlacement.setAttribute('data-amount', newPrice.toString());
+                        }
+                    }
+                });
+            </script>
+            <?php $hyvaCsp->registerInlineScript() ?>
         </div>
     <?php endif; ?>
     <?php if ($paypalViewModel->canUseForProductType($product)
@@ -49,7 +61,7 @@ $isRestricted = (bool)$product->getRvvupRestricted();
         && $paypalViewModel->getPayLaterMessagingValue('enabled') === true
     ): ?>
         <div>
-            <div class="rvvup-paypal-paylater-messaging-container"
+            <div id="rvvup-paypal-paylater-messaging-container" class="rvvup-paypal-paylater-messaging-container"
                  data-pp-message
                  data-pp-placement="product"
                  data-pp-amount="<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
@@ -62,6 +74,18 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                  data-pp-style-color="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('color')) ?>"
                  data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('ratio')) ?>"
             ></div>
+            <script>
+                window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', (e) => {
+                    const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
+                    if (newPrice) {
+                        const paypalMessaging = document.getElementById('rvvup-paypal-paylater-messaging-container');
+                        if (paypalMessaging) {
+                            paypalMessaging.setAttribute('data-pp-amount', newPrice.toString());
+                        }
+                    }
+                });
+            </script>
+            <?php $hyvaCsp->registerInlineScript() ?>
         </div>
     <?php endif; ?>
 </div>
