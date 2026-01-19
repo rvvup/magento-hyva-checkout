@@ -2,6 +2,14 @@ import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import Cart from "./Components/Cart";
 import { v7 as uuidv7 } from "uuid";
+import GoTo from "./Components/GoTo";
+
+async function selectSwatch(page, label) {
+  await page
+    .locator(`.swatch-option:has(input[aria-label="` + label + `"])`)
+    .click();
+  await expect(page.locator(`input[aria-label="` + label + `"]`)).toBeChecked();
+}
 // This test is quite far, but the Clearpay modal is quite a bit flakey. It sometimes works, sometimes doesn't.
 test.skip("Can place an order", async ({ page, browser }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
@@ -59,8 +67,13 @@ test.skip("Can place an order", async ({ page, browser }) => {
   ).toBeVisible();
 });
 
-test("Renders the Clearpay on the product page", async ({ page }) => {
-  await page.goto("./joust-duffle-bag.html");
+test("renders the Clearpay on the product page", async ({ page }) => {
+  await new GoTo(page).product.standard("medium-priced");
+  await expect(
+    page
+      .locator("#clearpay-summary")
+      .getByText("or 4 interest-free payments of £37.50"),
+  ).toBeVisible();
 
   await expect(page.locator(".afterpay-modal-overlay")).toBeHidden();
 
@@ -70,10 +83,34 @@ test("Renders the Clearpay on the product page", async ({ page }) => {
   await expect(page.locator(".afterpay-modal-overlay")).toBeVisible();
 });
 
-test("Renders the Clearpay widget in the checkout", async ({ page }) => {
+test("renders the Clearpay widget on the configurable product page", async ({
+  page,
+}) => {
+  await new GoTo(page).product.configurable();
+
+  await selectSwatch(page, "XS");
+
+  await selectSwatch(page, "Black");
+
+  await expect(
+    page
+      .locator("#clearpay-summary")
+      .getByText("or 4 interest-free payments of £11.25"),
+  ).toBeVisible();
+
+  await selectSwatch(page, "S");
+
+  await expect(
+    page
+      .locator("#clearpay-summary")
+      .getByText("or 4 interest-free payments of £25.00"),
+  ).toBeVisible();
+});
+
+test("renders the Clearpay widget in the checkout", async ({ page }) => {
   await new Cart(page).addStandardItemToCart();
 
-  await page.goto("/checkout/cart");
+  await new GoTo(page).cart();
 
   await expect(page.locator(".afterpay-modal-overlay")).toBeHidden();
 

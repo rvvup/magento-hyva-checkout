@@ -10,5 +10,8 @@
                 <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Addtocart</argument>
             </arguments>
         </referenceBlock>
+        <move element="product.page.info.rvvup.widgets"
+              destination="product.info.form"
+        />
     </body>
 </page>
