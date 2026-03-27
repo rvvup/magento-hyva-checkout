@@ -10,5 +10,17 @@
                 <argument name="magewire" xsi:type="object">Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Info\Addtocart</argument>
             </arguments>
         </referenceBlock>
+        <referenceContainer name="product.info.main">
+            <block name="rvvup.pdp.express-checkout"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/rvvup-express.phtml"
+                   after="product.info.addtocart"
+                   ifconfig="payment/rvvup/active">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>
