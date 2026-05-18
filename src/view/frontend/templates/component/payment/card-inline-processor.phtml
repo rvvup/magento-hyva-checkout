@@ -50,6 +50,9 @@ use Magento\Framework\View\Element\Template;
                 }
                 hyvaCheckout.payment.activate('rvvup_CARD', {
                     initialize() {
+                        if (ST !== null) {
+                            return;
+                        }
                         ST = SecureTrading({
                             jwt: '<?= $magewire->getInitializationToken() ?>',
                             animatedCard: true,
