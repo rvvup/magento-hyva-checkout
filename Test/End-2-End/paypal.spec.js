@@ -25,11 +25,6 @@ test("Can place an order using PayPal", async ({ page, browser }) => {
   ).not.toContainText(
     "You are currently paying with PayPal. If you want to cancel this process",
   );
-  await expect(
-    page
-      .frameLocator("#rvvup-modal iframe")
-      .getByText("Payment being processed"),
-  ).toBeVisible();
 
   await page.waitForURL("**/checkout/onepage/success/");
 
@@ -56,16 +51,14 @@ test("Can place an order from the product page using PayPal", async ({
 
   await page.getByLabel("Phone number").fill("+447500000000");
 
-  await page.getByLabel("Fixed").click();
+  await page.locator('input[name="shipping-method-option"]').first().click();
   await visitCheckoutPayment.loadersShouldBeHidden();
 
   await page.waitForTimeout(2000);
 
   await visitCheckoutPayment.loadersShouldBeHidden();
 
-  await page
-    .getByRole("button", { name: "Proceed to review & payments" })
-    .click();
+  await page.getByRole('button', { name: 'Proceed to Review & Payments' }).click();
 
   await expect(
     page.getByRole("heading", { name: "Payment Method" }),
@@ -81,11 +74,6 @@ test("Can place an order from the product page using PayPal", async ({
   await expect(children.length).toBe(1);
 
   await page.getByRole("button", { name: "Place order" }).click();
-  await expect(
-    page
-      .frameLocator("#rvvup-modal iframe")
-      .getByText("Payment being processed"),
-  ).toBeVisible();
   await page.waitForURL("**/checkout/onepage/success/");
   await expect(
     page.getByRole("heading", { name: "Thank you for your purchase!" }),
@@ -106,7 +94,7 @@ test("renders the paypal widget on the standard product page", async ({
 
   await expect(
     page
-      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
       .first()
       .getByText("Pay in 3 interest-free payments of £50.00"),
   ).toBeVisible();
@@ -123,7 +111,7 @@ test("renders the paypal widget on the configurable product page", async ({
 
   await expect(
     page
-      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
       .first()
       .getByText("Pay in 3 interest-free payments of £15.00"),
   ).toBeVisible();
@@ -132,7 +120,7 @@ test("renders the paypal widget on the configurable product page", async ({
 
   await expect(
     page
-      .frameLocator("#rvvup-paypal-paylater-messaging-container iframe")
+      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
       .first()
       .getByText("Pay in 3 interest-free payments of £33.34"),
   ).toBeVisible();

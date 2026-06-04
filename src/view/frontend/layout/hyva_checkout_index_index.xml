@@ -128,6 +128,7 @@
                    after="hyva.checkout.main"
                    class="Rvvup\PaymentsHyvaCheckout\Block\Checkout\Payment\Assets"
             />
+
         </referenceContainer>
         <referenceContainer name="hyva.checkout.container">
             <block name="checkout.payment.method.rvvup.express-button"

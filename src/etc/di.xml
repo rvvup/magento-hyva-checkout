@@ -62,4 +62,9 @@
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
+
+    <type name="Rvvup\Payments\Service\Express\ExpressPaymentManager">
+        <plugin name="rvvup_hyva_checkout_express_fallback_telephone"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\Express\FallbackTelephone"/>
+    </type>
 </config>

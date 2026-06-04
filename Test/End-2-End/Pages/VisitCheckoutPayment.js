@@ -23,7 +23,7 @@ export default class VisitCheckoutPayment {
     await this.page.getByLabel("ZIP").fill("SW1A 1AA");
     await this.page.getByLabel("Phone number").fill("+447500000000");
 
-    await this.page.getByLabel("Fixed").click();
+    await this.page.locator('input[name="shipping-method-option"]').first().click();
 
     await this.loadersShouldBeHidden();
 

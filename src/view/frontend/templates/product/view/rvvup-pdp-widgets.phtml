@@ -21,50 +21,61 @@ if ($isRestricted) {
     return;
 }
 ?>
-<div>
+<div data-currency="<?= $escaper->escapeHtmlAttr($currencyCode) ?>"
+     data-amount="<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
+     data-product-id="<?= $escaper->escapeHtmlAttr($product->getId()) ?>">
     <div id="rvvup-zrf-widget-container"></div>
     <script>
-        function initZrfWidget() {
-            if (!window.rvvup_sdk) return;
+        (function () {
+            const container = document.currentScript.parentElement;
 
-            let showHideWidget = async function (el, rvvupWidgetInstance) {
-                if (!(await rvvupWidgetInstance.canDisplayWidget())) {
-                    el.style.display = "none";
-                    return;
+            function initZrfWidget() {
+                if (!window.rvvup_sdk) return;
+
+                const currency = container.dataset.currency;
+                const amount = container.dataset.amount;
+                const productId = container.dataset.productId;
+
+                const showHideWidget = async function (el, rvvupWidgetInstance) {
+                    if (!(await rvvupWidgetInstance.canDisplayWidget())) {
+                        el.style.display = "none";
+                        return;
+                    }
+
+                    el.style.display = "block";
                 }
 
-                el.style.display = "block";
-            }
-            window.rvvup_sdk.createWidget("ZOPA_RETAIL_FINANCE", {
-                settings: {
-                    context: "product",
-                },
-                total: {
-                    currency: "<?= $currencyCode ?>",
-                    amount: "<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
-                },
-            }).then((widget) => {
-                widget.on("ready", async () => {
-                    const el = document.getElementById("rvvup-zrf-widget-container");
-                    if (!el) return;
-                    await widget.mount({selector: el});
-                    await showHideWidget(el, widget);
-                    window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', async (e) => {
-                        widget.update({
-                            total: {
-                                amount: e.detail.finalPrice.amount.toString(),
-                                currency: "<?= $currencyCode ?>",
-                            }
-                        });
+                window.rvvup_sdk.createWidget("ZOPA_RETAIL_FINANCE", {
+                    settings: {
+                        context: "product",
+                    },
+                    total: {
+                        currency: currency,
+                        amount: amount,
+                    },
+                }).then((widget) => {
+                    widget.on("ready", async () => {
+                        const el = document.getElementById("rvvup-zrf-widget-container");
+                        if (!el) return;
+                        await widget.mount({selector: el});
                         await showHideWidget(el, widget);
+                        window.addEventListener('update-prices-' + productId, async (e) => {
+                            widget.update({
+                                total: {
+                                    amount: e.detail.finalPrice.amount.toString(),
+                                    currency: currency,
+                                }
+                            });
+                            await showHideWidget(el, widget);
+                        });
                     });
+                }).catch((error) => {
+                    console.error("Error creating Rvvup widget:", error);
                 });
-            }).catch((error) => {
-                console.error("Error creating Rvvup widget:", error);
-            });
-        }
+            }
 
-        initZrfWidget();
+            initZrfWidget();
+        })();
     </script>
     <?php $hyvaCsp->registerInlineScript() ?>
 </div>

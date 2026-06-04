@@ -42,7 +42,7 @@ $modal = $modelViewModel->createModal()
             canCloseModal: true,
             init() {
                 window.addEventListener('rvvup:update:showModal', event =>{
-                    this.show('<?= $escaper->escapeHtmlAttr($modal->getDialogRefName()) ?>');
+                    this.show('<?= $escaper->escapeJs($modal->getDialogRefName()) ?>');
 
                     this.iframeUrl = event.detail.redirectUrl;
                 });

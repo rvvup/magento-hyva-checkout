@@ -8,8 +8,16 @@ npm --prefix vendor/hyva-themes/magento2-default-theme/web/tailwind/ run build-p
 
 /rvvup/scripts/rebuild-magento.sh
 
-vendor/bin/n98-magerun2 config:store:set design/theme/theme_id 5 --scope=stores --scope-id=1
-vendor/bin/n98-magerun2 config:store:set hyva_themes_checkout/general/checkout default
+php -r '
+$c = require "app/etc/env.php";
+$d = $c["db"]["connection"]["default"];
+$p = new PDO("mysql:host=".$d["host"].";dbname=".$d["dbname"], $d["username"], $d["password"] ?? "");
+$themeId = $p->query("SELECT theme_id FROM theme WHERE theme_path=\"Hyva/default\"")->fetchColumn();
+$stmt = $p->prepare("INSERT INTO core_config_data (scope, scope_id, path, value) VALUES (\"stores\", 1, ?, ?) ON DUPLICATE KEY UPDATE value=VALUES(value)");
+$stmt->execute(["design/theme/theme_id", $themeId]);
+$stmt->execute(["hyva_themes_checkout/general/checkout", "default"]);
+echo "Hyva theme ID set to: " . $themeId . PHP_EOL;
+'
 
 bin/magento config:set payment/rvvup/jwt $RVVUP_API_KEY
 bin/magento config:set payment/rvvup/active 1

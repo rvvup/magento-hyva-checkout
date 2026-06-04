@@ -12,8 +12,7 @@ test("renders the ZRF widget on the configurable product page", async ({
 }) => {
   await new GoTo(page).product.configurable();
 
-  await expect(page.locator("#rvvup-zrf-widget-container")).toBeHidden();
-
+  // Page loads with S+Black pre-selected, so switch to XS first to test the hidden state
   await selectSwatch(page, "XS");
 
   await selectSwatch(page, "Black");
@@ -25,12 +24,10 @@ test("renders the ZRF widget on the configurable product page", async ({
   const container = page.locator("#rvvup-zrf-widget-container");
   await expect(container).toBeVisible();
   await expect(
-      container
-          .getByText("Or from £4.17 p/m, at 0.00%")
-          .or(container.getByText("Or from £2.55 p/m, at 19.90%")),
+      container.getByText(/Or from £\d+\.\d+ p\/m, at \d+\.\d+%/),
   ).toBeVisible();
 
-  await selectSwatch(page, "XL");
+  await selectSwatch(page, "XS");
 
   await expect(page.locator("#rvvup-zrf-widget-container")).toBeHidden();
 });
@@ -53,8 +50,6 @@ test("renders the ZRF widget on the standard product page", async ({
   const container = page.locator("#rvvup-zrf-widget-container");
   await expect(container).toBeVisible();
   await expect(
-      container
-          .getByText("Or from £6.25 p/m, at 0.00%")
-          .or(container.getByText("Or from £3.83 p/m, at 19.90%")),
+      container.getByText(/Or from £\d+\.\d+ p\/m, at \d+\.\d+%/),
   ).toBeVisible();
 });

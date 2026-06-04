@@ -66,7 +66,7 @@ jobs:
         run: |
             mkdir -p logs/magento
             docker compose logs > logs/container_logs.log
-            docker cp magento-hyva-checkout-magento-1:/bitnami/magento/var/log logs/magento
+            docker compose cp magento:/bitnami/magento/var/log logs/magento || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
