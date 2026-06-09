@@ -1,4 +1,5 @@
 echo "Running setup.sh"
+set -e
 /rvvup/scripts/configure-base-store.sh;
 /rvvup/scripts/configure-hyva.sh;
 /rvvup/scripts/configure-rvvup.sh;
