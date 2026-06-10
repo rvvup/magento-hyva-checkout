@@ -8,15 +8,7 @@ async function selectSwatch(page, label) {
   await expect(page.locator(`input[aria-label="` + label + `"]`)).toBeChecked();
 }
 
-async function readMonthlyPrice(container) {
-  const text = await container
-    .getByText(/Or from £[\d,]+\.\d+ p\/m/)
-    .first()
-    .innerText();
-  return parseFloat(text.match(/£([\d,]+\.\d+)\s*p\/m/)[1].replace(/,/g, ""));
-}
-
-test("updates the ZRF widget price when the selected swatch changes", async ({
+test("updates the ZRF widget visibility when the selected swatch changes", async ({
   page,
 }) => {
   await new GoTo(page).product.configurable();
@@ -24,23 +16,22 @@ test("updates the ZRF widget price when the selected swatch changes", async ({
 
   await selectSwatch(page, "Black");
 
-  // XS (£45) is below the finance threshold, so the widget stays hidden
+  // XS (£45) is below the finance minimum, so the widget stays hidden
   await selectSwatch(page, "XS");
   await expect(container).toBeHidden();
 
   // S (£100) qualifies, so the widget shows a monthly price
   await selectSwatch(page, "S");
   await expect(container).toBeVisible();
-  const monthlyForS = await readMonthlyPrice(container);
+  await expect(
+    container
+      .getByText("Or from £4.17 p/m, at 0.00%")
+      .or(container.getByText("Or from £2.55 p/m, at 19.90%")),
+  ).toBeVisible();
 
-  // XL (£90,000) is far more expensive, so the widget must update to a higher monthly price.
-  // Asserting the price increased (rather than matching any price) catches the widget failing to
-  // update when the swatch changes.
+  // XL (£90,000) is above the finance maximum, so the widget hides again
   await selectSwatch(page, "XL");
-  await expect(container).toBeVisible();
-  await expect
-    .poll(() => readMonthlyPrice(container), { timeout: 20000 })
-    .toBeGreaterThan(monthlyForS);
+  await expect(container).toBeHidden();
 });
 
 test("does not render on standard product page for cheap product", async ({
@@ -61,6 +52,8 @@ test("renders the ZRF widget on the standard product page", async ({
   const container = page.locator("#rvvup-zrf-widget-container");
   await expect(container).toBeVisible();
   await expect(
-      container.getByText(/Or from £\d+\.\d+ p\/m, at \d+\.\d+%/),
+      container
+          .getByText("Or from £6.25 p/m, at 0.00%")
+          .or(container.getByText("Or from £3.83 p/m, at 19.90%")),
   ).toBeVisible();
 });
