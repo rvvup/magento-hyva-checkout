@@ -15,21 +15,6 @@ use Magento\Framework\View\Element\Template;
             let ST = null;
             const blockName = '<?= $escaper->escapeJs($block->getNameInLayout()) ?>';
 
-            window.addEventListener('checkout:validation:success', () => {
-                const component = Magewire.find(blockName);
-                let magewire = document.getElementById('magewire-loader');
-                magewire.children[0].style.display = 'block';
-
-                component.loadPaymentActions().then(() => {
-                    if (!component.paymentActions || !component.paymentActions.authorization) {
-                        document.getElementById('magewire-loader').children[0].style.display = 'none';
-                        return;
-                    }
-                    ST.updateJWT(component.paymentActions.authorization.value);
-                    document.getElementById('tp_place_order').click();
-                });
-            });
-
             hyvaCheckout.payment.registerMethod({
                 code: 'rvvup_CARD',
 
@@ -97,7 +82,18 @@ use Magento\Framework\View\Element\Template;
                     },
 
                     placeOrder: async function () {
-                        return Magewire.find(blockName).placeOrder();
+                        const component = Magewire.find(blockName);
+                        document.getElementById('magewire-loader').children[0].style.display = 'block';
+
+                        await component.loadPaymentActions();
+
+                        if (!component.paymentActions || !component.paymentActions.authorization) {
+                            document.getElementById('magewire-loader').children[0].style.display = 'none';
+                            return;
+                        }
+
+                        ST.updateJWT(component.paymentActions.authorization.value);
+                        document.getElementById('tp_place_order').click();
                     }
                 }
             });
