@@ -73,36 +73,43 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
             margin-right: 20px;
         }
     </style>
-    <div x-data="rvvupExpressButtons"
+    <?php $blockId = $escaper->escapeHtmlAttr(str_replace('.', '-', $block->getNameInLayout())); ?>
+    <div x-data="rvvupExpressButtons_<?= $blockId ?>"
          x-init="initRvvup"
+         id="rvvup-express-container-<?= $blockId ?>"
          class="rvvup_express_container">
         <div class="rvvup_express_title rvvup_express_text_with_line">Express Checkout</div>
         <div class="rvvup_express_wrapper">
-            <div id="rvvup-express-element" class="rvvup_express_element"></div>
+            <div id="rvvup-express-element-<?= $blockId ?>" class="rvvup_express_element"></div>
         </div>
         <div class="rvvup_express_divider_text rvvup_express_text_with_line">OR</div>
     </div>
     <script>
-        function rvvupExpressButtons() {
+        function rvvupExpressButtons_<?= $blockId ?>() {
             return {
                 initRvvup() {
                     const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                    const containerId = 'rvvup-express-container-<?= $blockId ?>';
+                    const elementSelector = '#rvvup-express-element-<?= $blockId ?>';
                     let enabledPaymentMethods = [];
                     const applePayExpressEnabled = rvvup_parameters?.settings?.apple_pay?.checkout?.express?.enabled || false;
-                    const rvvupCheckout = rvvup_parameters?.checkout;
+                    const rvvupCheckout = rvvup_parameters?.checkout || null;
                     if (applePayExpressEnabled) {
                         enabledPaymentMethods.push('APPLE_PAY');
                     }
-                    if (enabledPaymentMethods.length === 0 || !rvvupCheckout) {
+                    if (enabledPaymentMethods.length === 0) {
                         return;
                     }
-                    window.rvvup_sdk.createExpressCheckout({
-                        checkoutSessionKey: rvvupCheckout.token,
+                    const expressOptions = {
                         enabledPaymentMethods: enabledPaymentMethods,
-                    }).then(expressCheckout => {
+                    };
+                    if (rvvupCheckout?.token) {
+                        expressOptions.checkoutSessionKey = rvvupCheckout.token;
+                    }
+                    window.rvvup_sdk.createExpressCheckout(expressOptions).then(expressCheckout => {
                         expressCheckout.on("ready", (data) => {
                             if (data.paymentMethods.length > 0) {
-                                document.getElementsByClassName('rvvup_express_container')[0].classList.add('show')
+                                document.getElementById(containerId).classList.add('show')
                             }
                         });
 
@@ -126,9 +133,11 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                             };
                         });
                         expressCheckout.on("beforePaymentAuth", async (data) => {
-                            await component.createPaymentSession(rvvupCheckout.id, data)
+                            var checkoutId = rvvupCheckout?.id || null;
+                            await component.createPaymentSession(checkoutId, data);
                             return {
-                                paymentSessionId: component.paymentSessionResult.paymentSessionId
+                                checkoutSessionKey: component.checkoutToken || rvvupCheckout?.token,
+                                paymentSessionId: component.paymentSessionResult.paymentSessionId,
                             };
                         });
                         expressCheckout.on("paymentAuthorized", () => {
@@ -154,7 +163,7 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                             }
                         });
                         expressCheckout.mount({
-                            selector: "#rvvup-express-element",
+                            selector: elementSelector,
                         });
                     }).catch(e => {
                         console.error("Error creating express checkout", e);
@@ -162,7 +171,7 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                 },
             }
         }
-        window.addEventListener('alpine:init', () => Alpine.data('rvvupExpressButtons', rvvupExpressButtons), {once: true});
+        window.addEventListener('alpine:init', () => Alpine.data('rvvupExpressButtons_<?= $blockId ?>', rvvupExpressButtons_<?= $blockId ?>), {once: true});
     </script>
 <?php $hyvaCsp->registerInlineScript() ?>
 
