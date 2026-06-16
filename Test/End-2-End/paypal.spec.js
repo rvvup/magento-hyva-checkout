@@ -3,6 +3,30 @@ import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import PaypalPopup from "./Components/PaypalPopup";
 import GoTo from "./Components/GoTo";
 
+test("hides the native place order button while PayPal is selected and restores it for other methods", async ({
+  page,
+}) => {
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  const placeOrderButton = page
+    .locator(".checkout-nav-main button.btn-primary")
+    .first();
+
+  await expect(placeOrderButton).toBeVisible();
+
+  await page.getByLabel("PayPal", { exact: true }).click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeVisible();
+
+  await expect(placeOrderButton).toBeHidden();
+
+  await page.getByLabel("Pay by Card").click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+  await expect(page.locator("#rvvup-paypal-button-container-0")).toBeHidden();
+  await expect(placeOrderButton).toBeVisible();
+});
+
 test("Can place an order using PayPal", async ({ page, browser }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();

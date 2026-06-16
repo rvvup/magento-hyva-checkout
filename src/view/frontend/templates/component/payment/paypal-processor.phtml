@@ -4,6 +4,11 @@
 /** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div wire:ignore>
+    <style>
+        .rvvup_PAYPAL_place_order_button {
+            display: none !important;
+        }
+    </style>
     <script>
         hyvaCheckout.api.after(() => {
             const getButtonStyle = () => {

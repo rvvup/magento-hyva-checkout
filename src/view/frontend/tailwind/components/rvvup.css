@@ -8,10 +8,6 @@
         width: 100%;
     }
 
-    .rvvup_PAYPAL_place_order_button {
-        display: none !important;
-    }
-
     .rvvup_APPLE_PAY_place_order_button {
         display: none !important;
     }
