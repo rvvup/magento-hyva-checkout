@@ -71,8 +71,7 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\RvvupExpressProcessor;
                             };
                         });
                         expressCheckout.on("paymentAuthorized", () => {
-                            let magewire = document.getElementById('magewire-loader');
-                            magewire.children[0].style.display = 'block';
+                            window.rvvupLoader?.show();
                             window.location.href = component.paymentSessionResult.redirectUrl;
                         });
                         expressCheckout.on("paymentFailed", (data) => {

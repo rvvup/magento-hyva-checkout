@@ -1,0 +1,31 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
+?>
+<div
+    id="rvvup-loader"
+    x-data="{ isLoading: false }"
+>
+    <?= /** @noEscape */ $block->getChildHtml('loading') ?>
+</div>
+<script>
+    window.rvvupLoader = {
+        setLoading(isLoading) {
+            const element = document.getElementById('rvvup-loader');
+            if (element && window.Alpine) {
+                window.Alpine.$data(element).isLoading = isLoading;
+            }
+        },
+        show() {
+            this.setLoading(true);
+        },
+        hide() {
+            this.setLoading(false);
+        },
+    };
+</script>
+<?php $hyvaCsp->registerInlineScript() ?>

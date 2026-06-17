@@ -45,17 +45,11 @@
             }
 
             const hideLoader = () => {
-                const loader = document.getElementById('magewire-loader');
-                if (loader && loader.children[0]) {
-                    loader.children[0].style.display = 'none';
-                }
+                window.rvvupLoader?.hide();
             };
 
             const showLoader = () => {
-                const loader = document.getElementById('magewire-loader');
-                if (loader && loader.children[0]) {
-                    loader.children[0].style.display = 'block';
-                }
+                window.rvvupLoader?.show();
             };
 
             const createPaypalContainer = function (btnIndex, placeOrderButton) {
@@ -248,7 +242,7 @@
 
             document.addEventListener('click', function(e) {
                 if (e.target.closest('[data-rvvup-cancel-paypal]')) {
-                    hyvaCheckout.loader.start();
+                    window.rvvupLoader?.show();
                 }
             });
         });

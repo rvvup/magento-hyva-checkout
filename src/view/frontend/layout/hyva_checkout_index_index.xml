@@ -7,6 +7,15 @@
                    class="Rvvup\PaymentsHyvaCheckout\Block\Checkout\Messaging"
                    template="Rvvup_PaymentsHyvaCheckout::component/messaging/error.phtml"/>
 
+            <block name="checkout.payment.method.rvvup.loader"
+                   as="rvvup.loader"
+                   template="Rvvup_PaymentsHyvaCheckout::component/payment/loader.phtml"
+                   after="hyva.checkout.main">
+                <block name="rvvup.checkout.loading"
+                       as="loading"
+                       template="Hyva_Theme::ui/loading.phtml"/>
+            </block>
+
             <block name="checkout.payment.method.rvvup.modal"
                    as="rvvup.modal"
                    template="Rvvup_PaymentsHyvaCheckout::component/payment/modal.phtml"

@@ -75,8 +75,7 @@ use Magento\Framework\View\Element\Template;
                 });
                 applePay.on("paymentAuthorized", () => {
                     const component = Magewire.find(blockName);
-                    let magewire = document.getElementById('magewire-loader');
-                    magewire.children[0].style.display = 'block';
+                    window.rvvupLoader?.show();
                     window.location.href = component.paymentSessionResult.redirectUrl;
                 });
                 applePay.on("paymentFailed", (data) => {
