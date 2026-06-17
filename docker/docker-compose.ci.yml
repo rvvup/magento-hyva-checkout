@@ -1,0 +1,6 @@
+services:
+  magento:
+    environment:
+      - RVVUP_HYVA_CHECKOUT_PATH=/rvvup/module-src
+    volumes:
+      - "./:/rvvup/module-src"

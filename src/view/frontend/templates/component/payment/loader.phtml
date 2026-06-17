@@ -8,11 +8,17 @@ use Magento\Framework\View\Element\Template;
 ?>
 <div
     id="rvvup-loader"
-    x-data="{ isLoading: false }"
+    x-data="rvvupCheckoutLoader"
 >
     <?= /** @noEscape */ $block->getChildHtml('loading') ?>
 </div>
 <script>
+    function rvvupCheckoutLoader() {
+        return {
+            isLoading: false,
+        };
+    }
+
     window.rvvupLoader = {
         setLoading(isLoading) {
             const element = document.getElementById('rvvup-loader');
@@ -27,5 +33,10 @@ use Magento\Framework\View\Element\Template;
             this.setLoading(false);
         },
     };
+
+    (() => {
+        const register = () => Alpine.data('rvvupCheckoutLoader', rvvupCheckoutLoader);
+        window.Alpine ? register() : window.addEventListener('alpine:init', register, {once: true});
+    })();
 </script>
 <?php $hyvaCsp->registerInlineScript() ?>

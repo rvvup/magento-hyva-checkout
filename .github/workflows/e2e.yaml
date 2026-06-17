@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Start Docker
-        run: docker compose --progress=plain up -d --build --quiet-pull
+        run: docker compose -f docker-compose.yml -f docker/docker-compose.ci.yml --progress=plain up -d --build --quiet-pull
 
       - name: Install dependencies
         run: npm install
