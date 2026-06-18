@@ -28,53 +28,64 @@ if ($isRestricted) {
     <script>
         (function () {
             const container = document.currentScript.parentElement;
+            const currency = container.dataset.currency;
+            const productId = container.dataset.productId;
+            const createdAmount = container.dataset.amount;
 
-            function initZrfWidget() {
-                if (!window.rvvup_sdk) return;
+            let latestAmount = createdAmount;
+            let readyWidget = null;
 
-                const currency = container.dataset.currency;
-                const amount = container.dataset.amount;
-                const productId = container.dataset.productId;
-
-                const showHideWidget = async function (el, rvvupWidgetInstance) {
-                    if (!(await rvvupWidgetInstance.canDisplayWidget())) {
-                        el.style.display = "none";
-                        return;
-                    }
-
-                    el.style.display = "block";
+            const showHideWidget = async function (widget) {
+                const el = document.getElementById("rvvup-zrf-widget-container");
+                if (!el) {
+                    return;
                 }
+                el.style.display = (await widget.canDisplayWidget()) ? "block" : "none";
+            };
 
-                window.rvvup_sdk.createWidget("ZOPA_RETAIL_FINANCE", {
-                    settings: {
-                        context: "product",
-                    },
-                    total: {
-                        currency: currency,
-                        amount: amount,
-                    },
-                }).then((widget) => {
-                    widget.on("ready", async () => {
-                        const el = document.getElementById("rvvup-zrf-widget-container");
-                        if (!el) return;
-                        await widget.mount({selector: el});
-                        await showHideWidget(el, widget);
-                        window.addEventListener('update-prices-' + productId, async (e) => {
-                            widget.update({
-                                total: {
-                                    amount: e.detail.finalPrice.amount.toString(),
-                                    currency: currency,
-                                }
-                            });
-                            await showHideWidget(el, widget);
-                        });
-                    });
-                }).catch((error) => {
-                    console.error("Error creating Rvvup widget:", error);
-                });
+            // Register the price listener synchronously so a swatch change made before
+            // the widget finishes loading is not lost (Clearpay and PayPal do the same).
+            window.addEventListener('update-prices-' + productId, async (e) => {
+                const amount = e.detail?.finalPrice?.amount;
+                if (amount === undefined || amount === null) {
+                    return;
+                }
+                latestAmount = amount.toString();
+                if (readyWidget === null) {
+                    return;
+                }
+                readyWidget.update({total: {amount: latestAmount, currency: currency}});
+                await showHideWidget(readyWidget);
+            });
+
+            if (!window.rvvup_sdk) {
+                return;
             }
 
-            initZrfWidget();
+            window.rvvup_sdk.createWidget("ZOPA_RETAIL_FINANCE", {
+                settings: {
+                    context: "product",
+                },
+                total: {
+                    currency: currency,
+                    amount: createdAmount,
+                },
+            }).then((widget) => {
+                widget.on("ready", async () => {
+                    const el = document.getElementById("rvvup-zrf-widget-container");
+                    if (!el) {
+                        return;
+                    }
+                    await widget.mount({selector: el});
+                    readyWidget = widget;
+                    if (latestAmount !== createdAmount) {
+                        widget.update({total: {amount: latestAmount, currency: currency}});
+                    }
+                    await showHideWidget(widget);
+                });
+            }).catch((error) => {
+                console.error("Error creating Rvvup widget:", error);
+            });
         })();
     </script>
     <?php $hyvaCsp->registerInlineScript() ?>
