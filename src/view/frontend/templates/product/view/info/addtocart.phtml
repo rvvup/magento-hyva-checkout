@@ -161,7 +161,7 @@ if ($product) {
                     firstname: '',
                     lastname: '',
                     email: orderData.payer.email_address,
-                    telephone: '',
+                    telephone: orderData.payer?.phone?.phone_number?.national_number ?? '',
                     street: [],
                     city: '',
                     region: '',

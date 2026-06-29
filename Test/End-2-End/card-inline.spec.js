@@ -44,6 +44,63 @@ test("Can place an order using the inline credit card", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("locks the screen while a declined card is processed in the background", async ({
+  page,
+}) => {
+  // Hold the decline (handleCallback) request open so we can assert the screen is
+  // locked while it is in flight, rather than racing the real round-trip.
+  let releaseRequest;
+  const requestHeld = new Promise((resolve) => {
+    releaseRequest = resolve;
+  });
+  let declineRequestInFlight = false;
+
+  await page.route("**/magewire/**", async (route) => {
+    const request = route.request();
+    const isDeclineRequest =
+      request.method() === "POST" &&
+      (request.postData() || "").includes("handleCallback");
+
+    if (isDeclineRequest) {
+      declineRequestInFlight = true;
+      await requestHeld;
+    }
+
+    await route.continue();
+  });
+
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  await page.getByLabel("Pay by Card").click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  // 4000 0000 0000 2537 fails 3DSecure, which triggers the background decline request.
+  await page
+    .frameLocator(".st-card-number-iframe")
+    .getByLabel("Card Number")
+    .fill("4000 0000 0000 2537");
+  await page
+    .frameLocator(".st-expiration-date-iframe")
+    .getByLabel("Expiration Date")
+    .fill("1233");
+  await page
+    .frameLocator(".st-security-code-iframe")
+    .getByLabel("Security Code")
+    .fill("123");
+
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  await page.getByRole("button", { name: "Place order" }).click();
+
+  await expect.poll(() => declineRequestInFlight, { timeout: 60000 }).toBe(true);
+
+  // While the decline is processed in the background the overlay must cover the screen.
+  await expect(page.locator("#rvvup-loader > div")).toBeVisible();
+
+  releaseRequest();
+});
+
 test("The validation prevents placing an order with invalid card details", async ({
   page,
 }) => {

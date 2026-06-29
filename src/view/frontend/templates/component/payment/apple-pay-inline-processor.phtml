@@ -10,16 +10,17 @@ use Magento\Framework\View\Element\Template;
 /** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
 <div id="rvvup-apple-pay-inline" data-quoteamount="<?php echo $magewire->quoteAmount; ?>" data-quotecurrency="<?php echo $magewire->quoteCurrency; ?>">
-    <style>
-        #payment-method-option-rvvup_APPLE_PAY {
-            display: block;
-        }
-        .rvvup_APPLE_PAY_place_order_button {
-            display: none;
-        }
-    </style>
     <script>
-        (() => {
+        hyvaCheckout.api.after(() => {
+            const blockName = '<?= $escaper->escapeJs($block->getNameInLayout()) ?>';
+            const applePayOption = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
+            if (applePayOption) {
+                applePayOption.style.display = 'block';
+            }
+            const divId = "rvvup-apple-pay-button";
+            let $showApplePay = true;
+            let $applePaySelected = false;
+
             const getQuoteTotal = () => {
                 const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
                 return {
@@ -32,20 +33,18 @@ use Magento\Framework\View\Element\Template;
                     window.dispatchEvent(new CustomEvent('rvvup:methods:apple-pay:hide'));
                 }
             };
+
             let applePayPromise = window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
                 checkoutSessionKey: rvvup_parameters.checkout.token,
                 total: getQuoteTotal(),
             }).catch(e => {
                 console.error("Error creating Apple Pay payment method", e);
             });
-            let $showApplePay = true;
-            let $applePaySelected = false;
 
             applePayPromise.then(applePay => {
                 applePay.on("ready", async () => {
                     let placeOrderButton = getPlaceOrderButton();
-                    const divId = "rvvup-apple-pay-button";
-                    if(document.getElementById(divId)){
+                    if (document.getElementById(divId)) {
                         return;
                     }
                     const applePayButtonDiv = document.createElement('div');
@@ -68,16 +67,15 @@ use Magento\Framework\View\Element\Template;
                     applePay.update({total: getQuoteTotal()});
                 });
                 applePay.on("beforePaymentAuth", async () => {
-                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
+                    const component = Magewire.find(blockName);
                     await component.createPaymentSession(rvvup_parameters.checkout.id)
                     return {
                         paymentSessionId: component.paymentSessionResult.paymentSessionId
                     };
                 });
                 applePay.on("paymentAuthorized", () => {
-                    const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                    let magewire = document.getElementById('magewire-loader');
-                    magewire.children[0].style.display = 'block';
+                    const component = Magewire.find(blockName);
+                    window.rvvupLoader?.show();
                     window.location.href = component.paymentSessionResult.redirectUrl;
                 });
                 applePay.on("paymentFailed", (data) => {
@@ -87,9 +85,8 @@ use Magento\Framework\View\Element\Template;
                     }], 5000);
                 });
             });
-            window.addEventListener('checkout:payment:method-activate', triggerApplePayDisplayEvent);
-            window.addEventListener('checkout:step:loaded', triggerApplePayDisplayEvent);
 
+            window.addEventListener('checkout:step:loaded', triggerApplePayDisplayEvent);
             window.addEventListener('rvvup:methods:apple-pay:hide', () => {
                 let element = document.getElementById("payment-method-option-rvvup_APPLE_PAY");
                 if (element) {
@@ -97,51 +94,41 @@ use Magento\Framework\View\Element\Template;
                 }
             });
 
-            window.addEventListener('checkout:payment:method-activate', async event => {
-                let placeOrderButton = getPlaceOrderButton();
-                const divId = "rvvup-apple-pay-button";
+            hyvaCheckout.payment.registerMethod({
+                code: 'rvvup_APPLE_PAY',
 
-                if (event.detail.method !== 'rvvup_APPLE_PAY') {
-                    placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
-                    if (document.getElementById(divId)) {
-                        document.getElementById(divId).style.display = 'none';
-                    }
-                    $applePaySelected = false;
-                    return;
-                }
-
-                $applePaySelected = true;
-
-                /*
-                This code finds the magewire component, but the workaround is required because the component may not be
-                immediately available when the script is executed. This is related to an issue in Hyva Checkout 1.3.0 or
-                later. This is currently the suggested workaround provided by Hyva:
-                https://gitlab.hyva.io/hyva-checkout/checkout/-/issues/418
-                 */
-                let component;
-                try {
-                    component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                } catch (error) {
-                    await Livewire.onLoad(() => {
-                        component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                    });
-                }
-                hyvaCheckout.payment.activate('rvvup_APPLE_PAY', {
-                    initialize() {
-                        placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
-                        document.getElementById(divId).style.display = 'block';
-                    },
-                    placeOrderViaJs() {
-                        return document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active') !== null;
+                method: {
+                    initialize: async function () {
+                        $applePaySelected = true;
+                        triggerApplePayDisplayEvent();
+                        let placeOrderButton = getPlaceOrderButton();
+                        if (placeOrderButton) {
+                            placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
+                        }
+                        let button = document.getElementById(divId);
+                        if (button) {
+                            button.style.display = 'block';
+                        }
                     },
 
-                    placeOrder() {
-                        return component.placeOrder();
-                    }
-                }, document.querySelector('[wire\\:key="rvvup_APPLE_PAY"].active'));
+                    uninitialize: async function () {
+                        $applePaySelected = false;
+                        let placeOrderButton = getPlaceOrderButton();
+                        if (placeOrderButton) {
+                            placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
+                        }
+                        let button = document.getElementById(divId);
+                        if (button) {
+                            button.style.display = 'none';
+                        }
+                    },
 
+                    placeOrder: async function () {
+                        return Magewire.find(blockName).placeOrder();
+                    }
+                }
             });
-        })();
+        });
     </script>
 <?php $hyvaCsp->registerInlineScript() ?>
 </div>

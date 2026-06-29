@@ -11,45 +11,17 @@ use Magento\Framework\View\Element\Template;
 ?>
 <div wire:ignore>
     <script>
-        (() => {
+        hyvaCheckout.api.after(() => {
             let ST = null;
+            const blockName = '<?= $escaper->escapeJs($block->getNameInLayout()) ?>';
 
-            window.addEventListener('checkout:validation:success', () => {
-                const component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                let magewire = document.getElementById('magewire-loader');
-                magewire.children[0].style.display = 'block';
+            hyvaCheckout.payment.registerMethod({
+                code: 'rvvup_CARD',
 
-                component.loadPaymentActions().then(() => {
-                    if (!component.paymentActions || !component.paymentActions.authorization) {
-                        document.getElementById('magewire-loader').children[0].style.display = 'none';
-                        return;
-                    }
-                    ST.updateJWT(component.paymentActions.authorization.value);
-                    document.getElementById('tp_place_order').click();
-                });
-            });
+                method: {
+                    initialize: async function () {
+                        const component = Magewire.find(blockName);
 
-            window.addEventListener('checkout:payment:method-activate', async event => {
-                if (event.detail.method !== 'rvvup_CARD') {
-                    return;
-                }
-
-                /*
-                This code finds the magewire component, but the workaround is required because the component may not be
-                immediately available when the script is executed. This is related to an issue in Hyva Checkout 1.3.0 or
-                later. This is currently the suggested workaround provided by Hyva:
-                https://gitlab.hyva.io/hyva-checkout/checkout/-/issues/418
-                 */
-                let component;
-                try {
-                    component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                } catch (error) {
-                    await Livewire.onLoad(() => {
-                        component = Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>');
-                    });
-                }
-                hyvaCheckout.payment.activate('rvvup_CARD', {
-                    initialize() {
                         ST = SecureTrading({
                             jwt: '<?= $magewire->getInitializationToken() ?>',
                             animatedCard: true,
@@ -64,11 +36,13 @@ use Magento\Framework\View\Element\Template;
                                 let threeD = data.threedresponse || null;
                                 let authorization = data.jwt;
 
+                                window.rvvupLoader?.show();
+
                                 component.handleCallback(authorization, threeD);
                             },
                             errorCallback: function () {
                                 /** Hide loader */
-                                document.getElementById('magewire-loader').children[0].style.display = 'none';
+                                window.rvvupLoader?.hide();
                                 var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                                 fetch(
                                     url,
@@ -79,17 +53,17 @@ use Magento\Framework\View\Element\Template;
                                 )
                             },
                             translations: {
-                                "Card number": '<?php echo $magewire->getTranslation('label', 'cardNumber', 'Card Number'); ?>',
-                                "Expiration date": '<?php echo $magewire->getTranslation('label', 'expiryDate', 'Expiration Date'); ?>',
-                                "Security code": '<?php echo $magewire->getTranslation('label', 'securityCode', 'Security Code'); ?>',
-                                Pay: '<?php echo $magewire->getTranslation('button', 'pay', 'Pay'); ?>',
-                                Processing: '<?php echo $magewire->getTranslation('button', 'processing', 'Processing'); ?>',
+                                "Card number": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'cardNumber', 'Card Number')) ?>',
+                                "Expiration date": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'expiryDate', 'Expiration Date')) ?>',
+                                "Security code": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'securityCode', 'Security Code')) ?>',
+                                Pay: '<?= $escaper->escapeJs($magewire->getTranslation('button', 'pay', 'Pay')) ?>',
+                                Processing: '<?= $escaper->escapeJs($magewire->getTranslation('button', 'processing', 'Processing')) ?>',
                                 "Field is required":
-                                    '<?php echo $magewire->getTranslation('error', 'fieldRequired', 'Field is required'); ?>',
+                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'fieldRequired', 'Field is required')) ?>',
                                 "Value is too short":
-                                    '<?php echo $magewire->getTranslation('error', 'valueTooShort', 'Value is too short'); ?>',
+                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'valueTooShort', 'Value is too short')) ?>',
                                 "Value mismatch pattern":
-                                    '<?php echo $magewire->getTranslation('error', 'valueMismatch', 'Value is invalid'); ?>',
+                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'valueMismatch', 'Value is invalid')) ?>',
                             },
                             styles: {
                                 "background-color-input": "#FFFFFF",
@@ -109,16 +83,23 @@ use Magento\Framework\View\Element\Template;
                         ST.Components();
                     },
 
-                    placeOrderViaJs() {
-                        return document.querySelector('[wire\\:key="rvvup_CARD"].active') !== null;
-                    },
+                    placeOrder: async function () {
+                        const component = Magewire.find(blockName);
+                        window.rvvupLoader?.show();
 
-                    placeOrder() {
-                        return component.placeOrder();
+                        await component.loadPaymentActions();
+
+                        if (!component.paymentActions || !component.paymentActions.authorization) {
+                            window.rvvupLoader?.hide();
+                            return;
+                        }
+
+                        ST.updateJWT(component.paymentActions.authorization.value);
+                        document.getElementById('tp_place_order').click();
                     }
-                }, document.querySelector('[wire\\:key="rvvup_CARD"].active'));
+                }
             });
-        })();
+        });
     </script>
 <?php $hyvaCsp->registerInlineScript() ?>
 </div>
