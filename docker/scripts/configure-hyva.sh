@@ -1,21 +1,16 @@
 echo "Running configure-hyva.sh"
 
-mkdir -p /root/.ssh
-chmod 700 /root/.ssh
-printf '%s' "$HYVA_SSH_PRIVATE_KEY" | tr -d '\r' > /root/.ssh/id_ed25519
-echo >> /root/.ssh/id_ed25519
-chmod 600 /root/.ssh/id_ed25519
-ssh-keyscan -t rsa gitlab.hyva.io >> /root/.ssh/known_hosts
+git config --global url."https://oauth2:${HYVA_GITLAB_TOKEN}@gitlab.hyva.io/".insteadOf "https://gitlab.hyva.io/"
 cd /bitnami/magento
 
-composer config repositories.hyva-themes/magento2-theme-module git git@gitlab.hyva.io:hyva-themes/magento2-theme-module.git
-composer config repositories.hyva-themes/magento2-reset-theme git git@gitlab.hyva.io:hyva-themes/magento2-reset-theme.git
-composer config repositories.hyva-themes/magento2-email-module git git@gitlab.hyva.io:hyva-themes/magento2-email-module.git
-composer config repositories.hyva-themes/magento2-default-theme git git@gitlab.hyva.io:hyva-themes/magento2-default-theme.git
-composer config repositories.hyva-themes/magento2-compat-module-fallback git git@gitlab.hyva.io:hyva-themes/magento2-compat-module-fallback.git
-composer config repositories.hyva-themes/magento2-order-cancellation-webapi git git@gitlab.hyva.io:hyva-themes/magento2-order-cancellation-webapi.git
-composer config repositories.hyva-themes/magento2-mollie-theme-bundle git git@gitlab.hyva.io:hyva-themes/hyva-compat/magento2-mollie-theme-bundle.git
-composer config repositories.hyva-themes/hyva-checkout git git@gitlab.hyva.io:hyva-checkout/checkout.git
+composer config repositories.hyva-themes/magento2-theme-module git https://gitlab.hyva.io/hyva-themes/magento2-theme-module.git
+composer config repositories.hyva-themes/magento2-reset-theme git https://gitlab.hyva.io/hyva-themes/magento2-reset-theme.git
+composer config repositories.hyva-themes/magento2-email-module git https://gitlab.hyva.io/hyva-themes/magento2-email-module.git
+composer config repositories.hyva-themes/magento2-default-theme git https://gitlab.hyva.io/hyva-themes/magento2-default-theme.git
+composer config repositories.hyva-themes/magento2-compat-module-fallback git https://gitlab.hyva.io/hyva-themes/magento2-compat-module-fallback.git
+composer config repositories.hyva-themes/magento2-order-cancellation-webapi git https://gitlab.hyva.io/hyva-themes/magento2-order-cancellation-webapi.git
+composer config repositories.hyva-themes/magento2-mollie-theme-bundle git https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-mollie-theme-bundle.git
+composer config repositories.hyva-themes/hyva-checkout git https://gitlab.hyva.io/hyva-checkout/checkout.git
 
 retry_with_backoff() {
     max_attempts=5
