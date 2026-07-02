@@ -13,13 +13,16 @@ use Magento\Framework\View\Element\Template;
     <script>
         hyvaCheckout.api.after(() => {
             const blockName = '<?= $escaper->escapeJs($block->getNameInLayout()) ?>';
+            const divId = "rvvup-apple-pay-button";
+            let $showApplePay = true;
+            let $applePaySelected = false;
+            let applePay = null;
+            let applePayReady = false;
+
             const applePayOption = document.getElementById('payment-method-option-rvvup_APPLE_PAY');
             if (applePayOption) {
                 applePayOption.style.display = 'block';
             }
-            const divId = "rvvup-apple-pay-button";
-            let $showApplePay = true;
-            let $applePaySelected = false;
 
             const getQuoteTotal = () => {
                 const dataSet = document.querySelector('#rvvup-apple-pay-inline').dataset;
@@ -34,32 +37,43 @@ use Magento\Framework\View\Element\Template;
                 }
             };
 
-            let applePayPromise = window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
+            const renderApplePayButton = async () => {
+                if (!applePayReady || applePay === null || document.getElementById(divId)) {
+                    return;
+                }
+                const placeOrderButton = getPlaceOrderButton();
+                if (!placeOrderButton) {
+                    return;
+                }
+                const applePayButtonDiv = document.createElement('div');
+                applePayButtonDiv.id = divId;
+                applePayButtonDiv.className = 'rvvup-applepay-button z-0';
+                if (placeOrderButton.className && placeOrderButton.className.indexOf("w-full") > -1) {
+                    applePayButtonDiv.className += ' w-full';
+                }
+                placeOrderButton.parentNode.insertBefore(applePayButtonDiv, placeOrderButton);
+                await applePay.mount({
+                    selector: "#" + divId,
+                });
+            };
+
+            const removeApplePayButton = () => {
+                const applePayButtonDiv = document.getElementById(divId);
+                if (applePayButtonDiv) {
+                    applePayButtonDiv.remove();
+                }
+            };
+
+            window.rvvup_sdk.createPaymentMethod("APPLE_PAY", {
                 checkoutSessionKey: rvvup_parameters.checkout.token,
                 total: getQuoteTotal(),
-            }).catch(e => {
-                console.error("Error creating Apple Pay payment method", e);
-            });
-
-            applePayPromise.then(applePay => {
+            }).then(method => {
+                applePay = method;
                 applePay.on("ready", async () => {
-                    let placeOrderButton = getPlaceOrderButton();
-                    if (document.getElementById(divId)) {
-                        return;
+                    applePayReady = true;
+                    if ($applePaySelected) {
+                        await renderApplePayButton();
                     }
-                    const applePayButtonDiv = document.createElement('div');
-                    applePayButtonDiv.id = divId;
-                    applePayButtonDiv.className = 'rvvup-applepay-button z-0';
-                    applePayButtonDiv.style.display = $applePaySelected ? 'block' : 'none';
-                    if (placeOrderButton.className && placeOrderButton.className.indexOf("w-full") > -1) {
-                        applePayButtonDiv.className += ' w-full';
-                    }
-                    placeOrderButton.appendChild(applePayButtonDiv);
-                    placeOrderButton.parentNode.insertBefore(applePayButtonDiv, placeOrderButton);
-
-                    await applePay.mount({
-                        selector: "#rvvup-apple-pay-button",
-                    });
                     $showApplePay = await applePay.canMakePayment();
                     triggerApplePayDisplayEvent();
                 });
@@ -84,9 +98,16 @@ use Magento\Framework\View\Element\Template;
                         text: 'Payment ' + data.reason
                     }], 5000);
                 });
+            }).catch(e => {
+                console.error("Error creating Apple Pay payment method", e);
             });
 
-            window.addEventListener('checkout:step:loaded', triggerApplePayDisplayEvent);
+            window.addEventListener('checkout:step:loaded', () => {
+                triggerApplePayDisplayEvent();
+                if ($applePaySelected) {
+                    renderApplePayButton();
+                }
+            });
             window.addEventListener('rvvup:methods:apple-pay:hide', () => {
                 let element = document.getElementById("payment-method-option-rvvup_APPLE_PAY");
                 if (element) {
@@ -101,26 +122,20 @@ use Magento\Framework\View\Element\Template;
                     initialize: async function () {
                         $applePaySelected = true;
                         triggerApplePayDisplayEvent();
-                        let placeOrderButton = getPlaceOrderButton();
+                        const placeOrderButton = getPlaceOrderButton();
                         if (placeOrderButton) {
                             placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
                         }
-                        let button = document.getElementById(divId);
-                        if (button) {
-                            button.style.display = 'block';
-                        }
+                        await renderApplePayButton();
                     },
 
                     uninitialize: async function () {
                         $applePaySelected = false;
-                        let placeOrderButton = getPlaceOrderButton();
+                        const placeOrderButton = getPlaceOrderButton();
                         if (placeOrderButton) {
                             placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
                         }
-                        let button = document.getElementById(divId);
-                        if (button) {
-                            button.style.display = 'none';
-                        }
+                        removeApplePayButton();
                     },
 
                     placeOrder: async function () {
