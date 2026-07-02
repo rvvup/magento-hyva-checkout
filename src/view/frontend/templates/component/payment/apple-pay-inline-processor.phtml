@@ -45,6 +45,7 @@ use Magento\Framework\View\Element\Template;
                 if (!placeOrderButton) {
                     return;
                 }
+                placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
                 const applePayButtonDiv = document.createElement('div');
                 applePayButtonDiv.id = divId;
                 applePayButtonDiv.className = 'rvvup-applepay-button z-0';
@@ -58,6 +59,10 @@ use Magento\Framework\View\Element\Template;
             };
 
             const removeApplePayButton = () => {
+                const placeOrderButton = getPlaceOrderButton();
+                if (placeOrderButton) {
+                    placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
+                }
                 const applePayButtonDiv = document.getElementById(divId);
                 if (applePayButtonDiv) {
                     applePayButtonDiv.remove();
@@ -122,19 +127,11 @@ use Magento\Framework\View\Element\Template;
                     initialize: async function () {
                         $applePaySelected = true;
                         triggerApplePayDisplayEvent();
-                        const placeOrderButton = getPlaceOrderButton();
-                        if (placeOrderButton) {
-                            placeOrderButton.classList.add('rvvup_APPLE_PAY_place_order_button');
-                        }
                         await renderApplePayButton();
                     },
 
                     uninitialize: async function () {
                         $applePaySelected = false;
-                        const placeOrderButton = getPlaceOrderButton();
-                        if (placeOrderButton) {
-                            placeOrderButton.classList.remove('rvvup_APPLE_PAY_place_order_button');
-                        }
                         removeApplePayButton();
                     },
 
