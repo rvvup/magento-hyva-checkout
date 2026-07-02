@@ -49,4 +49,11 @@ container.
 ENV TEST_BASE_URL=https://magento.test npx playwright test --ui # change your base url to point to the right domain
 ```
 
+The tests assert order state in the backend through the admin REST API. The credentials default to `admin` / `password1`
+(the dockerized store). For a store with different admin credentials, pass them as environment variables:
+
+```bash
+TEST_BASE_URL=https://magento.test MAGENTO_ADMIN_USERNAME=exampleuser MAGENTO_ADMIN_PASSWORD=examplepassword123 npx playwright test
+```
+
 **Please note:** There are tests included for credit card for both the inline and the modal versions. It depends on the configuration of the payment method which test will succeed.

@@ -225,6 +225,10 @@
                 code: 'rvvup_PAYPAL',
 
                 method: {
+                    placeOrder: async function () {
+                        return Magewire.find('<?= $escaper->escapeJs($block->getNameInLayout()) ?>').placeOrder();
+                    },
+
                     initialize: async function () {
                         if (getPlaceOrderButtons().length > 0) {
                             showLoader();
