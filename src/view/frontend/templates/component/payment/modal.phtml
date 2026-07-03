@@ -93,6 +93,7 @@ $modal = $modelViewModel->createModal()
                 const originalHide = this.hide;
                 this.hide = (value) => {
                     if (!this.canCloseModal) return;
+                    this.iframeUrl = null;
                     this.enablePlaceOrderButton();
                     var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                     fetch(

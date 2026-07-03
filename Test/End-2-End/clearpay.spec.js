@@ -87,9 +87,15 @@ test("re-enables Place order after the Clearpay modal is cancelled and a method 
   const modalIframe = page.locator("#rvvup-modal iframe.rvvup-modal");
   await expect(modalIframe).toBeVisible();
 
-  // Cancel by clicking out of the modal.
-  await page.keyboard.press("Escape");
-  await expect(modalIframe).toBeHidden();
+  // Cancel by clicking outside the modal. The original test pressed Escape, but the cross-origin
+  // checkout iframe now holds keyboard focus so Escape never reaches the dialog. The modal is a
+  // top-layer native <dialog>, so a backdrop click light-dismisses it, which drives the module's
+  // hide() and re-enables Place order. A click can be absorbed moving focus off the iframe, so
+  // retry until the modal closes.
+  await expect(async () => {
+    await page.mouse.click(5, 5);
+    await expect(modalIframe).toBeHidden({ timeout: 3000 });
+  }).toPass({ timeout: 25000 });
 
   // Place order must be usable again after cancelling the modal.
   await expect(placeOrder).toBeEnabled();
