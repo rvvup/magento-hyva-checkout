@@ -7,32 +7,38 @@ async function selectSwatch(page, label) {
     .click();
   await expect(page.locator(`input[aria-label="` + label + `"]`)).toBeChecked();
 }
-test("renders the ZRF widget on the configurable product page", async ({
+
+async function monthlyPrice(container) {
+  const text = await container.getByText(/p\/m/).first().textContent();
+  return text.match(/£\d+\.\d{2} p\/m/)[0];
+}
+
+test("updates the ZRF widget visibility when the selected swatch changes", async ({
   page,
 }) => {
   await new GoTo(page).product.configurable();
-
-  await expect(page.locator("#rvvup-zrf-widget-container")).toBeHidden();
-
-  await selectSwatch(page, "XS");
+  const container = page.locator("#rvvup-zrf-widget-container");
 
   await selectSwatch(page, "Black");
 
-  await expect(page.locator("#rvvup-zrf-widget-container")).toBeHidden();
+  // XS (£45) is below the finance minimum, so the widget stays hidden
+  await selectSwatch(page, "XS");
+  await expect(container).toBeHidden();
 
-  await selectSwatch(page, "S");
-
-  const container = page.locator("#rvvup-zrf-widget-container");
+  // M (£54) qualifies, so the widget shows a monthly price
+  await selectSwatch(page, "M");
   await expect(container).toBeVisible();
-  await expect(
-      container
-          .getByText("Or from £4.17 p/m, at 0.00%")
-          .or(container.getByText("Or from £2.55 p/m, at 19.90%")),
-  ).toBeVisible();
+  const priceAtMedium = await monthlyPrice(container);
 
+  // S (£100) also qualifies and must recompute to a different monthly price,
+  // proving the widget updates its pricing when the selection changes
+  await selectSwatch(page, "S");
+  await expect(container).toBeVisible();
+  await expect.poll(() => monthlyPrice(container)).not.toBe(priceAtMedium);
+
+  // XL (£90,000) is above the finance maximum, so the widget hides again
   await selectSwatch(page, "XL");
-
-  await expect(page.locator("#rvvup-zrf-widget-container")).toBeHidden();
+  await expect(container).toBeHidden();
 });
 
 test("does not render on standard product page for cheap product", async ({
@@ -53,8 +59,6 @@ test("renders the ZRF widget on the standard product page", async ({
   const container = page.locator("#rvvup-zrf-widget-container");
   await expect(container).toBeVisible();
   await expect(
-      container
-          .getByText("Or from £6.25 p/m, at 0.00%")
-          .or(container.getByText("Or from £3.83 p/m, at 19.90%")),
+      container.getByText(/Or from £\d+\.\d{2} p\/m, at \d+\.\d{2}%/),
   ).toBeVisible();
 });

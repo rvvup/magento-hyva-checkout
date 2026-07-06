@@ -42,7 +42,7 @@ $modal = $modelViewModel->createModal()
             canCloseModal: true,
             init() {
                 window.addEventListener('rvvup:update:showModal', event =>{
-                    this.show('<?= $escaper->escapeHtmlAttr($modal->getDialogRefName()) ?>');
+                    this.show('<?= $escaper->escapeJs($modal->getDialogRefName()) ?>');
 
                     this.iframeUrl = event.detail.redirectUrl;
                 });
@@ -93,6 +93,8 @@ $modal = $modelViewModel->createModal()
                 const originalHide = this.hide;
                 this.hide = (value) => {
                     if (!this.canCloseModal) return;
+                    this.iframeUrl = null;
+                    this.enablePlaceOrderButton();
                     var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
                     fetch(
                         url,
@@ -103,6 +105,11 @@ $modal = $modelViewModel->createModal()
                     )
                     return originalHide.call(this, value);
                 }
+            },
+            enablePlaceOrderButton() {
+                document.querySelectorAll('.btn-place-order[disabled]').forEach((button) => {
+                    button.removeAttribute('disabled');
+                });
             },
         }
     }

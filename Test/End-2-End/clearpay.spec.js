@@ -67,6 +67,46 @@ test.skip("Can place an order", async ({ page, browser }) => {
   ).toBeVisible();
 });
 
+test("re-enables Place order after the Clearpay modal is cancelled and a method is switched", async ({
+  page,
+}) => {
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  await page.getByLabel("Clearpay").click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  const placeOrder = page.getByRole("button", { name: "Place order" });
+  await expect(placeOrder).toBeEnabled();
+
+  // Clicking too fast can fail to open the modal, mirroring the manual repro.
+  await page.waitForTimeout(3000);
+  await placeOrder.click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  const modalIframe = page.locator("#rvvup-modal iframe.rvvup-modal");
+  await expect(modalIframe).toBeVisible();
+
+  // Cancel by clicking outside the modal. The original test pressed Escape, but the cross-origin
+  // checkout iframe now holds keyboard focus so Escape never reaches the dialog. The modal is a
+  // top-layer native <dialog>, so a backdrop click light-dismisses it, which drives the module's
+  // hide() and re-enables Place order. A click can be absorbed moving focus off the iframe, so
+  // retry until the modal closes.
+  await expect(async () => {
+    await page.mouse.click(5, 5);
+    await expect(modalIframe).toBeHidden({ timeout: 3000 });
+  }).toPass({ timeout: 25000 });
+
+  // Place order must be usable again after cancelling the modal.
+  await expect(placeOrder).toBeEnabled();
+
+  // Switching to another method must also leave Place order usable.
+  await page.getByLabel("Pay by Card").click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  await expect(page.getByRole("button", { name: "Place order" })).toBeEnabled();
+});
+
 test("renders the Clearpay on the product page", async ({ page }) => {
   await new GoTo(page).product.standard("medium-priced");
   await expect(

@@ -7,4 +7,24 @@
     .rvvup-card-field iframe {
         width: 100%;
     }
+
+    .rvvup_APPLE_PAY_place_order_button {
+        display: none !important;
+    }
+
+    .rvvup_express_text_with_line::before,
+    .rvvup_express_text_with_line::after {
+        content: "";
+        flex: 1 1;
+        border-bottom: 1px solid #c5c5c5;
+        margin: auto;
+    }
+
+    .rvvup_express_text_with_line::after {
+        margin-left: 1.25rem;
+    }
+
+    .rvvup_express_text_with_line::before {
+        margin-right: 1.25rem;
+    }
 }

@@ -46,10 +46,19 @@ test("Prevent close is handled on bank selection screen and can only be closed b
 
   const frame = page.frameLocator("iframe.rvvup-modal");
   await expect(frame.getByLabel("Mock Bank")).toBeVisible();
-  await page.locator("#rvvup-modal div").first().click();
-  // Shouldn't close
-  await page.waitForTimeout(500);
-  await frame.getByTitle("Exit").click();
 
-  await expect(page.locator("#rvvup-modal div").first()).toBeHidden();
+  const modalIframe = page.locator("#rvvup-modal iframe.rvvup-modal");
+
+  // Clicking outside the dialog must NOT close it: prevent-close is active on the bank screen. The
+  // modal is a top-layer native <dialog>, so a backdrop click is the light-dismiss the module must
+  // suppress. A first click can be absorbed moving focus off the iframe, so click twice to make a
+  // real dismiss attempt; the modal must still stay open.
+  await page.mouse.click(5, 5);
+  await page.mouse.click(5, 5);
+  await page.waitForTimeout(500);
+  await expect(modalIframe).toBeVisible();
+
+  // Only the checkout's own Exit control closes it.
+  await frame.getByTitle("Exit").click();
+  await expect(modalIframe).toBeHidden();
 });

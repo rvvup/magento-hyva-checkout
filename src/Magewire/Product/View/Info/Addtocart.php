@@ -26,6 +26,8 @@ use Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\Method\PayPal;
 
 class Addtocart extends Component
 {
+    private const PLACEHOLDER_TELEPHONE = '000000000';
+
     /** @var Session */
     private $checkoutSession;
 
@@ -141,7 +143,7 @@ class Addtocart extends Component
         $cart = $this->checkoutSession->getQuote();
 
         $billingAddress = $this->addressFactory->create();
-        $billingAddress->setData($billingAddressInput);
+        $billingAddress->setData($this->withPlaceholderTelephone($billingAddressInput));
 
         if (!$cart->getCustomerEmail()) {
             $cart->setCustomerEmail($billingAddress->getEmail());
@@ -169,7 +171,7 @@ class Addtocart extends Component
         $cart = $this->checkoutSession->getQuote();
 
         $shippingAddress = $this->addressFactory->create();
-        $shippingAddress->setData($shippingAddressInput);
+        $shippingAddress->setData($this->withPlaceholderTelephone($shippingAddressInput));
 
         if (!$cart->getCustomerEmail()) {
             $cart->setCustomerEmail($shippingAddress->getEmail());
@@ -178,6 +180,23 @@ class Addtocart extends Component
         if(!$cart->isVirtual()) {
             $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
         }
+    }
+
+    /**
+     * Wallet providers do not always share a phone number, but Magento requires a non-empty telephone on the
+     * address. Fall back to a placeholder so the express address can be assigned; the shopper completes the real
+     * number on the checkout page before placing the order.
+     *
+     * @param array $address
+     * @return array
+     */
+    private function withPlaceholderTelephone(array $address): array
+    {
+        if ((string)($address['telephone'] ?? '') === '') {
+            $address['telephone'] = self::PLACEHOLDER_TELEPHONE;
+        }
+
+        return $address;
     }
 
     /** Cancel Express Paypal Payment */

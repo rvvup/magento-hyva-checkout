@@ -21,13 +21,11 @@
 
     <?php if ($magewire->isExpressPayment()): ?>
         <div class="mt-4 text-xs">
-            <?= __(
+            <?= /** @noEscape */ __(
                 'You are currently paying with %1. If you want to cancel this process, please click <a %2>here</a>',
                 'PayPal',
-                'href="#" onclick="hyvaCheckout.loader.start();window.location.reload();"
-                 wire:click.prevent="cancel" class="underline"'
-            );
-            ?>
+                'href="#" wire:click.prevent="cancel" data-rvvup-cancel-paypal="1" class="underline"'
+            ) ?>
         </div>
     <?php endif; ?>
 </div>

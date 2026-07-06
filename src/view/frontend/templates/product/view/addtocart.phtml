@@ -43,7 +43,7 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                                 data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('product')) ?>"
             ></afterpay-placement>
             <script>
-                window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', (e) => {
+                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
                     const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
                     if (newPrice) {
                         const clearpayPlacement = document.getElementById('clearpay-summary');
@@ -75,7 +75,7 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                  data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('ratio')) ?>"
             ></div>
             <script>
-                window.addEventListener('update-prices-<?= $escaper->escapeHtmlAttr($product->getId()); ?>', (e) => {
+                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
                     const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
                     if (newPrice) {
                         const paypalMessaging = document.getElementById('rvvup-paypal-paylater-messaging-container');

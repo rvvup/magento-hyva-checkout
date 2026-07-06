@@ -28,5 +28,3 @@ bin/magento config:set system/smtp/host $MAGENTO_SMTP_HOST
 bin/magento config:set system/smtp/port $MAGENTO_SMTP_PORT
 
 bin/magento sampledata:deploy
-
-composer require n98/magerun2-dist
