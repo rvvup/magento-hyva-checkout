@@ -42,7 +42,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Wait for Magento Store
-        run: bash scripts/helpers/wait-for-server-startup.sh http://local.dev.rvvuptech.com:89/magento_version 500
+        run: bash scripts/helpers/wait-for-server-startup.sh
 
       - name: Run Playwright tests
         run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test
