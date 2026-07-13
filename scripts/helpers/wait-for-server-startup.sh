@@ -31,12 +31,12 @@ while true; do
 
     http_status=$(curl -o /dev/null -s -w "%{http_code}\n" -I "$URL" || echo "000")
 
-    if [ "$http_status" -eq 200 ]; then
+    if [ "$http_status" = "200" ]; then
         print_green "\r✔ Server Ready. Time taken: ${elapsed} seconds."
         break
-    fi
-
-    if [ "$http_status" -gt 299 ] && [ "$http_status" -ne 000 ]; then
+    elif [ "$http_status" = "000" ]; then
+        echo -ne "\r$(pretty_loader) $(pretty_loader) \033[90mWaiting for server to be up (Might take a couple of minutes). Current Status: $http_status / Time taken: ${elapsed} seconds.\033[0m"
+    elif [ "$http_status" -gt 299 ]; then
         print_red "\r✖ ERROR! Server responded with $http_status. Time taken: ${elapsed} seconds."
         exit 1
     else
