@@ -9,93 +9,264 @@ use Magento\Framework\View\Element\Template;
 /** @var \Rvvup\PaymentsHyvaCheckout\Magewire\Checkout\Payment\CardProcessor $magewire */
 /** @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp */
 ?>
-<div wire:ignore>
+<div id="rvvup-card-inline"
+     data-quoteamount="<?= $escaper->escapeHtmlAttr($magewire->quoteAmount) ?>"
+     data-quotecurrency="<?= $escaper->escapeHtmlAttr($magewire->quoteCurrency) ?>">
     <script>
         hyvaCheckout.api.after(() => {
-            let ST = null;
             const blockName = '<?= $escaper->escapeJs($block->getNameInLayout()) ?>';
+            const mountSelector = '#rvvup-card-form-container';
+
+            const messages = {
+                declined: '<?= $escaper->escapeJs(__('Payment was declined, please try again or use another method.')) ?>',
+                failed: '<?= $escaper->escapeJs(__('Your payment could not be completed. Please check your details and try again.')) ?>',
+                invalidCardDetails: '<?= $escaper->escapeJs(__('Please enter valid card details and try again.')) ?>',
+                formUnavailable: '<?= $escaper->escapeJs(__('The card form could not be loaded. Please refresh the page and try again.')) ?>',
+            };
+
+            const DECLINED_PAYMENT_CODE = 'declined';
+
+            /* Of the errors the SDK raises this is the only one worded for a shopper. The rest are
+               internal ("Error processing payment" for a declined authorization, "Error creating 3DS
+               session" for a provider failure) and get replaced before they reach the message area. */
+            const VALIDATION_ERROR_NAME = 'RvvupValidationError';
+
+            let cardPromise = null;
+            let isWired = false;
+            let isReady = false;
+            let isFormValid = false;
+            let readyCallbacks = [];
+            let activePayment = null;
+
+            const getQuoteTotal = () => {
+                const dataSet = document.getElementById('rvvup-card-inline').dataset;
+                return {
+                    amount: dataSet.quoteamount,
+                    currency: dataSet.quotecurrency
+                };
+            };
+
+            const showError = (message) => {
+                hyvaCheckout.payment.dispatchExceptionMessage(message, 'error');
+            };
+
+            /* The SDK only paints its own invalid state on fields the shopper has actually touched,
+               so an untouched empty form would show a message with nothing marked. */
+            const markCardFormInvalid = (isInvalid) => {
+                const container = document.querySelector(mountSelector);
+                if (container === null) {
+                    return;
+                }
+                container.classList.toggle('rvvup-card-form-invalid', isInvalid);
+            };
+
+            /* Matches the inputs Hyva Checkout renders itself, so the card fields do not read as a
+               different design system. The values mirror the theme its form tokens (--form-stroke,
+               --form-radius, --form-px/py, --text-base); they cannot reference those custom
+               properties directly because the SDK serialises them into a cross origin iframe.
+               Only "base" and "invalid" are supported, so the focus ring lives in rvvup.css. */
+            const cardAppearance = {
+                input: {
+                    base: {
+                        borderStyle: 'solid',
+                        borderWidth: '1px',
+                        borderColor: '#cad5e2',
+                        borderRadius: '8px',
+                        backgroundColor: '#ffffff',
+                        color: '#020618',
+                        fontSize: '16px',
+                        lineHeight: '24px',
+                        padding: '8px 12px',
+                    },
+                    invalid: {
+                        borderColor: '#e7000b',
+                        backgroundColor: '#ffffff',
+                    },
+                },
+            };
+
+            const createCard = () => {
+                if (!window.rvvup_sdk || !rvvup_parameters.checkout || !rvvup_parameters.checkout.token) {
+                    return Promise.reject(new Error('The Rvvup SDK or the checkout token is unavailable.'));
+                }
+                /* The total goes in paymentRequest rather than the deprecated top level "total":
+                   the SDK normalises that older shape by rebuilding the options from scratch, which
+                   silently drops everything else passed alongside it, the appearance included. */
+                return window.rvvup_sdk.createPaymentMethod('CARD', {
+                    checkoutSessionKey: rvvup_parameters.checkout.token,
+                    paymentRequest: {total: getQuoteTotal()},
+                    methodOptions: {appearance: cardAppearance},
+                });
+            };
+
+            const getCard = () => {
+                if (cardPromise === null) {
+                    cardPromise = createCard().catch(error => {
+                        /* Drop the rejected promise so selecting the method again retries instead of
+                           failing forever on a transient error at page load. */
+                        cardPromise = null;
+                        throw error;
+                    });
+                }
+                return cardPromise;
+            };
+
+            /* Only ever rejects: a successful payment navigates away, and leaving the promise pending
+               keeps the place order button and the rest of the form locked until the browser leaves. */
+            const settlePayment = (handler) => {
+                if (activePayment === null) {
+                    return;
+                }
+                const payment = activePayment;
+                activePayment = null;
+                handler(payment);
+            };
+
+            const failPayment = (message) => settlePayment(payment => payment.reject(message));
+
+            const completePayment = () => {
+                if (activePayment === null || !activePayment.redirectUrl) {
+                    failPayment(messages.failed);
+                    return;
+                }
+                window.rvvupLoader?.show();
+                window.location.href = activePayment.redirectUrl;
+            };
+
+            const wireCard = (card) => {
+                if (isWired) {
+                    return;
+                }
+                isWired = true;
+
+                card.on('ready', () => {
+                    isReady = true;
+                    readyCallbacks.splice(0).forEach(callback => callback());
+                });
+                /* Hyva has already run its own validation before the payment is submitted. */
+                card.on('validate', () => true);
+                card.on('formValidation', (data) => {
+                    isFormValid = Boolean(data && data.isFormValid);
+                    if (isFormValid) {
+                        markCardFormInvalid(false);
+                    }
+                });
+                card.on('beforePaymentAuth', async () => {
+                    /* The Magento order and the Rvvup payment session are only created once the SDK
+                       has validated the card details, so an invalid attempt leaves nothing behind. */
+                    const component = Magewire.find(blockName);
+                    await component.createPaymentSession(rvvup_parameters.checkout.id);
+
+                    const result = component.paymentSessionResult;
+                    if (!result || !result.paymentSessionId) {
+                        failPayment(messages.failed);
+                        return false;
+                    }
+                    if (activePayment !== null) {
+                        activePayment.redirectUrl = result.redirectUrl;
+                    }
+                    return {paymentSessionId: result.paymentSessionId};
+                });
+                card.on('paymentAuthorized', () => completePayment());
+                card.on('paymentCaptured', () => completePayment());
+                card.on('paymentFailed', (data) => {
+                    failPayment(data && data.code === DECLINED_PAYMENT_CODE ? messages.declined : messages.failed);
+                });
+                card.on('error', (error) => {
+                    console.error('Rvvup: the card payment failed', error);
+                    failPayment(
+                        error && error.name === VALIDATION_ERROR_NAME && error.message
+                            ? error.message
+                            : messages.failed
+                    );
+                });
+            };
+
+            /* Hyva only renders the block of the selected payment method, so switching away removes
+               the container and switching back gives us an empty one to mount into again. */
+            const mountCard = (card) => {
+                const container = document.querySelector(mountSelector);
+                if (container === null || container.childElementCount > 0) {
+                    return;
+                }
+                card.update({paymentRequest: {total: getQuoteTotal()}});
+                card.mount({selector: mountSelector});
+            };
+
+            const renderCardForm = async () => {
+                let card;
+                try {
+                    card = await getCard();
+                } catch (error) {
+                    console.error('Rvvup: creating the card payment method failed', error);
+                    showError(messages.formUnavailable);
+                    return;
+                }
+
+                wireCard(card);
+
+                if (isReady) {
+                    mountCard(card);
+                    return;
+                }
+                readyCallbacks.push(() => mountCard(card));
+            };
 
             hyvaCheckout.payment.registerMethod({
                 code: 'rvvup_CARD',
 
                 method: {
                     initialize: async function () {
-                        const component = Magewire.find(blockName);
+                        await renderCardForm();
+                    },
 
-                        ST = SecureTrading({
-                            jwt: '<?= $magewire->getInitializationToken() ?>',
-                            animatedCard: true,
-                            livestatus: <?= $magewire->getLiveStatus() ?>,
-                            buttonId: "tp_place_order",
-                            deferInit: true,
-                            submitOnSuccess: false,
-                            panIcon: true,
-                            stopSubmitFormOnEnter: true,
-                            formId: "st-form",
-                            submitCallback: function (data) {
-                                let threeD = data.threedresponse || null;
-                                let authorization = data.jwt;
+                    uninitialize: async function () {
+                        /* The next mount starts with empty fields while the SDK only reports validity
+                           once the shopper types, so validity must not outlive its form. */
+                        isFormValid = false;
+                        markCardFormInvalid(false);
+                    },
 
-                                window.rvvupLoader?.show();
-
-                                component.handleCallback(authorization, threeD);
-                            },
-                            errorCallback: function () {
-                                /** Hide loader */
-                                window.rvvupLoader?.hide();
-                                var url = window.BASE_URL + 'rvvup/payment/cancel' + '?form_key=' + hyva.getFormKey();
-                                fetch(
-                                    url,
-                                    {
-                                        method: 'post',
-                                        headers: {contentType: 'application/json'}
-                                    }
-                                )
-                            },
-                            translations: {
-                                "Card number": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'cardNumber', 'Card Number')) ?>',
-                                "Expiration date": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'expiryDate', 'Expiration Date')) ?>',
-                                "Security code": '<?= $escaper->escapeJs($magewire->getTranslation('label', 'securityCode', 'Security Code')) ?>',
-                                Pay: '<?= $escaper->escapeJs($magewire->getTranslation('button', 'pay', 'Pay')) ?>',
-                                Processing: '<?= $escaper->escapeJs($magewire->getTranslation('button', 'processing', 'Processing')) ?>',
-                                "Field is required":
-                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'fieldRequired', 'Field is required')) ?>',
-                                "Value is too short":
-                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'valueTooShort', 'Value is too short')) ?>',
-                                "Value mismatch pattern":
-                                    '<?= $escaper->escapeJs($magewire->getTranslation('error', 'valueMismatch', 'Value is invalid')) ?>',
-                            },
-                            styles: {
-                                "background-color-input": "#FFFFFF",
-                                "border-color-input": "#EBEBF2",
-                                "border-radius-input": "8px",
-                                "border-size-input": "1px",
-                                "color-input": "#050505",
-                                "border-color-input-error": "#ff4545",
-                                "color-label": "#050505",
-                                "position-left-label": "0.5rem",
-                                "font-size-label": "1.2rem",
-                                "font-size-message": "1rem",
-                                "space-outset-message": "0rem 0px 0px 0.5rem",
-                            },
-                        });
-
-                        ST.Components();
+                    validate: async function () {
+                        if (!isReady) {
+                            showError(messages.formUnavailable);
+                            return false;
+                        }
+                        if (!isFormValid) {
+                            showError(messages.invalidCardDetails);
+                            markCardFormInvalid(true);
+                            return false;
+                        }
+                        markCardFormInvalid(false);
+                        return true;
                     },
 
                     placeOrder: async function () {
-                        const component = Magewire.find(blockName);
-                        window.rvvupLoader?.show();
-
-                        await component.loadPaymentActions();
-
-                        if (!component.paymentActions || !component.paymentActions.authorization) {
-                            window.rvvupLoader?.hide();
-                            return;
+                        const card = await getCard().catch(() => null);
+                        if (card === null) {
+                            throw messages.formUnavailable;
                         }
 
-                        ST.updateJWT(component.paymentActions.authorization.value);
-                        document.getElementById('tp_place_order').click();
+                        window.rvvupLoader?.show();
+
+                        return new Promise((resolve, reject) => {
+                            activePayment = {
+                                redirectUrl: null,
+                                reject: (message) => {
+                                    window.rvvupLoader?.hide();
+                                    reject(message);
+                                }
+                            };
+
+                            card.update({paymentRequest: {total: getQuoteTotal()}});
+                            Promise.resolve(card.submit()).catch(() => failPayment(messages.failed));
+                        });
+                    },
+
+                    /* Without this Hyva only logs the failure to the console, leaving the shopper with
+                       a checkout that silently stops. */
+                    handleException: async function ({exception}) {
+                        showError(typeof exception === 'string' ? exception : messages.failed);
                     }
                 }
             });
