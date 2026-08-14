@@ -33,13 +33,16 @@ export default class Admin {
   async getOrderByIncrementId(incrementId) {
     await this.login();
 
-    const response = await this.page.request.get(this.origin() + "/rest/V1/orders", {
-      headers: { Authorization: `Bearer ${this.token}` },
-      params: {
-        "searchCriteria[filterGroups][0][filters][0][field]": "increment_id",
-        "searchCriteria[filterGroups][0][filters][0][value]": incrementId,
+    const response = await this.page.request.get(
+      this.origin() + "/rest/V1/orders",
+      {
+        headers: { Authorization: `Bearer ${this.token}` },
+        params: {
+          "searchCriteria[filterGroups][0][filters][0][field]": "increment_id",
+          "searchCriteria[filterGroups][0][filters][0][value]": incrementId,
+        },
       },
-    });
+    );
 
     expect(response.ok(), "Fetching order failed").toBeTruthy();
 
@@ -51,6 +54,35 @@ export default class Admin {
     ).toBeGreaterThan(0);
 
     return body.items[0];
+  }
+
+  async getOrdersByCustomerEmail(email) {
+    await this.login();
+
+    const response = await this.page.request.get(
+      this.origin() + "/rest/V1/orders",
+      {
+        headers: { Authorization: `Bearer ${this.token}` },
+        params: {
+          "searchCriteria[filterGroups][0][filters][0][field]":
+            "customer_email",
+          "searchCriteria[filterGroups][0][filters][0][value]": email,
+        },
+      },
+    );
+
+    expect(response.ok(), "Fetching orders failed").toBeTruthy();
+
+    return (await response.json()).items;
+  }
+
+  async expectNoOrderForCustomerEmail(email) {
+    const orders = await this.getOrdersByCustomerEmail(email);
+
+    expect(
+      orders.map((order) => `${order.increment_id} (${order.state})`),
+      `Expected no order for ${email}, the payment should not have been created`,
+    ).toEqual([]);
   }
 
   async expectOrderState(incrementId, expectedState) {

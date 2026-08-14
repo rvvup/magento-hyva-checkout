@@ -17,7 +17,10 @@ $modelViewModel = $viewModels->require(Modal::class);
 $modal = $modelViewModel->createModal()
     ->positionCenter()
     ->removeDialogClass('p-10', 'rounded-lg')
-    ->addDialogClass('relative rounded-xl flex flex-col text-center mx-8 sm:mx-16')
+    // "open:flex" rather than "flex": a plain display:flex overrides the browser its own
+    // dialog:not([open]) { display: none }, which leaves the closed modal on the page as an empty
+    // box on every checkout step.
+    ->addDialogClass('relative rounded-xl open:flex flex-col text-center mx-8 sm:mx-16')
     ->withAriaLabelledby('modal-title');
 ?>
 <div id="rvvup-modal" x-data="rvvupPaymentsHyvaCheckoutComponentPaymentModal">

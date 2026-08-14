@@ -4,16 +4,10 @@
 /** @var \Magento\Framework\Escaper $escaper */
 ?>
 <?php if ($magewire->showForm()): ?>
-    <div id="rvvup-card-form">
-        <form id="st-form" method="POST">
-            <div id="st-card-number" class="rvvup-card-field rvvup-card-number w-full"></div>
-
-            <div class="flex w-full flex-row">
-                <div id="st-expiration-date" class="rvvup-card-field rvvup-card-expiry mr-4 basis-1/2"></div>
-                <div id="st-security-code" class="rvvup-card-field rvvup-card-security-code ml-4 basis-1/2"></div>
-            </div>
-            <input type="submit" id="tp_place_order" class="hidden">
-        </form>
+    <?php /* wire:ignore keeps the mounted SDK iframes alive when Magewire re-renders the payment
+    step, for example after the shopper changes their address, shipping method or coupon. */ ?>
+    <div id="rvvup-card-form" wire:ignore>
+        <div id="rvvup-card-form-container" class="rvvup-card-form"></div>
     </div>
 <?php endif; ?>
 <?php if ($magewire->showFrame()): ?>
