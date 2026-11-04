@@ -59,6 +59,41 @@ test("renders the ZRF widget on the standard product page", async ({
   const container = page.locator("#rvvup-zrf-widget-container");
   await expect(container).toBeVisible();
   await expect(
-      container.getByText(/Or from £\d+\.\d{2} p\/m, at \d+\.\d{2}%/),
+    container.getByText(/Or from £\d+\.\d{2} p\/m, at \d+\.\d{2}%/),
   ).toBeVisible();
+});
+
+test("passes the bundle price, not 0.00, on a dynamic-price bundle", async ({
+  page,
+}) => {
+  await new GoTo(page).product.bundle();
+  const wrapper = page.locator("[data-product-id][data-amount]").filter({
+    has: page.locator("#rvvup-zrf-widget-container"),
+  });
+  await expect(wrapper).toHaveCount(1);
+  const amount = await wrapper.getAttribute("data-amount");
+  expect(Number(amount)).toBeGreaterThan(0);
+});
+
+test("starts the widget when inline scripts are moved away from the wrapper", async ({
+  page,
+}) => {
+  // Simulate a store that moves inline scripts to the end of <body>.
+  await page.route("**/fusion-backpack.html", async (route) => {
+    const response = await route.fetch();
+    let html = await response.text();
+    const re =
+      /<script>\s*\(function \(\) \{\s*const container = [\s\S]*?<\/script>/;
+    const match = html.match(re);
+    expect(match).not.toBeNull();
+    html = html.replace(re, "").replace("</body>", match[0] + "</body>");
+    await route.fulfill({ response, body: html });
+  });
+  const errors = [];
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  await new GoTo(page).product.standard("medium-priced");
+  const container = page.locator("#rvvup-zrf-widget-container");
+  await expect(container).toBeVisible();
+  await expect(container.getByText(/p\/m/).first()).toBeVisible();
+  expect(errors.join("\n")).not.toContain("total is not available");
 });

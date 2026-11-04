@@ -26,6 +26,10 @@ class GoToProduct {
     await this.page.goto(this.standardProducts[productType]);
   }
 
+  async bundle() {
+    await this.page.goto("./sprite-yoga-companion-kit.html");
+  }
+
   async configurable() {
     await this.page.goto("./hero-hoodie.html");
   }
