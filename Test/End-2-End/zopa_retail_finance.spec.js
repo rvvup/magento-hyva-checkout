@@ -116,6 +116,7 @@ test("passes the VAT-inclusive price when catalogue prices exclude VAT", async (
 
 test("updates the widget when bundle options change", async ({ page }) => {
   await new GoTo(page).product.bundle();
+  await page.waitForLoadState("networkidle");
   const container = page.locator("#rvvup-zrf-widget-container");
 
   // Hyva fires update-product-final-price / update-bundle-option-prices for
