@@ -97,3 +97,38 @@ test("starts the widget when inline scripts are moved away from the wrapper", as
   await expect(container.getByText(/p\/m/).first()).toBeVisible();
   expect(errors.join("\n")).not.toContain("total is not available");
 });
+
+test("passes the VAT-inclusive price when catalogue prices exclude VAT", async ({
+  page,
+}) => {
+  // 24-MB03 is stored as 825.00 ex-VAT and displayed as 990.00 inc. 20% VAT
+  await new GoTo(page).product.standard("ex-vat");
+  await expect(page.getByText("£990.00").first()).toBeVisible();
+  const wrapper = page.locator("[data-product-id][data-amount]").filter({
+    has: page.locator("#rvvup-zrf-widget-container"),
+  });
+  await expect(wrapper).toHaveAttribute("data-amount", "990.00");
+  await expect(page.locator("#rvvup-zrf-widget-container")).toBeVisible();
+  await expect(
+    page.locator("#rvvup-zrf-widget-container").getByText(/p\/m/).first(),
+  ).toBeVisible();
+});
+
+test("updates the widget when bundle options change", async ({ page }) => {
+  await new GoTo(page).product.bundle();
+  const container = page.locator("#rvvup-zrf-widget-container");
+  await expect(container).toBeVisible();
+  await expect.poll(() => monthlyPrice(container)).toMatch(/p\/m/);
+  const initialMonthly = await monthlyPrice(container);
+
+  // Hyva fires update-product-final-price / update-bundle-option-prices for
+  // bundles, not update-prices-<productId>.
+  const radios = page.locator("input[type=radio][name^=bundle_option]");
+  for (let i = 0; i < (await radios.count()); i++) {
+    await radios.nth(i).check({ force: true });
+    await page.waitForTimeout(400);
+  }
+
+  await expect(container).toBeVisible();
+  await expect.poll(() => monthlyPrice(container)).not.toBe(initialMonthly);
+});

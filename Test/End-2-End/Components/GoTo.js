@@ -19,6 +19,7 @@ class GoToProduct {
     this.standardProducts = {
       cheap: "./affirm-water-bottle.html",
       "medium-priced": "./fusion-backpack.html",
+      "ex-vat": "./crown-summit-backpack.html",
     };
   }
 

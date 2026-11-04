@@ -60,12 +60,9 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                     updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
                 });
                 // Hyva bundle products do not fire update-prices-<id>.
-                window.addEventListener('update-product-final-price', (e) => {
-                    updateAmount(typeof e.detail === 'object' ? e.detail?.finalPrice?.amount ?? e.detail?.amount : e.detail);
-                });
-                window.addEventListener('update-bundle-option-prices', (e) => {
-                    updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
-                });
+                const amountFrom = (d) => (d !== null && typeof d === 'object') ? (d.finalPrice?.amount ?? d.finalPrice ?? d.amount ?? d.price) : d;
+                window.addEventListener('update-product-final-price', (e) => updateAmount(amountFrom(e.detail)));
+                window.addEventListener('update-bundle-option-prices', (e) => updateAmount(amountFrom(e.detail)));
                 })();
             </script>
             <?php $hyvaCsp->registerInlineScript() ?>
@@ -104,12 +101,9 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                     updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
                 });
                 // Hyva bundle products do not fire update-prices-<id>.
-                window.addEventListener('update-product-final-price', (e) => {
-                    updateAmount(typeof e.detail === 'object' ? e.detail?.finalPrice?.amount ?? e.detail?.amount : e.detail);
-                });
-                window.addEventListener('update-bundle-option-prices', (e) => {
-                    updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
-                });
+                const amountFrom = (d) => (d !== null && typeof d === 'object') ? (d.finalPrice?.amount ?? d.finalPrice ?? d.amount ?? d.price) : d;
+                window.addEventListener('update-product-final-price', (e) => updateAmount(amountFrom(e.detail)));
+                window.addEventListener('update-bundle-option-prices', (e) => updateAmount(amountFrom(e.detail)));
                 })();
             </script>
             <?php $hyvaCsp->registerInlineScript() ?>

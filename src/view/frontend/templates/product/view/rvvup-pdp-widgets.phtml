@@ -68,13 +68,12 @@ if ($isRestricted) {
             window.addEventListener('update-prices-' + productId, (e) => {
                 applyAmount(e.detail?.finalPrice?.amount);
             });
-            // Hyva bundle products do not fire update-prices-<id>.
-            window.addEventListener('update-product-final-price', (e) => {
-                applyAmount(typeof e.detail === 'object' ? e.detail?.finalPrice?.amount ?? e.detail?.amount : e.detail);
-            });
-            window.addEventListener('update-bundle-option-prices', (e) => {
-                applyAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
-            });
+            // Hyva bundle products do not fire update-prices-<id>. They fire
+            // update-product-final-price (detail: number) and update-bundle-option-prices
+            // (detail: {oldPrice: number, finalPrice: number}).
+            const amountFrom = (d) => (d !== null && typeof d === 'object') ? (d.finalPrice?.amount ?? d.finalPrice ?? d.amount ?? d.price) : d;
+            window.addEventListener('update-product-final-price', (e) => applyAmount(amountFrom(e.detail)));
+            window.addEventListener('update-bundle-option-prices', (e) => applyAmount(amountFrom(e.detail)));
 
             if (!window.rvvup_sdk) {
                 return;
