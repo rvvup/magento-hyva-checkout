@@ -117,18 +117,20 @@ test("passes the VAT-inclusive price when catalogue prices exclude VAT", async (
 test("updates the widget when bundle options change", async ({ page }) => {
   await new GoTo(page).product.bundle();
   const container = page.locator("#rvvup-zrf-widget-container");
-  await expect(container).toBeVisible();
-  await expect.poll(() => monthlyPrice(container)).toMatch(/p\/m/);
-  const initialMonthly = await monthlyPrice(container);
 
   // Hyva fires update-product-final-price / update-bundle-option-prices for
   // bundles, not update-prices-<productId>.
-  const radios = page.locator("input[type=radio][name^=bundle_option]");
-  for (let i = 0; i < (await radios.count()); i++) {
-    await radios.nth(i).check({ force: true });
-    await page.waitForTimeout(400);
-  }
+  const firstRadio = page
+    .locator("input[type=radio][name='bundle_option[1]']")
+    .first();
+  const qty = page.locator("input[name='bundle_option_qty[1]']");
+  await firstRadio.check({ force: true });
 
+  await qty.fill("3");
   await expect(container).toBeVisible();
-  await expect.poll(() => monthlyPrice(container)).not.toBe(initialMonthly);
+  await expect.poll(() => monthlyPrice(container)).toMatch(/p\/m/);
+  const monthlyAtThree = await monthlyPrice(container);
+
+  await qty.fill("4");
+  await expect.poll(() => monthlyPrice(container)).not.toBe(monthlyAtThree);
 });
