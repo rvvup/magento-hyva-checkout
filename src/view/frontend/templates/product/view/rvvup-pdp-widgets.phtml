@@ -3,6 +3,7 @@
  * @var \Magento\Catalog\Block\Product\View $block
  * @var \Magento\Framework\Escaper $escaper
  * @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ * @var \Hyva\Theme\Model\ViewModelRegistry $viewModels
  */
 /** Magento 2.3.5 backward compatibility fix */
 if (!isset($escaper)) {
@@ -14,20 +15,27 @@ if ($product === null) {
     return;
 }
 
-$initialPrice = number_format($product->getFinalPrice(), 2, '.', '');
+/** @var \Rvvup\PaymentsHyvaCheckout\ViewModel\ProductAmount $productAmount */
+$productAmount = $viewModels->require(\Rvvup\PaymentsHyvaCheckout\ViewModel\ProductAmount::class);
+$initialPrice = $productAmount->getAmount($product);
+$wrapperId = 'rvvup-zrf-widget-wrapper-' . (int) $product->getId();
 $currencyCode = $block->getProduct()->getStore()->getCurrentCurrencyCode();
 $isRestricted = (bool) $product->getRvvupRestricted();
 if ($isRestricted) {
     return;
 }
 ?>
-<div data-currency="<?= $escaper->escapeHtmlAttr($currencyCode) ?>"
+<div id="<?= $escaper->escapeHtmlAttr($wrapperId) ?>"
+     data-currency="<?= $escaper->escapeHtmlAttr($currencyCode) ?>"
      data-amount="<?= $escaper->escapeHtmlAttr($initialPrice) ?>"
      data-product-id="<?= $escaper->escapeHtmlAttr($product->getId()) ?>">
     <div id="rvvup-zrf-widget-container"></div>
     <script>
         (function () {
-            const container = document.currentScript.parentElement;
+            const container = document.getElementById('<?= $escaper->escapeJs($wrapperId) ?>');
+            if (!container) {
+                return;
+            }
             const currency = container.dataset.currency;
             const productId = container.dataset.productId;
             const createdAmount = container.dataset.amount;
@@ -45,17 +53,27 @@ if ($isRestricted) {
 
             // Register the price listener synchronously so a swatch change made before
             // the widget finishes loading is not lost (Clearpay and PayPal do the same).
-            window.addEventListener('update-prices-' + productId, async (e) => {
-                const amount = e.detail?.finalPrice?.amount;
-                if (amount === undefined || amount === null) {
+            const applyAmount = async (amount) => {
+                if (amount === undefined || amount === null || isNaN(Number(amount))) {
                     return;
                 }
-                latestAmount = amount.toString();
+                latestAmount = Number(amount).toFixed(2);
                 if (readyWidget === null) {
                     return;
                 }
                 readyWidget.update({total: {amount: latestAmount, currency: currency}});
                 await showHideWidget(readyWidget);
+            };
+
+            window.addEventListener('update-prices-' + productId, (e) => {
+                applyAmount(e.detail?.finalPrice?.amount);
+            });
+            // Hyva bundle products do not fire update-prices-<id>.
+            window.addEventListener('update-product-final-price', (e) => {
+                applyAmount(typeof e.detail === 'object' ? e.detail?.finalPrice?.amount ?? e.detail?.amount : e.detail);
+            });
+            window.addEventListener('update-bundle-option-prices', (e) => {
+                applyAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
             });
 
             if (!window.rvvup_sdk) {
@@ -76,12 +94,17 @@ if ($isRestricted) {
                     if (!el) {
                         return;
                     }
-                    await widget.mount({selector: el});
-                    readyWidget = widget;
-                    if (latestAmount !== createdAmount) {
-                        widget.update({total: {amount: latestAmount, currency: currency}});
+                    try {
+                        await widget.mount({selector: el});
+                        readyWidget = widget;
+                        if (latestAmount !== createdAmount) {
+                            widget.update({total: {amount: latestAmount, currency: currency}});
+                        }
+                        await showHideWidget(widget);
+                    } catch (error) {
+                        el.style.display = "none";
+                        console.error("Error mounting Rvvup widget:", error);
                     }
-                    await showHideWidget(widget);
                 });
             }).catch((error) => {
                 console.error("Error creating Rvvup widget:", error);
