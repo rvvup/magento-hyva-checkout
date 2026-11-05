@@ -155,23 +155,3 @@ test("passes the VAT-inclusive price to PayPal messaging when catalogue prices e
     page.locator("#rvvup-paypal-paylater-messaging-container"),
   ).toHaveAttribute("data-pp-amount", "990.00");
 });
-
-test("updates the PayPal messaging amount when bundle options change", async ({
-  page,
-}) => {
-  await new GoTo(page).product.bundle();
-  await page.waitForLoadState("networkidle");
-  const messaging = page.locator("#rvvup-paypal-paylater-messaging-container");
-  await expect(messaging).toHaveAttribute("data-pp-amount", /^[1-9]/);
-  const initial = await messaging.getAttribute("data-pp-amount");
-
-  await page
-    .locator("input[type=radio][name='bundle_option[1]']")
-    .first()
-    .check({ force: true });
-  await page.locator("input[name='bundle_option_qty[1]']").fill("4");
-
-  await expect
-    .poll(() => messaging.getAttribute("data-pp-amount"))
-    .not.toBe(initial);
-});

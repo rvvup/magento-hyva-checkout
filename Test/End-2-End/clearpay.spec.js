@@ -164,10 +164,14 @@ test("passes the VAT-inclusive price to Clearpay when catalogue prices exclude V
   page,
 }) => {
   await new GoTo(page).product.standard("ex-vat");
-  await expect(page.locator("#clearpay-summary")).toHaveAttribute(
-    "data-amount",
-    "990.00",
-  );
+  // The Afterpay script may rewrite the attribute without decimals, so compare numerically.
+  await expect
+    .poll(async () =>
+      Number(
+        await page.locator("#clearpay-summary").getAttribute("data-amount"),
+      ),
+    )
+    .toBe(990);
 });
 
 test("updates the Clearpay amount when bundle options change", async ({
