@@ -44,7 +44,7 @@ if ($isRestricted) {
             let readyWidget = null;
 
             const showHideWidget = async function (widget) {
-                const el = document.getElementById("rvvup-zrf-widget-container");
+                const el = container.querySelector("#rvvup-zrf-widget-container");
                 if (!el) {
                     return;
                 }
@@ -89,7 +89,7 @@ if ($isRestricted) {
                 },
             }).then((widget) => {
                 widget.on("ready", async () => {
-                    const el = document.getElementById("rvvup-zrf-widget-container");
+                    const el = container.querySelector("#rvvup-zrf-widget-container");
                     if (!el) {
                         return;
                     }

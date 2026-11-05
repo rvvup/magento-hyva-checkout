@@ -26,24 +26,39 @@ try {
     $config->save('tax/display/type', 2);
     $config->save('tax/defaults/country', 'GB');
 
-    $classRepo = $obj->get("Magento\Tax\Api\TaxClassRepositoryInterface");
-    $class = $obj->create("Magento\Tax\Api\Data\TaxClassInterface");
-    $class->setClassName('ZRF Ex-VAT')->setClassType('PRODUCT');
-    $classId = $classRepo->save($class);
+    // Idempotent: reuse the tax class, rate and rule when the script has already run.
+    $classCollection = $obj->create("Magento\Tax\Model\ResourceModel\TaxClass\Collection")
+        ->addFieldToFilter('class_name', 'ZRF Ex-VAT')
+        ->addFieldToFilter('class_type', 'PRODUCT');
+    $existingClass = $classCollection->getFirstItem();
+    if ($existingClass->getId()) {
+        $classId = (int) $existingClass->getId();
+    } else {
+        $classRepo = $obj->get("Magento\Tax\Api\TaxClassRepositoryInterface");
+        $class = $obj->create("Magento\Tax\Api\Data\TaxClassInterface");
+        $class->setClassName('ZRF Ex-VAT')->setClassType('PRODUCT');
+        $classId = (int) $classRepo->save($class);
+    }
 
-    $rateRepo = $obj->get("Magento\Tax\Api\TaxRateRepositoryInterface");
-    $rate = $obj->create("Magento\Tax\Api\Data\TaxRateInterface");
-    $rate->setTaxCountryId('GB')->setTaxRegionId(0)->setTaxPostcode('*')
-        ->setCode('ZRF-VAT-20')->setRate(20);
-    $rate = $rateRepo->save($rate);
+    $rate = $obj->create("Magento\Tax\Model\Calculation\Rate")->loadByCode('ZRF-VAT-20');
+    if (!$rate->getId()) {
+        $rateRepo = $obj->get("Magento\Tax\Api\TaxRateRepositoryInterface");
+        $rate = $obj->create("Magento\Tax\Api\Data\TaxRateInterface");
+        $rate->setTaxCountryId('GB')->setTaxRegionId(0)->setTaxPostcode('*')
+            ->setCode('ZRF-VAT-20')->setRate(20);
+        $rate = $rateRepo->save($rate);
+    }
 
-    $ruleRepo = $obj->get("Magento\Tax\Api\TaxRuleRepositoryInterface");
-    $rule = $obj->create("Magento\Tax\Api\Data\TaxRuleInterface");
-    $rule->setCode('ZRF-VAT-20')->setPriority(0)
-        ->setCustomerTaxClassIds([3])
-        ->setProductTaxClassIds([$classId])
-        ->setTaxRateIds([$rate->getId()]);
-    $ruleRepo->save($rule);
+    $ruleExists = $obj->create("Magento\Tax\Model\Calculation\Rule")->load('ZRF-VAT-20', 'code')->getId();
+    if (!$ruleExists) {
+        $ruleRepo = $obj->get("Magento\Tax\Api\TaxRuleRepositoryInterface");
+        $rule = $obj->create("Magento\Tax\Api\Data\TaxRuleInterface");
+        $rule->setCode('ZRF-VAT-20')->setPriority(0)
+            ->setCustomerTaxClassIds([3])
+            ->setProductTaxClassIds([$classId])
+            ->setTaxRateIds([$rate->getId()]);
+        $ruleRepo->save($rule);
+    }
 
     $repo = $obj->get("Magento\Catalog\Api\ProductRepositoryInterface");
     $product = $repo->get($sku);
