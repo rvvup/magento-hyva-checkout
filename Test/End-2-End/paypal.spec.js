@@ -123,30 +123,28 @@ test("renders the paypal widget on the configurable product page", async ({
   page,
 }) => {
   // PayPal's sandbox varies the message copy (e.g. "Pay in 30 days" vs "Pay in 3 ..."), so
-  // assert on the amount the module asks PayPal to message for rather than on PayPal's wording.
-  const messageRequestFor = (amount) =>
-    page.waitForRequest((request) => {
-      const url = new URL(request.url());
-      return (
-        url.pathname.endsWith("/credit-presentment/smart/message") &&
-        url.searchParams.get("amount") === amount
-      );
-    });
+  // assert on the amount the module last asked PayPal to message for rather than on its wording.
+  const amounts = [];
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.pathname.endsWith("/credit-presentment/smart/message")) {
+      amounts.push(url.searchParams.get("amount"));
+    }
+  });
+  const lastAmount = () => amounts[amounts.length - 1];
 
   await new GoTo(page).product.configurable();
 
-  const xsBlackRequest = messageRequestFor("45");
   await selectSwatch(page, "XS");
 
   await selectSwatch(page, "Black");
 
-  await xsBlackRequest;
+  await expect.poll(lastAmount).toBe("45");
   await expect(
     page.locator(".rvvup-paypal-paylater-messaging-container iframe").first(),
   ).toBeVisible();
 
-  const sRequest = messageRequestFor("100");
   await selectSwatch(page, "S");
 
-  await sRequest;
+  await expect.poll(lastAmount).toBe("100");
 });
