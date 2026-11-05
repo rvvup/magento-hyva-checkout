@@ -1,3 +1,4 @@
+import { rvvupModalFrame } from "./Components/RvvupModal";
 import { test, expect } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
@@ -19,7 +20,7 @@ test.skip("Can place an order using the credit card modal", async ({
   await page.getByRole("button", { name: "Place order" }).click();
 
   // Credit card form
-  const frame = page.frameLocator("iframe.rvvup-modal");
+  const frame = rvvupModalFrame(page);
   await frame
     .frameLocator(".st-card-number-iframe")
     .getByLabel("Card Number")

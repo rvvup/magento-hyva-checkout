@@ -1,3 +1,4 @@
+import { rvvupModalFrame } from "./Components/RvvupModal";
 import { expect, test } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 import Cart from "./Components/Cart";
@@ -26,7 +27,7 @@ test.skip("Can place an order", async ({ page, browser }) => {
 
   await visitCheckoutPayment.loadersShouldBeHidden();
 
-  const frame = page.frameLocator("iframe.rvvup-modal");
+  const frame = rvvupModalFrame(page);
   await frame.getByRole("button", { name: "Accept All" }).click();
 
   await frame
