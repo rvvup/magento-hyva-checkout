@@ -122,25 +122,31 @@ test("renders the paypal widget on the standard product page", async ({
 test("renders the paypal widget on the configurable product page", async ({
   page,
 }) => {
+  // PayPal's sandbox varies the message copy (e.g. "Pay in 30 days" vs "Pay in 3 ..."), so
+  // assert on the amount the module asks PayPal to message for rather than on PayPal's wording.
+  const messageRequestFor = (amount) =>
+    page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname.endsWith("/credit-presentment/smart/message") &&
+        url.searchParams.get("amount") === amount
+      );
+    });
+
   await new GoTo(page).product.configurable();
 
+  const xsBlackRequest = messageRequestFor("45");
   await selectSwatch(page, "XS");
 
   await selectSwatch(page, "Black");
 
+  await xsBlackRequest;
   await expect(
-    page
-      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
-      .first()
-      .getByText("Pay in 3 interest-free payments of £15.00"),
+    page.locator(".rvvup-paypal-paylater-messaging-container iframe").first(),
   ).toBeVisible();
 
+  const sRequest = messageRequestFor("100");
   await selectSwatch(page, "S");
 
-  await expect(
-    page
-      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
-      .first()
-      .getByText("Pay in 3 interest-free payments of £33.34"),
-  ).toBeVisible();
+  await sRequest;
 });
