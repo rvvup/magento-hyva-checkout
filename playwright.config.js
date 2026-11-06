@@ -44,6 +44,18 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // The test store is served over plain HTTP, which is not a secure context.
+        // Trust Payments' ST.js (js/latest) calls crypto.randomUUID(), which only
+        // exists in secure contexts, so treat the test origin as secure like HTTPS.
+        // The flag is ignored by the default headless shell, so use new headless.
+        channel: 'chromium',
+        launchOptions: {
+          args: process.env.TEST_BASE_URL
+            ? [`--unsafely-treat-insecure-origin-as-secure=${new URL(process.env.TEST_BASE_URL).origin}`]
+            : [],
+        },
+      },
     }]
 });
