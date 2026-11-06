@@ -12,3 +12,6 @@ php /rvvup/scripts/php/update-prices.php 24-UG06 7
 
 # Standard Product 2: medium-priced
 php /rvvup/scripts/php/update-prices.php 24-MB02 150
+
+# Ex-VAT product: 825 excluding 20% VAT is 990 including VAT
+php /rvvup/scripts/php/setup-ex-vat-product.php 24-MB03 825

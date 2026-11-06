@@ -3,6 +3,7 @@
  * @var \Magento\Catalog\Block\Product\View $block
  * @var \Magento\Framework\Escaper $escaper
  * @var Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ * @var \Hyva\Theme\Model\ViewModelRegistry $viewModels
  * @var \Rvvup\PaymentsHyvaCheckout\Magewire\Product\View\Addtocart $magewire
  */
 
@@ -20,7 +21,9 @@ $restrictions = $block->getData('restrictions');
 /** @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel */
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
 
-$initialPrice = number_format($product->getFinalPrice(), 2, '.', '');
+/** @var \Rvvup\PaymentsHyvaCheckout\ViewModel\ProductAmount $productAmount */
+$productAmount = $viewModels->require(\Rvvup\PaymentsHyvaCheckout\ViewModel\ProductAmount::class);
+$initialPrice = $productAmount->getAmount($product);
 $currencyCode = $block->getProduct()->getStore()->getCurrentCurrencyCode();
 $thresholds = $clearpay->getThresholds($product);
 $isRestricted = (bool)$product->getRvvupRestricted();
@@ -43,15 +46,24 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                                 data-modal-theme="<?= $escaper->escapeHtmlAttr($clearpay->getModalTheme('product')) ?>"
             ></afterpay-placement>
             <script>
-                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
-                    const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
+                (function () {
+                const updateAmount = (newPrice) => {
+                    newPrice = Number(newPrice);
                     if (newPrice) {
                         const clearpayPlacement = document.getElementById('clearpay-summary');
                         if (clearpayPlacement) {
-                            clearpayPlacement.setAttribute('data-amount', newPrice.toString());
+                            clearpayPlacement.setAttribute('data-amount', newPrice.toFixed(2));
                         }
                     }
+                };
+                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
+                    updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
                 });
+                // Hyva bundle products do not fire update-prices-<id>.
+                const amountFrom = (d) => (d !== null && typeof d === 'object') ? (d.finalPrice?.amount ?? d.finalPrice ?? d.amount ?? d.price) : d;
+                window.addEventListener('update-product-final-price', (e) => updateAmount(amountFrom(e.detail)));
+                window.addEventListener('update-bundle-option-prices', (e) => updateAmount(amountFrom(e.detail)));
+                })();
             </script>
             <?php $hyvaCsp->registerInlineScript() ?>
         </div>
@@ -75,15 +87,24 @@ $isRestricted = (bool)$product->getRvvupRestricted();
                  data-pp-style-ratio="<?= $escaper->escapeHtmlAttr($paypalViewModel->getPayLaterMessagingValue('ratio')) ?>"
             ></div>
             <script>
-                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
-                    const newPrice = e.detail?.finalPrice?.amount ?? e.detail?.price;
+                (function () {
+                const updateAmount = (newPrice) => {
+                    newPrice = Number(newPrice);
                     if (newPrice) {
                         const paypalMessaging = document.getElementById('rvvup-paypal-paylater-messaging-container');
                         if (paypalMessaging) {
-                            paypalMessaging.setAttribute('data-pp-amount', newPrice.toString());
+                            paypalMessaging.setAttribute('data-pp-amount', newPrice.toFixed(2));
                         }
                     }
+                };
+                window.addEventListener('update-prices-<?= $escaper->escapeJs($product->getId()); ?>', (e) => {
+                    updateAmount(e.detail?.finalPrice?.amount ?? e.detail?.price);
                 });
+                // Hyva bundle products do not fire update-prices-<id>.
+                const amountFrom = (d) => (d !== null && typeof d === 'object') ? (d.finalPrice?.amount ?? d.finalPrice ?? d.amount ?? d.price) : d;
+                window.addEventListener('update-product-final-price', (e) => updateAmount(amountFrom(e.detail)));
+                window.addEventListener('update-bundle-option-prices', (e) => updateAmount(amountFrom(e.detail)));
+                })();
             </script>
             <?php $hyvaCsp->registerInlineScript() ?>
         </div>

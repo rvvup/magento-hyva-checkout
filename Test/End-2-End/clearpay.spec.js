@@ -160,3 +160,37 @@ test("renders the Clearpay widget in the checkout", async ({ page }) => {
   await page.getByLabel("Clearpay logo - Opens a dialog").click();
   await expect(page.locator(".afterpay-modal-overlay")).toBeVisible();
 });
+
+test("passes the VAT-inclusive price to Clearpay when catalogue prices exclude VAT", async ({
+  page,
+}) => {
+  await new GoTo(page).product.standard("ex-vat");
+  // The Afterpay script may rewrite the attribute without decimals, so compare numerically.
+  await expect
+    .poll(async () =>
+      Number(
+        await page.locator("#clearpay-summary").getAttribute("data-amount"),
+      ),
+    )
+    .toBe(990);
+});
+
+test("updates the Clearpay amount when bundle options change", async ({
+  page,
+}) => {
+  await new GoTo(page).product.bundle();
+  await page.waitForLoadState("networkidle");
+  const placement = page.locator("#clearpay-summary");
+  await expect(placement).toHaveAttribute("data-amount", /^[1-9]/);
+  const initial = await placement.getAttribute("data-amount");
+
+  await page
+    .locator("input[type=radio][name='bundle_option[1]']")
+    .first()
+    .check({ force: true });
+  await page.locator("input[name='bundle_option_qty[1]']").fill("4");
+
+  await expect
+    .poll(() => placement.getAttribute("data-amount"))
+    .not.toBe(initial);
+});

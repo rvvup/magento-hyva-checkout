@@ -19,11 +19,16 @@ class GoToProduct {
     this.standardProducts = {
       cheap: "./affirm-water-bottle.html",
       "medium-priced": "./fusion-backpack.html",
+      "ex-vat": "./crown-summit-backpack.html",
     };
   }
 
   async standard(productType = "cheap") {
     await this.page.goto(this.standardProducts[productType]);
+  }
+
+  async bundle() {
+    await this.page.goto("./sprite-yoga-companion-kit.html");
   }
 
   async configurable() {
