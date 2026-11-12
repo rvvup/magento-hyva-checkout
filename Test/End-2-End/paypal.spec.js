@@ -75,7 +75,9 @@ test("Can place an order from the product page using PayPal", async ({
 
   await visitCheckoutPayment.loadersShouldBeHidden();
 
-  await page.getByRole('button', { name: 'Proceed to Review & Payments' }).click();
+  await page
+    .getByRole("button", { name: "Proceed to Review & Payments" })
+    .click();
 
   await expect(
     page.getByRole("heading", { name: "Payment Method" }),
@@ -147,4 +149,13 @@ test("renders the paypal widget on the configurable product page", async ({
   await selectSwatch(page, "S");
 
   await expect.poll(lastAmount).toBe("100");
+});
+
+test("passes the VAT-inclusive price to PayPal messaging when catalogue prices exclude VAT", async ({
+  page,
+}) => {
+  await new GoTo(page).product.standard("ex-vat");
+  await expect(
+    page.locator("#rvvup-paypal-paylater-messaging-container"),
+  ).toHaveAttribute("data-pp-amount", "990.00");
 });

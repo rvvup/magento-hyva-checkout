@@ -4,6 +4,7 @@
  * @var \Rvvup\Payments\ViewModel\PayPal $paypalViewModel
  * @var \Magento\Framework\Escaper $escaper
  * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ * @var \Hyva\Theme\Model\ViewModelRegistry $viewModels
  */
 
 $paypalViewModel = $block->getData('rvvup_payments_paypal_view_model');
@@ -18,7 +19,7 @@ $product = $block->getProduct();
 if ($product) {
     if ($paypalViewModel === null ||
         !$paypalViewModel->canUseForProductType($product) ||
-        !$paypalViewModel->isAvailable((string)$product->getFinalPrice())
+        !$paypalViewModel->isAvailable($viewModels->require(\Rvvup\PaymentsHyvaCheckout\ViewModel\ProductAmount::class)->getAmount($product))
     ) {
         // This is required for magewire
         echo '<div></div>';
