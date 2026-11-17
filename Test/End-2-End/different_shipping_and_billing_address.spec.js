@@ -1,3 +1,4 @@
+import { rvvupModalFrame } from "./Components/RvvupModal";
 import { test, expect } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
@@ -27,7 +28,7 @@ test("Can place an order using different billing and shipping address", async ({
   await page.getByRole("button", { name: "Place order" }).click();
 
   // Bank Selector
-  const frame = page.frameLocator("iframe.rvvup-modal");
+  const frame = rvvupModalFrame(page);
   await frame.getByLabel("Mock Bank").click();
   await frame.getByRole("button", { name: "Continue on desktop" }).click();
 

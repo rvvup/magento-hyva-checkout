@@ -1,3 +1,4 @@
+import { rvvupModalFrame } from "./Components/RvvupModal";
 import { test, expect } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
 
@@ -12,7 +13,7 @@ test("Can place an order using pay by bank", async ({ page, browser }) => {
   await page.waitForTimeout(3000);
   await page.getByRole("button", { name: "Place order" }).click();
 
-  const frame = page.frameLocator("iframe.rvvup-modal");
+  const frame = rvvupModalFrame(page);
   await frame.getByLabel("Mock Bank").click();
   await frame.getByRole("button", { name: "Continue on desktop" }).click();
 
@@ -44,7 +45,7 @@ test("Prevent close is handled on bank selection screen and can only be closed b
   await page.waitForTimeout(3000);
   await page.getByRole("button", { name: "Place order" }).click();
 
-  const frame = page.frameLocator("iframe.rvvup-modal");
+  const frame = rvvupModalFrame(page);
   await expect(frame.getByLabel("Mock Bank")).toBeVisible();
 
   const modalIframe = page.locator("#rvvup-modal iframe.rvvup-modal");

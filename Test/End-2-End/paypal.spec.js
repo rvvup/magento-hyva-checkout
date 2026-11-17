@@ -75,7 +75,9 @@ test("Can place an order from the product page using PayPal", async ({
 
   await visitCheckoutPayment.loadersShouldBeHidden();
 
-  await page.getByRole('button', { name: 'Proceed to Review & Payments' }).click();
+  await page
+    .getByRole("button", { name: "Proceed to Review & Payments" })
+    .click();
 
   await expect(
     page.getByRole("heading", { name: "Payment Method" }),
@@ -122,25 +124,38 @@ test("renders the paypal widget on the standard product page", async ({
 test("renders the paypal widget on the configurable product page", async ({
   page,
 }) => {
+  // PayPal's sandbox varies the message copy (e.g. "Pay in 30 days" vs "Pay in 3 ..."), so
+  // assert on the amount the module last asked PayPal to message for rather than on its wording.
+  const amounts = [];
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.pathname.endsWith("/credit-presentment/smart/message")) {
+      amounts.push(url.searchParams.get("amount"));
+    }
+  });
+  const lastAmount = () => amounts[amounts.length - 1];
+
   await new GoTo(page).product.configurable();
 
   await selectSwatch(page, "XS");
 
   await selectSwatch(page, "Black");
 
+  await expect.poll(lastAmount).toBe("45");
   await expect(
-    page
-      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
-      .first()
-      .getByText("Pay in 3 interest-free payments of £15.00"),
+    page.locator(".rvvup-paypal-paylater-messaging-container iframe").first(),
   ).toBeVisible();
 
   await selectSwatch(page, "S");
 
+  await expect.poll(lastAmount).toBe("100");
+});
+
+test("passes the VAT-inclusive price to PayPal messaging when catalogue prices exclude VAT", async ({
+  page,
+}) => {
+  await new GoTo(page).product.standard("ex-vat");
   await expect(
-    page
-      .frameLocator(".rvvup-paypal-paylater-messaging-container iframe")
-      .first()
-      .getByText("Pay in 3 interest-free payments of £33.34"),
-  ).toBeVisible();
+    page.locator("#rvvup-paypal-paylater-messaging-container"),
+  ).toHaveAttribute("data-pp-amount", "990.00");
 });
