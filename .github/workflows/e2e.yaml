@@ -45,7 +45,19 @@ jobs:
         run: bash scripts/helpers/wait-for-server-startup.sh
 
       - name: Run Playwright tests
-        run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test
+        run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test --grep-invert @excluding-tax
+
+      # The tests above run with prices displayed including tax. Magento's default is excluding tax, which is a
+      # separate code path on the product page, so run the tests that need it in a second pass.
+      - name: Display prices excluding tax
+        if: ${{ !cancelled() }}
+        run: |
+          docker compose exec -T -w /bitnami/magento magento bin/magento config:set tax/display/type 1
+          docker compose exec -T -w /bitnami/magento magento bin/magento cache:flush
+
+      - name: Run Playwright tests (prices displayed excluding tax)
+        if: ${{ !cancelled() }}
+        run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test --grep @excluding-tax
 
       - name: Prepare logs
         if: always()
