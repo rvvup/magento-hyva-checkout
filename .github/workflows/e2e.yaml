@@ -57,6 +57,9 @@ jobs:
 
       - name: Run Playwright tests (prices displayed excluding tax)
         if: ${{ !cancelled() }}
+        # Own report folder, otherwise this run replaces the report (and the traces) of the main run.
+        env:
+          PLAYWRIGHT_HTML_REPORT: playwright-report-excluding-tax
         run: TEST_BASE_URL=http://local.dev.rvvuptech.com:89 npx playwright test --grep @excluding-tax
 
       - name: Prepare logs
@@ -71,4 +74,5 @@ jobs:
           name: results-${{ matrix.MAGENTO_VERSION }}-${{ matrix.HYVA_CHECKOUT_VERSION }}-${{ github.run_number }}
           path: |
             playwright-report/
+            playwright-report-excluding-tax/
             logs/
