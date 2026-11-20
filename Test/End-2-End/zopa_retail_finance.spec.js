@@ -114,6 +114,21 @@ test("passes the VAT-inclusive price when catalogue prices exclude VAT", async (
   ).toBeVisible();
 });
 
+// Magento's default is to display prices excluding tax (tax/display/type = 1). The main run uses
+// tax/display/type = 2, so this test only runs in the separate "excluding tax" pass, after the store
+// is configured for it (see the workflow and scripts/run-e2e-tests.sh): npx playwright test --grep @excluding-tax
+test("passes the VAT-inclusive price when the store displays prices excluding VAT @excluding-tax", async ({
+  page,
+}) => {
+  // 24-MB03 is stored as 825.00 ex-VAT, displayed as 825.00, and the customer pays 990.00 inc. 20% VAT
+  await new GoTo(page).product.standard("ex-vat");
+  await expect(page.getByText("£825.00").first()).toBeVisible();
+  const wrapper = page.locator("[data-product-id][data-amount]").filter({
+    has: page.locator("#rvvup-zrf-widget-container"),
+  });
+  await expect(wrapper).toHaveAttribute("data-amount", "990.00");
+});
+
 test("updates the widget when bundle options change", async ({ page }) => {
   await new GoTo(page).product.bundle();
   await page.waitForLoadState("networkidle");
