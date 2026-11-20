@@ -28,6 +28,10 @@
         <plugin name="rvvup-payment-method-icons"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\IconRenderer\RenderExternalIcon"/>
     </type>
+    <type name="Hyva\Checkout\ViewModel\Checkout\Payment\MethodList">
+        <plugin name="rvvup-hide-vault-methods"
+                type="Rvvup\PaymentsHyvaCheckout\Plugin\HideVaultMethods"/>
+    </type>
     <type name="Hyva\Checkout\Model\CustomCondition\IsGuest">
         <plugin name="afterValidateCheckIfCustomerExists"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\IsGuest"
