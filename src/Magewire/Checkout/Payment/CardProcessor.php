@@ -11,6 +11,7 @@ use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
 use Rvvup\PaymentsHyvaCheckout\Service\GetPaymentActions;
 use Rvvup\PaymentsHyvaCheckout\Service\PaymentSessionManager;
+use Rvvup\PaymentsHyvaCheckout\Service\SavedCardsAvailability;
 
 class CardProcessor extends AbstractProcessor
 {
@@ -23,6 +24,9 @@ class CardProcessor extends AbstractProcessor
     /** @var PaymentSessionManager */
     private $paymentSessionManager;
 
+    /** @var SavedCardsAvailability */
+    private $savedCardsAvailability;
+
     /** @var array */
     public $paymentSessionResult = [];
 
@@ -33,6 +37,7 @@ class CardProcessor extends AbstractProcessor
      * @param SdkProxy $sdkProxy
      * @param GetPaymentActions $getPaymentActions
      * @param PaymentSessionManager $paymentSessionManager
+     * @param SavedCardsAvailability $savedCardsAvailability
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -40,11 +45,13 @@ class CardProcessor extends AbstractProcessor
         Session $checkoutSession,
         SdkProxy $sdkProxy,
         GetPaymentActions $getPaymentActions,
-        PaymentSessionManager $paymentSessionManager
+        PaymentSessionManager $paymentSessionManager,
+        SavedCardsAvailability $savedCardsAvailability
     ) {
         parent::__construct($serializer, $assetsModel, $getPaymentActions, $checkoutSession, $sdkProxy);
 
         $this->paymentSessionManager = $paymentSessionManager;
+        $this->savedCardsAvailability = $savedCardsAvailability;
     }
 
     public function boot(): void
@@ -66,12 +73,17 @@ class CardProcessor extends AbstractProcessor
      * beforePaymentAuth event, so a session only exists once the card details have been validated.
      *
      * @param string $checkoutId
+     * @param bool $savePaymentMethod Whether the shopper ticked "Save this card"
      * @return void
      */
-    public function createPaymentSession(string $checkoutId): void
+    public function createPaymentSession(string $checkoutId, bool $savePaymentMethod = false): void
     {
+        $quote = $this->checkoutSession->getQuote();
+        /* The browser only decides what is asked, the server decides what is allowed. */
+        $this->savedCardsAvailability->apply($quote, $this->parameters, $savePaymentMethod);
+
         $this->paymentSessionResult = $this->paymentSessionManager->create(
-            $this->checkoutSession->getQuote(),
+            $quote,
             $checkoutId,
             $this,
             PaymentType::STANDARD
