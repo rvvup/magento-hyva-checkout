@@ -155,7 +155,13 @@ use Magento\Framework\View\Element\Template;
                     /* The Magento order and the Rvvup payment session are only created once the SDK
                        has validated the card details, so an invalid attempt leaves nothing behind. */
                     const component = Magewire.find(blockName);
-                    await component.createPaymentSession(rvvup_parameters.checkout.id);
+                    /* Read at submit time instead of mirrored into state: the checkbox lives in a
+                       wire:ignore block, so the DOM is the one source that survives re-renders. */
+                    const saveCard = document.getElementById('rvvup-save-card');
+                    await component.createPaymentSession(
+                        rvvup_parameters.checkout.id,
+                        saveCard !== null && saveCard.checked
+                    );
 
                     const result = component.paymentSessionResult;
                     if (!result || !result.paymentSessionId) {

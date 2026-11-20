@@ -8,6 +8,12 @@
     step, for example after the shopper changes their address, shipping method or coupon. */ ?>
     <div id="rvvup-card-form" wire:ignore>
         <div id="rvvup-card-form-container" class="rvvup-card-form"></div>
+        <?php if ($magewire->showSaveCard()): ?>
+            <label class="flex items-center gap-2 mt-4 cursor-pointer" for="rvvup-save-card">
+                <input type="checkbox" id="rvvup-save-card" class="form-checkbox">
+                <span><?= $escaper->escapeHtml(__('Save this card for future purchases')) ?></span>
+            </label>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 <?php if ($magewire->showFrame()): ?>
