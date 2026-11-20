@@ -24,7 +24,8 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests. */
   workers: process.env.CI ? 1 : undefined,
-  maxFailures: 2,
+  /* In CI run every test: stopping after 2 failures left the rest of the suite unreported (e.g. 11 tests did not run). */
+  maxFailures: process.env.CI ? 0 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [['github'], ['list'], ['html', {open: 'never'}]]
