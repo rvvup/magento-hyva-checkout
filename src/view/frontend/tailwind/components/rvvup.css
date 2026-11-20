@@ -1,11 +1,38 @@
 @layer components {
-    .rvvup-card-field {
-        flex-grow: 1;
-        height: 90px;
+    .rvvup-card-form {
+        width: 100%;
     }
 
-    .rvvup-card-field iframe {
+    .rvvup-card-form iframe {
         width: 100%;
+    }
+
+    /* The SDK writes border-width, border-color, border-radius and background-color inline on these
+       wrappers from the appearance configuration, but never border-style, so without this the border
+       it just configured does not render. Width and colour are deliberately left to the SDK. */
+    #rvvup-card-number,
+    #rvvup-card-expiration-date,
+    #rvvup-card-cvv {
+        box-sizing: border-box;
+        border-style: solid;
+    }
+
+    /* The card input lives in a cross origin iframe, so the browser its own focus ring is trapped
+       inside it and the shopper gets no focus affordance without this. An outline draws it rather
+       than a border colour, because the SDK writes border-color inline where CSS cannot reach it. */
+    #rvvup-card-number:focus-within,
+    #rvvup-card-expiration-date:focus-within,
+    #rvvup-card-cvv:focus-within {
+        outline: 2px solid var(--form-active-color, #1f48c5);
+        outline-offset: -1px;
+    }
+
+    /* Set while the form is rejected as a whole, for the fields the SDK does not mark itself.
+       Overriding the inline border-color the SDK writes on the wrapper needs the extra weight. */
+    .rvvup-card-form-invalid #rvvup-card-number,
+    .rvvup-card-form-invalid #rvvup-card-expiration-date,
+    .rvvup-card-form-invalid #rvvup-card-cvv {
+        border-color: var(--color-red-600, #e7000b) !important;
     }
 
     .rvvup_APPLE_PAY_place_order_button {

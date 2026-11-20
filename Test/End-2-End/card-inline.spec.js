@@ -1,32 +1,36 @@
 import { test, expect } from "@playwright/test";
 import VisitCheckoutPayment from "./Pages/VisitCheckoutPayment";
+import RvvupCardForm from "./Components/PaymentMethods/RvvupCardForm";
+import CheckoutSuccess from "./Pages/CheckoutSuccess";
+import Admin from "./Components/Admin";
+import getCardFlow, { INLINE } from "./Components/CardFlow";
+import clickCheckoutControl from "./Components/CheckoutControl";
+
+// These cover the inline card flow driven by the Rvvup JS SDK. On a hosted/modal merchant the card
+// form never renders, so card-modal.spec.js applies instead.
+test.beforeEach(async ({ page }) => {
+  test.skip(
+    (await getCardFlow(page)) !== INLINE,
+    "the merchant does not have the card INLINE flow",
+  );
+});
+
+const selectCard = async (page, visitCheckoutPayment) => {
+  await clickCheckoutControl(page.getByLabel("Pay by Card"));
+  await visitCheckoutPayment.loadersShouldBeHidden();
+};
 
 test("Can place an order using the inline credit card", async ({ page }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
-  await page.getByLabel("Pay by Card").click();
+  await selectCard(page, visitCheckoutPayment);
 
-  await visitCheckoutPayment.loadersShouldBeHidden();
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.fill();
+  await cardForm.placeOrder();
 
-  // Credit card form
-  await page
-    .frameLocator(".st-card-number-iframe")
-    .getByLabel("Card Number")
-    .fill("4111 1111 1111 1111");
-  await page
-    .frameLocator(".st-expiration-date-iframe")
-    .getByLabel("Expiration Date")
-    .fill("1233");
-  await page
-    .frameLocator(".st-security-code-iframe")
-    .getByLabel("Security Code")
-    .fill("123");
-  await page.getByRole("button", { name: "Place order" }).click();
-
-  await visitCheckoutPayment.loadersShouldBeHidden();
-
-  // OTP form (3DS) does not always show.
+  // The OTP form (3DS) does not always show.
   const frame = page.frameLocator("#Cardinal-CCA-IFrame");
   try {
     const element = frame.getByPlaceholder("Enter Code Here");
@@ -37,89 +41,192 @@ test("Can place an order using the inline credit card", async ({ page }) => {
     console.log("3DS form not found, so skipping it.");
   }
 
-  await page.waitForURL("**/checkout/onepage/success/");
+  await page.waitForURL("**/checkout/onepage/success/", { timeout: 60000 });
 
-  await expect(
-    page.getByRole("heading", { name: "Thank you for your purchase!" }),
-  ).toBeVisible();
+  const checkoutSuccess = new CheckoutSuccess(page);
+  await checkoutSuccess.waitForSuccess();
+
+  // Reaching the success page is not proof the payment landed: assert the order was actually paid
+  // for rather than left behind in pending_payment.
+  const orderNumber = await checkoutSuccess.getOrderNumber();
+  await new Admin(page).expectOrderState(orderNumber, "processing");
 });
 
-test("locks the screen while a declined card is processed in the background", async ({
+// The SDK drops the whole appearance configuration unless it is nested under methodOptions, and it
+// never writes border-style, so the card fields silently end up borderless and invisible against a
+// white background. Both failure modes are silent, so assert the configured border actually renders.
+test("it renders the card fields with a visible border", async ({ page }) => {
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  await selectCard(page, visitCheckoutPayment);
+
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.shouldBeMounted();
+
+  const border = await page
+    .locator("#rvvup-card-number")
+    .evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        style: style.borderStyle,
+        width: style.borderWidth,
+        color: style.borderColor,
+      };
+    });
+
+  expect(border.style).toBe("solid");
+  expect(border.width).toBe("1px");
+  // The configured colour, matching the inputs Hyva Checkout renders itself. Anything else means
+  // the appearance was dropped and the SDK fell back to its own near invisible default.
+  expect(border.color).toBe("rgb(202, 213, 226)");
+});
+
+// SUPPORT-186: submitting empty card fields used to show "Something went wrong, please try again".
+// The shopper must get a message telling them what to correct, and the place order button has to
+// stay usable so they can correct it.
+test("it shows a meaningful message when the card fields are empty", async ({
   page,
 }) => {
-  // Hold the decline (handleCallback) request open so we can assert the screen is
-  // locked while it is in flight, rather than racing the real round-trip.
-  let releaseRequest;
-  const requestHeld = new Promise((resolve) => {
-    releaseRequest = resolve;
-  });
-  let declineRequestInFlight = false;
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
 
-  await page.route("**/magewire/**", async (route) => {
-    const request = route.request();
-    const isDeclineRequest =
+  await selectCard(page, visitCheckoutPayment);
+
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.shouldBeMounted();
+  await cardForm.placeOrder();
+
+  await expect(
+    page.getByText("Please enter valid card details and try again."),
+  ).toBeVisible();
+
+  await expect(page.getByRole("button", { name: "Place Order" })).toBeEnabled();
+});
+
+// SUPPORT-187: the Magento order and the Rvvup payment session must only be created once the SDK has
+// validated the card details, so a rejected attempt leaves no payment behind to reconcile.
+test("it does not create a payment when the card details are invalid", async ({
+  page,
+}) => {
+  const paymentSessionRequests = [];
+  page.on("request", (request) => {
+    if (
       request.method() === "POST" &&
-      (request.postData() || "").includes("handleCallback");
-
-    if (isDeclineRequest) {
-      declineRequestInFlight = true;
-      await requestHeld;
+      (request.postData() || "").includes("createPaymentSession")
+    ) {
+      paymentSessionRequests.push(request.url());
     }
-
-    await route.continue();
   });
 
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
-  await page.getByLabel("Pay by Card").click();
-  await visitCheckoutPayment.loadersShouldBeHidden();
+  await selectCard(page, visitCheckoutPayment);
 
-  // 4000 0000 0000 2537 fails 3DSecure, which triggers the background decline request.
-  await page
-    .frameLocator(".st-card-number-iframe")
-    .getByLabel("Card Number")
-    .fill("4000 0000 0000 2537");
-  await page
-    .frameLocator(".st-expiration-date-iframe")
-    .getByLabel("Expiration Date")
-    .fill("1233");
-  await page
-    .frameLocator(".st-security-code-iframe")
-    .getByLabel("Security Code")
-    .fill("123");
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.shouldBeMounted();
+  await cardForm.placeOrder();
 
-  await visitCheckoutPayment.loadersShouldBeHidden();
+  await expect(
+    page.getByText("Please enter valid card details and try again."),
+  ).toBeVisible();
 
-  await page.getByRole("button", { name: "Place order" }).click();
+  expect(paymentSessionRequests).toEqual([]);
 
-  await expect.poll(() => declineRequestInFlight, { timeout: 60000 }).toBe(true);
-
-  // While the decline is processed in the background the overlay must cover the screen.
-  await expect(page.locator("#rvvup-loader > div")).toBeVisible();
-
-  releaseRequest();
+  // No payment session request is only half the story: assert the backend is clean too, so a
+  // rejected attempt can never leave a stranded order behind.
+  await new Admin(page).expectNoOrderForCustomerEmail(
+    visitCheckoutPayment.guestEmail,
+  );
 });
 
-test("The validation prevents placing an order with invalid card details", async ({
+// SUPPORT-133 feedback: a failed authorization used to leave the shopper with "Something went wrong,
+// please try again" and a place order button stuck spinning. The authorization is failed here rather
+// than with a declining card because the sandbox clears the test cards, and because a decline
+// currently reaches the plugin as an SDK `error` rather than a `paymentFailed`.
+test("it shows a meaningful message and stays retryable when the authorization fails", async ({
   page,
 }) => {
   const visitCheckoutPayment = new VisitCheckoutPayment(page);
   await visitCheckoutPayment.visit();
 
-  await page.getByLabel("Pay by Card").click();
+  await selectCard(page, visitCheckoutPayment);
 
-  await expect(page.locator("#rvvup-card-form")).toBeVisible();
+  await page.route(/\/card\/auth/, (route) => route.abort());
 
-  await visitCheckoutPayment.loadersShouldBeHidden();
-
-  await expect(page.locator(".st-security-code-iframe")).toBeVisible();
-
-  await page.getByRole("button", { name: "Place order" }).click();
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.fill();
+  await cardForm.placeOrder();
 
   await expect(
-    page
-      .frameLocator('iframe[name="st-expiration-date-iframe"]')
-      .getByText("Field is required"),
-  ).toBeVisible();
+    page.getByText(
+      "Your payment could not be completed. Please check your details and try again.",
+    ),
+  ).toBeVisible({ timeout: 60000 });
+
+  // The shopper has to be able to correct the payment without reloading the page: the loader must
+  // be gone, the place order button usable again and the card fields still mounted.
+  await expect(page.locator("#rvvup-loader > div")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Place Order" })).toBeEnabled();
+  await cardForm.shouldBeMounted();
+
+  // A failed authorization must not leave a paid looking order behind.
+  const orders = await new Admin(page).getOrdersByCustomerEmail(
+    visitCheckoutPayment.guestEmail,
+  );
+  expect(orders.map((order) => order.state)).not.toContain("processing");
+});
+
+// SUPPORT-188: changing an address field re-renders the payment step. The mounted SDK iframes have to
+// survive that, otherwise the shopper has to reload the page before they can enter their card.
+test("it keeps the card fields mounted after changing the address", async ({
+  page,
+}) => {
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  await selectCard(page, visitCheckoutPayment);
+
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.shouldBeMounted();
+
+  // Revealing the billing address re-renders the payment step around the mounted card fields.
+  await page
+    .getByLabel("My billing and shipping address are the same")
+    .uncheck();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  await cardForm.shouldBeMounted();
+
+  // Changing the country re-renders it again, this time with different address fields. The onepage
+  // checkout also shows the shipping country, so the billing one is always the last.
+  await page.getByLabel("Country").last().selectOption("Ireland");
+  await visitCheckoutPayment.loadersShouldBeHidden();
+
+  await cardForm.shouldBeMounted();
+  await cardForm.fill();
+});
+
+// Switching payment method unmounts the card block entirely, so coming back has to mount a working
+// form into the freshly rendered container rather than leaving an empty box behind.
+test("it re-mounts the card fields after switching payment method and back", async ({
+  page,
+}) => {
+  const visitCheckoutPayment = new VisitCheckoutPayment(page);
+  await visitCheckoutPayment.visit();
+
+  await selectCard(page, visitCheckoutPayment);
+
+  const cardForm = new RvvupCardForm(page);
+  await cardForm.shouldBeMounted();
+
+  await page.getByLabel("PayPal", { exact: true }).click();
+  await visitCheckoutPayment.loadersShouldBeHidden();
+  await expect(cardForm.container()).toBeHidden();
+
+  await selectCard(page, visitCheckoutPayment);
+
+  await cardForm.shouldBeMounted();
+  await cardForm.fill();
 });

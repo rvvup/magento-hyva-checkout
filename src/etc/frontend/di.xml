@@ -11,6 +11,14 @@
             </argument>
         </arguments>
     </type>
+    <type name="Rvvup\Payments\ViewModel\Assets">
+        <arguments>
+            <argument name="checkoutPageFullActionNames" xsi:type="array">
+                <item name="hyva_checkout" xsi:type="string">hyva_checkout_index_index</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Hyva\Checkout\Model\MethodMetaData">
         <plugin name="rvvup-payment-method-icons"
                 type="Rvvup\PaymentsHyvaCheckout\Plugin\Hyva\Checkout\Model\MethodMetaData\RenderMethodIcons"/>
