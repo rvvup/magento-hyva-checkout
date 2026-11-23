@@ -8,6 +8,7 @@ use Magento\Framework\Serialize\SerializerInterface;
 use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
+use Rvvup\PaymentsHyvaCheckout\Service\SavedCardsAvailability;
 
 class Card extends Component
 {
@@ -20,6 +21,9 @@ class Card extends Component
     /** @var SdkProxy */
     private $sdkProxy;
 
+    /** @var SavedCardsAvailability */
+    private $savedCardsAvailability;
+
     /** @var array */
     public $parameters = [];
 
@@ -27,15 +31,18 @@ class Card extends Component
      * @param SerializerInterface $serializer
      * @param Assets $assetsModel
      * @param SdkProxy $sdkProxy
+     * @param SavedCardsAvailability $savedCardsAvailability
      */
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,
-        SdkProxy $sdkProxy
+        SdkProxy $sdkProxy,
+        SavedCardsAvailability $savedCardsAvailability
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;
         $this->sdkProxy = $sdkProxy;
+        $this->savedCardsAvailability = $savedCardsAvailability;
     }
 
     public function mount(): void
@@ -46,6 +53,11 @@ class Card extends Component
     public function showForm(): bool
     {
         return $this->parameters['settings']['card']['flow'] == 'INLINE';
+    }
+
+    public function showSaveCard(): bool
+    {
+        return $this->showForm() && $this->savedCardsAvailability->isAvailable($this->parameters);
     }
 
     public function showFrame(): bool
