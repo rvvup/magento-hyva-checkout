@@ -21,6 +21,7 @@ use Magento\Framework\View\Element\Template;
                 declined: '<?= $escaper->escapeJs(__('Payment was declined, please try again or use another method.')) ?>',
                 failed: '<?= $escaper->escapeJs(__('Your payment could not be completed. Please check your details and try again.')) ?>',
                 invalidCardDetails: '<?= $escaper->escapeJs(__('Please enter valid card details and try again.')) ?>',
+                savedCardUnusable: '<?= $escaper->escapeJs(__('This saved card can no longer be used. Please use a different card.')) ?>',
                 formUnavailable: '<?= $escaper->escapeJs(__('The card form could not be loaded. Please refresh the page and try again.')) ?>',
             };
 
@@ -37,6 +38,27 @@ use Magento\Framework\View\Element\Template;
             let isFormValid = false;
             let readyCallbacks = [];
             let activePayment = null;
+
+            /* Public hash of the chosen saved card, empty when a new card is entered. Read from the DOM
+               because the list sits in a wire:ignore block that survives Magewire re-renders. */
+            const getSelectedSavedCard = () => {
+                const selected = document.querySelector('input[name="rvvup-saved-card"]:checked');
+                return selected === null ? '' : selected.value;
+            };
+
+            const syncSavedCardSelection = () => {
+                const newCard = document.getElementById('rvvup-card-new');
+                if (newCard !== null) {
+                    newCard.hidden = getSelectedSavedCard() !== '';
+                }
+            };
+
+            document.addEventListener('change', (event) => {
+                if (event.target && event.target.name === 'rvvup-saved-card') {
+                    syncSavedCardSelection();
+                    markCardFormInvalid(false);
+                }
+            });
 
             const getQuoteTotal = () => {
                 const dataSet = document.getElementById('rvvup-card-inline').dataset;
@@ -158,10 +180,17 @@ use Magento\Framework\View\Element\Template;
                     /* Read at submit time instead of mirrored into state: the checkbox lives in a
                        wire:ignore block, so the DOM is the one source that survives re-renders. */
                     const saveCard = document.getElementById('rvvup-save-card');
-                    await component.createPaymentSession(
-                        rvvup_parameters.checkout.id,
-                        saveCard !== null && saveCard.checked
-                    );
+                    try {
+                        await component.createPaymentSession(
+                            rvvup_parameters.checkout.id,
+                            saveCard !== null && saveCard.checked,
+                            getSelectedSavedCard()
+                        );
+                    } catch (error) {
+                        console.error('Rvvup: creating the payment session failed', error);
+                        failPayment(messages.savedCardUnusable);
+                        return false;
+                    }
 
                     const result = component.paymentSessionResult;
                     if (!result || !result.paymentSessionId) {
@@ -223,6 +252,7 @@ use Magento\Framework\View\Element\Template;
 
                 method: {
                     initialize: async function () {
+                        syncSavedCardSelection();
                         await renderCardForm();
                     },
 
@@ -237,6 +267,11 @@ use Magento\Framework\View\Element\Template;
                         if (!isReady) {
                             showError(messages.formUnavailable);
                             return false;
+                        }
+                        /* A saved card has no form to validate. */
+                        if (getSelectedSavedCard() !== '') {
+                            markCardFormInvalid(false);
+                            return true;
                         }
                         if (!isFormValid) {
                             showError(messages.invalidCardDetails);
@@ -265,7 +300,7 @@ use Magento\Framework\View\Element\Template;
                             };
 
                             card.update({paymentRequest: {total: getQuoteTotal()}});
-                            Promise.resolve(card.submit()).catch(() => failPayment(messages.failed));
+                            Promise.resolve(card.submit(getSelectedSavedCard() !== '' ? {savedToken: true} : undefined)).catch(() => failPayment(messages.failed));
                         });
                     },
 

@@ -7,13 +7,40 @@
     <?php /* wire:ignore keeps the mounted SDK iframes alive when Magewire re-renders the payment
     step, for example after the shopper changes their address, shipping method or coupon. */ ?>
     <div id="rvvup-card-form" wire:ignore>
-        <div id="rvvup-card-form-container" class="rvvup-card-form"></div>
-        <?php if ($magewire->showSaveCard()): ?>
-            <label class="flex items-center gap-2 mt-4 cursor-pointer" for="rvvup-save-card">
-                <input type="checkbox" id="rvvup-save-card" class="form-checkbox">
-                <span><?= $escaper->escapeHtml(__('Save this card for future purchases')) ?></span>
-            </label>
+        <?php $savedCards = $magewire->getSavedCards(); ?>
+        <?php if ($savedCards): ?>
+            <?php /* The selection is read from the DOM when paying, the same way as the checkbox below. */ ?>
+            <fieldset id="rvvup-saved-cards" class="mb-4 space-y-2">
+                <legend class="sr-only"><?= $escaper->escapeHtml(__('Saved cards')) ?></legend>
+                <?php foreach ($savedCards as $index => $card): ?>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="rvvup-saved-card" class="form-radio"
+                               value="<?= $escaper->escapeHtmlAttr($card['publicHash']) ?>"
+                            <?= $index === 0 ? 'checked' : '' ?>>
+                        <span>
+                            <?= $escaper->escapeHtml(trim($card['brand'] . ' •••• ' . $card['last4'])) ?>
+                            <?php if ($card['expiry'] !== ''): ?>
+                                <?= $escaper->escapeHtml(__('(expires %1)', $card['expiry'])) ?>
+                            <?php endif; ?>
+                        </span>
+                    </label>
+                <?php endforeach; ?>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="rvvup-saved-card" class="form-radio" value="">
+                    <span><?= $escaper->escapeHtml(__('Use a different card')) ?></span>
+                </label>
+            </fieldset>
         <?php endif; ?>
+        <?php /* Hidden, not removed, when a saved card is chosen: the SDK keeps its mounted form. */ ?>
+        <div id="rvvup-card-new"<?= $savedCards ? ' hidden' : '' ?>>
+            <div id="rvvup-card-form-container" class="rvvup-card-form"></div>
+            <?php if ($magewire->showSaveCard()): ?>
+                <label class="flex items-center gap-2 mt-4 cursor-pointer" for="rvvup-save-card">
+                    <input type="checkbox" id="rvvup-save-card" class="form-checkbox">
+                    <span><?= $escaper->escapeHtml(__('Save this card for future purchases')) ?></span>
+                </label>
+            <?php endif; ?>
+        </div>
     </div>
 <?php endif; ?>
 <?php if ($magewire->showFrame()): ?>
