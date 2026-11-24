@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rvvup\PaymentsHyvaCheckout\Test\Unit\Service;
 
 use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Payment;
 use PHPUnit\Framework\TestCase;
@@ -79,6 +80,38 @@ class SavedCardsAvailabilityTest extends TestCase
         $payment->expects($this->once())->method('unsAdditionalInformation');
 
         $this->create(true)->apply($this->quote($payment), [], true);
+    }
+
+    public function testApplySavedCardStoresHashAndDropsSaveChoice(): void
+    {
+        $payment = $this->createMock(Payment::class);
+        $payment->expects($this->once())->method('setAdditionalInformation')
+            ->with(Method::PUBLIC_HASH, 'abc');
+        $payment->expects($this->once())->method('unsAdditionalInformation')
+            ->with(Method::SAVE_PAYMENT_METHOD);
+
+        $this->create(true)->applySavedCard($this->quote($payment), self::ENABLED, 'abc');
+    }
+
+    public function testApplySavedCardClearsStaleHashForNewCard(): void
+    {
+        $payment = $this->createMock(Payment::class);
+        $payment->expects($this->never())->method('setAdditionalInformation');
+        $payment->expects($this->once())->method('unsAdditionalInformation')
+            ->with(Method::PUBLIC_HASH);
+
+        $this->create(true)->applySavedCard($this->quote($payment), self::ENABLED, '');
+    }
+
+    public function testApplySavedCardRejectsGuest(): void
+    {
+        $payment = $this->createMock(Payment::class);
+        $payment->expects($this->never())->method('setAdditionalInformation');
+        $payment->expects($this->once())->method('unsAdditionalInformation')
+            ->with(Method::PUBLIC_HASH);
+
+        $this->expectException(LocalizedException::class);
+        $this->create(false)->applySavedCard($this->quote($payment), self::ENABLED, 'abc');
     }
 
     private function create(bool $loggedIn): SavedCardsAvailability

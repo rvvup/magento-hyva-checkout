@@ -9,6 +9,7 @@ use Magewirephp\Magewire\Component;
 use Rvvup\Payments\Model\SdkProxy;
 use Rvvup\Payments\ViewModel\Assets;
 use Rvvup\PaymentsHyvaCheckout\Service\SavedCardsAvailability;
+use Rvvup\PaymentsHyvaCheckout\Service\SavedCardTokens;
 
 class Card extends Component
 {
@@ -24,6 +25,12 @@ class Card extends Component
     /** @var SavedCardsAvailability */
     private $savedCardsAvailability;
 
+    /** @var SavedCardTokens */
+    private $savedCardTokens;
+
+    /** @var array|null */
+    private $savedCards;
+
     /** @var array */
     public $parameters = [];
 
@@ -32,17 +39,20 @@ class Card extends Component
      * @param Assets $assetsModel
      * @param SdkProxy $sdkProxy
      * @param SavedCardsAvailability $savedCardsAvailability
+     * @param SavedCardTokens $savedCardTokens
      */
     public function __construct(
         SerializerInterface $serializer,
         Assets $assetsModel,
         SdkProxy $sdkProxy,
-        SavedCardsAvailability $savedCardsAvailability
+        SavedCardsAvailability $savedCardsAvailability,
+        SavedCardTokens $savedCardTokens
     ) {
         $this->serializer = $serializer;
         $this->assetsModel = $assetsModel;
         $this->sdkProxy = $sdkProxy;
         $this->savedCardsAvailability = $savedCardsAvailability;
+        $this->savedCardTokens = $savedCardTokens;
     }
 
     public function mount(): void
@@ -58,6 +68,21 @@ class Card extends Component
     public function showSaveCard(): bool
     {
         return $this->showForm() && $this->savedCardsAvailability->isAvailable($this->parameters);
+    }
+
+    /**
+     * Rendered server side and never exposed as a public property, so the list is not sent to the browser
+     * as component state.
+     *
+     * @return array[]
+     */
+    public function getSavedCards(): array
+    {
+        if ($this->savedCards === null) {
+            $this->savedCards = $this->showForm() ? $this->savedCardTokens->getCards($this->parameters) : [];
+        }
+
+        return $this->savedCards;
     }
 
     public function showFrame(): bool

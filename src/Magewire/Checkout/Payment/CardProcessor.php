@@ -74,13 +74,18 @@ class CardProcessor extends AbstractProcessor
      *
      * @param string $checkoutId
      * @param bool $savePaymentMethod Whether the shopper ticked "Save this card"
+     * @param string $publicHash Public hash of the saved card the shopper chose, empty for a new card
      * @return void
      */
-    public function createPaymentSession(string $checkoutId, bool $savePaymentMethod = false): void
-    {
+    public function createPaymentSession(
+        string $checkoutId,
+        bool $savePaymentMethod = false,
+        string $publicHash = ''
+    ): void {
         $quote = $this->checkoutSession->getQuote();
+        $this->savedCardsAvailability->applySavedCard($quote, $this->parameters, $publicHash);
         /* The browser only decides what is asked, the server decides what is allowed. */
-        $this->savedCardsAvailability->apply($quote, $this->parameters, $savePaymentMethod);
+        $this->savedCardsAvailability->apply($quote, $this->parameters, $savePaymentMethod && $publicHash === '');
 
         $this->paymentSessionResult = $this->paymentSessionManager->create(
             $quote,
